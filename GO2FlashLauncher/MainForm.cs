@@ -29,6 +29,7 @@ namespace GO2FlashLauncher
 #if !DEBUG
             metroButton3.Hide();
 #endif
+            metroTabControl1.SelectedIndex = 0;
             var settings = new CefSettings();
             settings.CachePath = Path.GetFullPath("cache");
             settings.CefCommandLineArgs.Add("enable-system-flash", "1");
@@ -55,7 +56,13 @@ namespace GO2FlashLauncher
                 chromiumWebBrowser = new ChromiumWebBrowser(File.ReadAllText(Path.GetFullPath("cache\\config.settings")));
             }
             chromiumWebBrowser.BrowserSettings.Plugins = CefState.Enabled;
-            chromiumWebBrowser.RequestContext = new RequestContext();
+            var reqSettings = new RequestContextSettings();
+            reqSettings.IgnoreCertificateErrors = true;
+            reqSettings.PersistUserPreferences = true;
+            reqSettings.PersistSessionCookies = true;
+            reqSettings.CachePath = Path.GetFullPath("cache");
+            chromiumWebBrowser.RequestContext = new RequestContext(reqSettings);
+
             Cef.UIThreadTaskFactory.StartNew(delegate {
                 chromiumWebBrowser.RequestContext.SetPreference("profile.default_content_setting_values.plugins", 1, out string error);
             });
