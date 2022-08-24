@@ -33,6 +33,8 @@ namespace GO2FlashLauncher
             {
                 File.Delete("debug.log");
             }
+            WindowState = FormWindowState.Maximized;
+            maximizeBtn.Text = "\U0001F5D7";
             metroTabControl1.SelectedIndex = 0;
             var settings = new CefSettings();
             settings.CachePath = Path.GetFullPath("cache");
