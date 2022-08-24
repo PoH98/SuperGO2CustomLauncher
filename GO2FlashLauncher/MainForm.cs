@@ -29,6 +29,10 @@ namespace GO2FlashLauncher
 #if !DEBUG
             metroButton3.Hide();
 #endif
+            if (File.Exists("debug.log"))
+            {
+                File.Delete("debug.log");
+            }
             metroTabControl1.SelectedIndex = 0;
             var settings = new CefSettings();
             settings.CachePath = Path.GetFullPath("cache");
@@ -116,30 +120,41 @@ namespace GO2FlashLauncher
                 {
                     LoginWeb();
                 }
-                else if (chromiumWebBrowser.Address.StartsWith("https://beta.supergo2.com/play"))
+                else if (chromiumWebBrowser.Address.StartsWith("https://beta.supergo2.com/play") && chromiumWebBrowser.CanExecuteJavascriptInMainFrame)
                 {
                     //player in game
                     File.WriteAllText(Path.GetFullPath("cache\\config.settings"), chromiumWebBrowser.Address);
-                    chromiumWebBrowser.ExecuteScriptAsync(@"
-setInterval(()=>{
+                    chromiumWebBrowser.ExecuteScriptAsync(@"(function () {
+var iv = setInterval(()=>{
 try
 { 
-   document.getElementsByTagName('iframe')[0].height = '800';
-   document.getElementsByTagName('iframe')[0].style.minHeight = '800px';
-   console.log('"+ scriptKey + @"');
+if(document.getElementsByTagName('iframe')){
+   document.getElementById('wrapper').style.overflow = 'hidden';
+   document.getElementsByTagName('iframe')[0].height = '" + (chromiumWebBrowser.Size.Height - 110) + @"';
+   document.getElementsByTagName('iframe')[0].width = '" + chromiumWebBrowser.Size.Width + @"';
+   document.getElementsByTagName('iframe')[0].style.minHeight = '" + (chromiumWebBrowser.Size.Height - 110) + @"px';
+   document.getElementsByTagName('iframe')[0].style.minWidth = '" + chromiumWebBrowser.Size.Width + @"px';
+   document.getElementsByTagName('iframe')[0].style.marginLeft = '0px';
+   document.getElementsByTagName('iframe')[0].style.marginTop = '15px';
+   document.getElementsByTagName('iframe')[0].style.marginBottom = '15px';
+   console.log('" + scriptKey + @"');
+   document.querySelector('#wrapper .row').style.display = 'none';
+   clearInterval(iv);
+}
 }
 catch
 { 
    console.log('back to home!') 
 }
-}, 1000);");
+}, 1000);
+})();");
                     RunScript();
                 }
-                if (!File.Exists(Path.GetFullPath("cache\\background.settings")))
+                if (!File.Exists(Path.GetFullPath("cache\\background.settings")) && chromiumWebBrowser.CanExecuteJavascriptInMainFrame)
                 {
                     chromiumWebBrowser.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'none'");
                 }
-                else
+                else if(chromiumWebBrowser.CanExecuteJavascriptInMainFrame)
                 {
                     chromiumWebBrowser.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'url(data:image/png;base64," + ConvertImage(File.ReadAllText(Path.GetFullPath("cache\\background.settings"))) +")'");
                 }
@@ -264,6 +279,28 @@ input.dispatchEvent(event);
                 File.Delete(Path.GetFullPath("cache\\background.settings"));
             }
             chromiumWebBrowser.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'none'");
+        }
+
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            if(chromiumWebBrowser == null)
+            {
+                return;
+            }
+            Task.Run(() =>
+            {
+                do
+                {
+                    Thread.Sleep(200);
+                }
+                while (!chromiumWebBrowser.CanExecuteJavascriptInMainFrame);
+                chromiumWebBrowser.ExecuteScriptAsync(@"
+   document.getElementsByTagName('iframe')[0].height = '" + (chromiumWebBrowser.Size.Height - 110) + @"';
+   document.getElementsByTagName('iframe')[0].width = '" + chromiumWebBrowser.Size.Width + @"';
+   document.getElementsByTagName('iframe')[0].style.minHeight = '" + (chromiumWebBrowser.Size.Height - 110) + @"px';
+   document.getElementsByTagName('iframe')[0].style.minWidth = '" + chromiumWebBrowser.Size.Width + @"px';
+");
+            });
         }
     }
 

@@ -34,12 +34,12 @@
             this.metroButton3 = new MetroFramework.Controls.MetroButton();
             this.metroButton2 = new MetroFramework.Controls.MetroButton();
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
+            this.metroButton5 = new MetroFramework.Controls.MetroButton();
+            this.metroButton4 = new MetroFramework.Controls.MetroButton();
             this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.closeBtn = new MetroFramework.Controls.MetroButton();
             this.maximizeBtn = new MetroFramework.Controls.MetroButton();
             this.minimizeBtn = new MetroFramework.Controls.MetroButton();
-            this.metroButton4 = new MetroFramework.Controls.MetroButton();
-            this.metroButton5 = new MetroFramework.Controls.MetroButton();
             this.metroTabControl1.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
             this.metroTabPage2.SuspendLayout();
@@ -55,8 +55,8 @@
             this.metroTabControl1.Location = new System.Drawing.Point(4, 45);
             this.metroTabControl1.Multiline = true;
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 1;
-            this.metroTabControl1.Size = new System.Drawing.Size(1251, 531);
+            this.metroTabControl1.SelectedIndex = 0;
+            this.metroTabControl1.Size = new System.Drawing.Size(1235, 650);
             this.metroTabControl1.TabIndex = 0;
             this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroTabControl1.UseSelectable = true;
@@ -71,7 +71,7 @@
             this.metroTabPage1.HorizontalScrollbarSize = 10;
             this.metroTabPage1.Location = new System.Drawing.Point(4, 38);
             this.metroTabPage1.Name = "metroTabPage1";
-            this.metroTabPage1.Size = new System.Drawing.Size(1243, 489);
+            this.metroTabPage1.Size = new System.Drawing.Size(1227, 608);
             this.metroTabPage1.TabIndex = 0;
             this.metroTabPage1.Text = "Game";
             this.metroTabPage1.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -87,7 +87,7 @@
             this.panel1.BackColor = System.Drawing.Color.Transparent;
             this.panel1.Location = new System.Drawing.Point(3, 34);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1240, 462);
+            this.panel1.Size = new System.Drawing.Size(1224, 581);
             this.panel1.TabIndex = 5;
             // 
             // metroButton3
@@ -130,6 +130,27 @@
             this.metroTabPage2.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage2.VerticalScrollbarSize = 10;
             // 
+            // metroButton5
+            // 
+            this.metroButton5.Location = new System.Drawing.Point(150, 3);
+            this.metroButton5.Name = "metroButton5";
+            this.metroButton5.Size = new System.Drawing.Size(141, 39);
+            this.metroButton5.TabIndex = 8;
+            this.metroButton5.Text = "Remove Background";
+            this.metroButton5.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroButton5.UseSelectable = true;
+            this.metroButton5.Click += new System.EventHandler(this.metroButton5_Click);
+            // 
+            // metroButton4
+            // 
+            this.metroButton4.Location = new System.Drawing.Point(3, 48);
+            this.metroButton4.Name = "metroButton4";
+            this.metroButton4.Size = new System.Drawing.Size(141, 39);
+            this.metroButton4.TabIndex = 7;
+            this.metroButton4.Text = "Auto Login";
+            this.metroButton4.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroButton4.UseSelectable = true;
+            // 
             // metroButton1
             // 
             this.metroButton1.Location = new System.Drawing.Point(3, 3);
@@ -145,7 +166,7 @@
             // 
             this.closeBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.closeBtn.BackColor = System.Drawing.Color.Red;
-            this.closeBtn.Location = new System.Drawing.Point(1242, 7);
+            this.closeBtn.Location = new System.Drawing.Point(1232, 7);
             this.closeBtn.Name = "closeBtn";
             this.closeBtn.Size = new System.Drawing.Size(25, 20);
             this.closeBtn.TabIndex = 6;
@@ -158,7 +179,7 @@
             // maximizeBtn
             // 
             this.maximizeBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.maximizeBtn.Location = new System.Drawing.Point(1211, 7);
+            this.maximizeBtn.Location = new System.Drawing.Point(1201, 7);
             this.maximizeBtn.Name = "maximizeBtn";
             this.maximizeBtn.Size = new System.Drawing.Size(25, 20);
             this.maximizeBtn.TabIndex = 7;
@@ -170,7 +191,7 @@
             // minimizeBtn
             // 
             this.minimizeBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.minimizeBtn.Location = new System.Drawing.Point(1180, 7);
+            this.minimizeBtn.Location = new System.Drawing.Point(1170, 7);
             this.minimizeBtn.Name = "minimizeBtn";
             this.minimizeBtn.Size = new System.Drawing.Size(25, 20);
             this.minimizeBtn.TabIndex = 8;
@@ -179,32 +200,11 @@
             this.minimizeBtn.UseSelectable = true;
             this.minimizeBtn.Click += new System.EventHandler(this.minimizeBtn_Click);
             // 
-            // metroButton4
-            // 
-            this.metroButton4.Location = new System.Drawing.Point(3, 48);
-            this.metroButton4.Name = "metroButton4";
-            this.metroButton4.Size = new System.Drawing.Size(141, 39);
-            this.metroButton4.TabIndex = 7;
-            this.metroButton4.Text = "Auto Login";
-            this.metroButton4.Theme = MetroFramework.MetroThemeStyle.Dark;
-            this.metroButton4.UseSelectable = true;
-            // 
-            // metroButton5
-            // 
-            this.metroButton5.Location = new System.Drawing.Point(150, 3);
-            this.metroButton5.Name = "metroButton5";
-            this.metroButton5.Size = new System.Drawing.Size(141, 39);
-            this.metroButton5.TabIndex = 8;
-            this.metroButton5.Text = "Remove Background";
-            this.metroButton5.Theme = MetroFramework.MetroThemeStyle.Dark;
-            this.metroButton5.UseSelectable = true;
-            this.metroButton5.Click += new System.EventHandler(this.metroButton5_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1270, 593);
+            this.ClientSize = new System.Drawing.Size(1260, 720);
             this.ControlBox = false;
             this.Controls.Add(this.minimizeBtn);
             this.Controls.Add(this.maximizeBtn);
@@ -216,6 +216,7 @@
             this.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.metroTabControl1.ResumeLayout(false);
             this.metroTabPage1.ResumeLayout(false);
             this.metroTabPage2.ResumeLayout(false);
