@@ -133,10 +133,12 @@ try
 if(document.getElementsByTagName('iframe')){
    document.getElementById('wrapper').style.overflow = 'hidden';
    document.getElementsByTagName('iframe')[0].height = '" + (chromiumWebBrowser.Size.Height - 110) + @"';
-   document.getElementsByTagName('iframe')[0].width = '" + chromiumWebBrowser.Size.Width + @"';
+   document.getElementsByTagName('iframe')[0].width = '" + (chromiumWebBrowser.Size.Width > 1920 ? 1920 : chromiumWebBrowser.Size.Width) + @"';
    document.getElementsByTagName('iframe')[0].style.minHeight = '" + (chromiumWebBrowser.Size.Height - 110) + @"px';
-   document.getElementsByTagName('iframe')[0].style.minWidth = '" + chromiumWebBrowser.Size.Width + @"px';
-   document.getElementsByTagName('iframe')[0].style.marginLeft = '0px';
+   document.getElementsByTagName('iframe')[0].style.minWidth = '" + (chromiumWebBrowser.Size.Width > 1920? 1920: chromiumWebBrowser.Size.Width) + @"px';
+   document.getElementsByTagName('iframe')[0].style.maxWidth = '1920px';
+   document.getElementsByTagName('iframe')[0].style.marginLeft = 'auto';
+   document.getElementsByTagName('iframe')[0].style.marginRight = 'auto';
    document.getElementsByTagName('iframe')[0].style.marginTop = '15px';
    document.getElementsByTagName('iframe')[0].style.marginBottom = '15px';
    console.log('" + scriptKey + @"');
@@ -285,6 +287,14 @@ input.dispatchEvent(event);
 
         private void MainForm_Resize(object sender, EventArgs e)
         {
+            if (Width < 720)
+            {
+                Width = 720;
+            }
+            if(Height < 1260)
+            {
+                Height = 1260;
+            }
             if(chromiumWebBrowser == null)
             {
                 return;
