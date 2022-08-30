@@ -1,11 +1,18 @@
 ﻿using CefSharp;
 using CefSharp.WinForms;
+using GO2FlashLauncher.Model;
+using GO2FlashLauncher.Models;
+using GO2FlashLauncher.Script;
 using GO2FlashLauncher.Service;
+using MetroFramework;
+using MetroFramework.Controls;
 using MetroFramework.Forms;
+using Newtonsoft.Json;
 using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,12 +21,29 @@ namespace GO2FlashLauncher
 {
     public partial class MainForm : MetroForm
     {
-        ChromiumWebBrowser chromiumWebBrowser;
+        ChromiumWebBrowser alpha, beta;
         Thread redirector;
         string scriptKey = "";
+        HttpClient hc = new HttpClient();
+        CancellationTokenSource cancellation;
+        MainScript script;
+        string profileName = "Bot1";
+        readonly BotSettings settings = new BotSettings();
         public MainForm()
         {
             InitializeComponent();
+            if (!Directory.Exists("Profile"))
+            {
+                Directory.CreateDirectory("Profile");
+            }
+            if (!Directory.Exists("Profile\\" + profileName))
+            {
+                Directory.CreateDirectory("Profile\\" + profileName);
+            }
+            if(File.Exists("Profile\\" + profileName + "\\config.json"))
+            {
+                settings = JsonConvert.DeserializeObject<BotSettings>(File.ReadAllText("Profile\\" + profileName + "\\config.json"));
+            }
             scriptKey = Encryption.RandomString(10);
 
         }
@@ -47,7 +71,22 @@ namespace GO2FlashLauncher
             settings.CefCommandLineArgs.Add("disable-gpu-vsync", "1");
             settings.CefCommandLineArgs["plugin-policy"] = "allow";
             settings.CefCommandLineArgs.Add("allow-outdated-plugins");
-
+            settings.CefCommandLineArgs.Add("use-angle", "gl");
+            var alphaContext = new RequestContextSettings
+            {
+                IgnoreCertificateErrors = true,
+                PersistUserPreferences = true,
+                PersistSessionCookies = true,
+                CachePath = Path.GetFullPath("cache")
+            }
+            ;
+            var betaContext = new RequestContextSettings
+            {
+                IgnoreCertificateErrors = true,
+                PersistUserPreferences = true,
+                PersistSessionCookies = true,
+                CachePath = Path.GetFullPath("cache")
+            };
             if (!Cef.Initialize(settings, true))
             {
                 throw new Exception("Unable to Initialize Cef");
@@ -55,32 +94,55 @@ namespace GO2FlashLauncher
 
             if (!File.Exists(Path.GetFullPath("cache\\config.settings")))
             {
-                chromiumWebBrowser = new ChromiumWebBrowser("https://beta.supergo2.com/");
+                alpha = new ChromiumWebBrowser("https://beta.supergo2.com/");
             }
             else
             {
-                chromiumWebBrowser = new ChromiumWebBrowser(File.ReadAllText(Path.GetFullPath("cache\\config.settings")));
+                alpha = new ChromiumWebBrowser(File.ReadAllText(Path.GetFullPath("cache\\config.settings")));
             }
-            chromiumWebBrowser.BrowserSettings.Plugins = CefState.Enabled;
-            var reqSettings = new RequestContextSettings();
-            reqSettings.IgnoreCertificateErrors = true;
-            reqSettings.PersistUserPreferences = true;
-            reqSettings.PersistSessionCookies = true;
-            reqSettings.CachePath = Path.GetFullPath("cache");
-            chromiumWebBrowser.RequestContext = new RequestContext(reqSettings);
-
+            beta = new ChromiumWebBrowser("blank");
+            alpha.RequestContext = new RequestContext(alphaContext);
+            beta.RequestContext = new RequestContext(betaContext);
+            alpha.BrowserSettings.Plugins = CefState.Enabled;
+            beta.BrowserSettings.Plugins = CefState.Enabled;
             Cef.UIThreadTaskFactory.StartNew(delegate {
-                chromiumWebBrowser.RequestContext.SetPreference("profile.default_content_setting_values.plugins", 1, out string error);
+                alpha.RequestContext.SetPreference("profile.default_content_setting_values.plugins", 1, out string error);
+                beta.RequestContext.SetPreference("profile.default_content_setting_values.plugins", 1, out error);
             });
-            chromiumWebBrowser.MenuHandler = new CustomMenuHandler();
-            panel1.Controls.Add(chromiumWebBrowser);
-            chromiumWebBrowser.Dock = DockStyle.Fill;
-            chromiumWebBrowser.LoadingStateChanged += ChromiumWebBrowser_LoadingStateChanged;
-            chromiumWebBrowser.ConsoleMessage += ChromiumWebBrowser_ConsoleMessage;
+            alpha.MenuHandler = new CustomMenuHandler();
+            beta.MenuHandler = new CustomMenuHandler();
+            panel1.Controls.Add(alpha);
+            panel2.Controls.Add(beta);
+            alpha.Dock = DockStyle.Fill;
+            beta.Dock = DockStyle.Fill;
+            beta.IsBrowserInitializedChanged += Beta_IsBrowserInitializedChanged; ;
+            alpha.LoadingStateChanged += ChromiumWebBrowser_LoadingStateChanged;
+            beta.LoadingStateChanged += ChromiumWebBrowser_LoadingStateChanged;
+            alpha.ConsoleMessage += ChromiumWebBrowser_ConsoleMessage;
+            timer1_Tick(null, null);
+            timer1.Start();
+            instanceSelection.SelectedIndex = this.settings.Instance - 1;
+            metroToggle1.Checked = this.settings.RunBot;
+            RenderFleets();
+        }
+
+        private void Beta_IsBrowserInitializedChanged(object sender, EventArgs e)
+        {
+            if (!File.Exists(Path.GetFullPath("cache\\config.beta.settings")))
+            {
+                beta.GetDevToolsClient().Emulation.SetUserAgentOverrideAsync("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) supergo2-btr/1.0.0-btr Chrome/85.0.4183.121 Electron/10.1.3 Safari/537.36");
+                beta.Load("http://149.56.143.181:3000/");
+            }
+            else
+            {
+                beta.GetDevToolsClient().Emulation.SetUserAgentOverrideAsync("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) supergo2-btr/1.0.0-btr Chrome/85.0.4183.121 Electron/10.1.3 Safari/537.36");
+                beta.Load(File.ReadAllText(Path.GetFullPath("cache\\config.beta.settings")));
+            }
         }
 
         private void ChromiumWebBrowser_ConsoleMessage(object sender, ConsoleMessageEventArgs e)
         {
+            var chrome = (ChromiumWebBrowser)sender;
             if(e.Message == "back to home!")
             {
                 if (redirector != null)
@@ -91,7 +153,7 @@ namespace GO2FlashLauncher
                 redirector = new Thread(() =>
                 {
                     Thread.Sleep(5000);
-                    chromiumWebBrowser.Load("https://beta.supergo2.com/");
+                    chrome.Load("https://beta.supergo2.com/");
                 });
                 redirector.Start();                
             }
@@ -103,39 +165,62 @@ namespace GO2FlashLauncher
                     redirector = null;
                 }
             }
+            else if (e.Message.StartsWith("Login result:"))
+            {
+                if (!e.Message.Contains("Invalid"))
+                {
+                    chrome.ExecuteScriptAsync("document.querySelector(\"a[href = '/myplanets']\").click()");
+                }
+            }
             else if(e.Message == scriptKey)
             {
-                RunScript();
+                RunScript(chrome);
             }
         }
 
         private void ChromiumWebBrowser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
+            var chrome = (ChromiumWebBrowser)sender;
+            if(chrome.Address == "blank")
+            {
+                return;
+            }
+            var uri = new Uri(chrome.Address);
+            var host = uri.Scheme + "://" + uri.Host;
+            if (!uri.IsDefaultPort)
+            {
+                host += ":" + uri.Port;
+            }    
+            if (!host.EndsWith("/"))
+            {
+                host += "/";
+            }
+
             if (!e.IsLoading)
             {
-                if (!chromiumWebBrowser.Address.StartsWith("https://beta.supergo2.com/"))
+                if (chrome.Address.Contains("igg"))
                 {
-                    chromiumWebBrowser.Load("https://beta.supergo2.com/");
+                    chrome.Back();
                     return;
                 }
-                else if (chromiumWebBrowser.Address == "https://beta.supergo2.com/" && File.Exists(Path.GetFullPath("cache\\credential.settings")))
+                else if (chrome.Address == host && File.Exists(Path.GetFullPath("cache\\credential.settings")))
                 {
-                    LoginWeb();
+                    LoginWeb(chrome);
                 }
-                else if (chromiumWebBrowser.Address.StartsWith("https://beta.supergo2.com/play") && chromiumWebBrowser.CanExecuteJavascriptInMainFrame)
+                else if (chrome.Address.StartsWith(host + "play") && alpha.CanExecuteJavascriptInMainFrame)
                 {
                     //player in game
-                    File.WriteAllText(Path.GetFullPath("cache\\config.settings"), chromiumWebBrowser.Address);
-                    chromiumWebBrowser.ExecuteScriptAsync(@"(function () {
+                    File.WriteAllText(Path.GetFullPath("cache\\config.settings"), alpha.Address);
+                    chrome.ExecuteScriptAsync(@"(function () {
 var iv = setInterval(()=>{
 try
 { 
 if(document.getElementsByTagName('iframe')){
    document.getElementById('wrapper').style.overflow = 'hidden';
-   document.getElementsByTagName('iframe')[0].height = '" + (chromiumWebBrowser.Size.Height - 110) + @"';
-   document.getElementsByTagName('iframe')[0].width = '" + (chromiumWebBrowser.Size.Width > 1920 ? 1920 : chromiumWebBrowser.Size.Width) + @"';
-   document.getElementsByTagName('iframe')[0].style.minHeight = '" + (chromiumWebBrowser.Size.Height - 110) + @"px';
-   document.getElementsByTagName('iframe')[0].style.minWidth = '" + (chromiumWebBrowser.Size.Width > 1920? 1920: chromiumWebBrowser.Size.Width) + @"px';
+   document.getElementsByTagName('iframe')[0].height = '" + (chrome.Size.Height - 110) + @"';
+   document.getElementsByTagName('iframe')[0].width = '" + (chrome.Size.Width > 1920 ? 1920 : chrome.Size.Width) + @"';
+   document.getElementsByTagName('iframe')[0].style.minHeight = '" + (chrome.Size.Height - 110) + @"px';
+   document.getElementsByTagName('iframe')[0].style.minWidth = '" + (chrome.Size.Width > 1920? 1920: chrome.Size.Width) + @"px';
    document.getElementsByTagName('iframe')[0].style.maxWidth = '1920px';
    document.getElementsByTagName('iframe')[0].style.marginLeft = 'auto';
    document.getElementsByTagName('iframe')[0].style.marginRight = 'auto';
@@ -152,22 +237,35 @@ catch
 }
 }, 1000);
 })();");
-                    RunScript();
+                    RunScript(chrome);
                 }
-                if (!File.Exists(Path.GetFullPath("cache\\background.settings")) && chromiumWebBrowser.CanExecuteJavascriptInMainFrame)
+                if (!File.Exists(Path.GetFullPath("cache\\background.settings")) && chrome.CanExecuteJavascriptInMainFrame)
                 {
-                    chromiumWebBrowser.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'none'");
+                    chrome.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'none'");
                 }
-                else if(chromiumWebBrowser.CanExecuteJavascriptInMainFrame)
+                else if(chrome.CanExecuteJavascriptInMainFrame)
                 {
-                    chromiumWebBrowser.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'url(data:image/png;base64," + ConvertImage(File.ReadAllText(Path.GetFullPath("cache\\background.settings"))) +")'");
+                    chrome.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'url(data:image/png;base64," + ConvertImage(File.ReadAllText(Path.GetFullPath("cache\\background.settings"))) +")'");
                 }
             }
         }
 
-        private void RunScript()
+        private void RunScript(ChromiumWebBrowser chrome)
         {
-            //Run script
+            if(script != null)
+            {
+                if (script.Running)
+                {
+                    return;
+                }
+            }
+            if (!metroToggle1.Checked)
+            {
+                return;
+            }
+            cancellation = new CancellationTokenSource();
+            script = new MainScript(richTextBox1, settings);
+            _ = script.Run(cancellation.Token, chrome).ConfigureAwait(false);
         }
 
         private string ConvertImage(string path)
@@ -192,18 +290,20 @@ catch
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 File.WriteAllText(Path.GetFullPath("cache\\background.settings"), openFileDialog.FileName);
-                chromiumWebBrowser.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'url(data:image/png;base64," + ConvertImage(openFileDialog.FileName) + ")'");
+                alpha.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'url(data:image/png;base64," + ConvertImage(openFileDialog.FileName) + ")'");
             }
         }
 
         private void metroButton2_Click(object sender, EventArgs e)
         {
-            chromiumWebBrowser.Reload(true);
+            alpha.Reload(true);
+            if(cancellation != null)
+                cancellation.Cancel();
         }
 
         private void metroButton3_Click(object sender, EventArgs e)
         {
-            chromiumWebBrowser.ShowDevTools();
+            alpha.ShowDevTools();
         }
 
         private void closeBtn_Click(object sender, EventArgs e)
@@ -239,15 +339,16 @@ catch
 
         private void Login_FormClosed(object sender, FormClosedEventArgs e)
         {
-            LoginWeb();
+            LoginWeb(alpha);
+            LoginWeb(beta);
         }
 
-        private async void LoginWeb()
+        private async void LoginWeb(ChromiumWebBrowser web)
         {
             var hashed = File.ReadAllText(Path.GetFullPath("cache\\credential.settings"));
             var login = Encryption.Decrypt(hashed);
-            chromiumWebBrowser.ExecuteScriptAsync("document.querySelector('#navbarDropdown').click();");
-            chromiumWebBrowser.ExecuteScriptAsync(@"
+            web.ExecuteScriptAsync("document.querySelector('#navbarDropdown').click();");
+            web.ExecuteScriptAsync(@"(function(){
 var text = '"+ login.Email + @"';
 var input = document.querySelector('input[name=" + "\"username\"" + @"]');
 var nativeTextAreaValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
@@ -255,24 +356,35 @@ nativeTextAreaValueSetter.call(input, text);
 
 const event = new Event('input', { bubbles: true });
 input.dispatchEvent(event);
-");
+})()");
             await Task.Delay((login.Email.Length * 50) + 100);
-            chromiumWebBrowser.ExecuteScriptAsync(@"
+            web.ExecuteScriptAsync(@"(function(){
 var text = '" + login.Password + @"';
 var input = document.querySelector('input[name=" + "\"password\"" + @"]');
 var nativeTextAreaValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
 nativeTextAreaValueSetter.call(input, text);
 
+const event = new Event('input', { bubbles: true });
 input.dispatchEvent(event);
-");
+})()");
             await Task.Delay((login.Password.Length * 50) + 100);
-            chromiumWebBrowser.ExecuteScriptAsync("document.querySelector('.loginBox__button.btn-primary').click();");
-            await Task.Delay(5000);
-            chromiumWebBrowser.ExecuteScriptAsync("document.querySelector(\"a[href = '/myplanets']\").click()");
+            web.ExecuteScriptAsync("document.querySelector('.loginBox__button.btn-primary').click();");
+            await Task.Delay(3000);
+            web.ExecuteScriptAsync("console.log(\"Login result:\"+document.querySelector('#swal2-html-container').innerText)");
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (!Directory.Exists("Profile"))
+            {
+                Directory.CreateDirectory("Profile");
+            }
+            if (!Directory.Exists("Profile\\" + profileName))
+            {
+                Directory.CreateDirectory("Profile\\" + profileName);
+            }
+            File.WriteAllText("Profile\\" + profileName + "\\config.json", JsonConvert.SerializeObject(settings));
+
             Cef.Shutdown();
         }
 
@@ -282,7 +394,7 @@ input.dispatchEvent(event);
             {
                 File.Delete(Path.GetFullPath("cache\\background.settings"));
             }
-            chromiumWebBrowser.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'none'");
+            alpha.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'none'");
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -295,7 +407,7 @@ input.dispatchEvent(event);
             {
                 Height = 1260;
             }
-            if(chromiumWebBrowser == null)
+            if(alpha == null)
             {
                 return;
             }
@@ -305,14 +417,170 @@ input.dispatchEvent(event);
                 {
                     Thread.Sleep(200);
                 }
-                while (!chromiumWebBrowser.CanExecuteJavascriptInMainFrame);
-                chromiumWebBrowser.ExecuteScriptAsync(@"
-   document.getElementsByTagName('iframe')[0].height = '" + (chromiumWebBrowser.Size.Height - 110) + @"';
-   document.getElementsByTagName('iframe')[0].width = '" + chromiumWebBrowser.Size.Width + @"';
-   document.getElementsByTagName('iframe')[0].style.minHeight = '" + (chromiumWebBrowser.Size.Height - 110) + @"px';
-   document.getElementsByTagName('iframe')[0].style.minWidth = '" + chromiumWebBrowser.Size.Width + @"px';
+                while (!alpha.CanExecuteJavascriptInMainFrame);
+                alpha.ExecuteScriptAsync(@"
+   document.getElementsByTagName('iframe')[0].height = '" + (alpha.Size.Height - 110) + @"';
+   document.getElementsByTagName('iframe')[0].width = '" + alpha.Size.Width + @"';
+   document.getElementsByTagName('iframe')[0].style.minHeight = '" + (alpha.Size.Height - 110) + @"px';
+   document.getElementsByTagName('iframe')[0].style.minWidth = '" + alpha.Size.Width + @"px';
 ");
             });
+        }
+
+        private async void timer1_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                var response = await hc.GetAsync("https://beta-api.supergo2.com/metrics/online");
+                var online = JsonConvert.DeserializeObject<OnlinePlayers>(await response.Content.ReadAsStringAsync());
+                label1.Text = "Online Players: " + online.Data.Online;
+            }
+            catch
+            {
+                label1.Text = "Online Players: 0";
+            }
+
+        }
+
+        private void metroButton6_Click(object sender, EventArgs e)
+        {
+            beta.ShowDevTools();
+        }
+
+        private void metroToggle1_CheckedChanged(object sender, EventArgs e)
+        {
+            if(cancellation != null)
+            {
+                cancellation.Cancel();
+            }
+
+            settings.RunBot = metroToggle1.Checked;
+            if (metroToggle1.Checked)
+            {
+                richTextBox1.Invoke((MethodInvoker)delegate
+                {
+                    richTextBox1.SelectionStart = richTextBox1.TextLength;
+                    richTextBox1.SelectionLength = 0;
+                    richTextBox1.SelectionColor = Color.Black;
+                    richTextBox1.Text += "\n" + "[" + DateTime.Now.ToString("HH:mm") + "]: Bot Restarted";
+                    richTextBox1.ScrollToCaret();
+                });
+                RunScript(alpha);
+            }
+            else
+            {
+                richTextBox1.Invoke((MethodInvoker)delegate
+                {
+                    richTextBox1.SelectionStart = richTextBox1.TextLength;
+                    richTextBox1.SelectionLength = 0;
+                    richTextBox1.SelectionColor = Color.Black;
+                    richTextBox1.Text += "\n" + "[" + DateTime.Now.ToString("HH:mm") + "]: Bot Stopped";
+                    richTextBox1.ScrollToCaret();
+                });
+            }
+        }
+
+        private void instanceSelection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            settings.Instance = instanceSelection.SelectedIndex + 1;
+        }
+
+        private void metroButton8_Click(object sender, EventArgs e)
+        {
+            settings.Fleets.Add(new Fleet
+            {
+                Name = "Fleet " + (settings.Fleets.Count + 1),
+                Order = settings.Fleets.Count
+            });
+            RenderFleets();
+        }
+
+        private void metroButton7_Click(object sender, EventArgs e)
+        {
+            beta.Reload(true);
+        }
+
+        private void RenderFleets()
+        {
+            metroTabControl3.Width = (150 * 3) + 30;
+            metroTabControl3.Controls.Clear();
+            int tabs = settings.Fleets.Count / 9;
+            int x = 0;
+            for(x = 0; x < tabs; x++)
+            {
+                var tab = new MetroTabPage
+                {
+                    Name = "FleetTab" + x,
+                    Text = "Fleet Page " + x,
+                    Theme = MetroThemeStyle.Dark
+                };
+                var panel = new FlowLayoutPanel()
+                {
+                    Dock = DockStyle.Fill,
+                    BackColor = Color.Transparent
+                };
+                for(int y = 1 * x; y < ((x + 1) * 9); y++)
+                {
+                    var group = new GroupBox
+                    {
+                        Text = settings.Fleets[y].Name,
+                        Height = 45,
+                        Width = 150,
+                        ForeColor = Color.White
+                    };
+                    var input = new NumericUpDown
+                    {
+                        Name = settings.Fleets[y].Name,
+                        Value = settings.Fleets[y].Order,
+                        Top = 15,
+                        Left = 15,
+                    };
+                    input.ValueChanged += Input_ValueChanged;
+                    group.Controls.Add(input);
+                    panel.Controls.Add(group);
+                }
+                tab.Controls.Add(panel);
+                metroTabControl3.Controls.Add(tab);
+            }
+            var t = new MetroTabPage
+            {
+                Name = "FleetTab" + x,
+                Text = "Fleet Page " + x,
+                Theme = MetroThemeStyle.Dark
+            };
+            var p = new FlowLayoutPanel()
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.Transparent
+            };
+            for (int y = x * 9; y < settings.Fleets.Count; y++)
+            {
+                var group = new GroupBox
+                {
+                    Text = settings.Fleets[y].Name,
+                    Height = 45,
+                    Width = 150,
+                    ForeColor = Color.White
+                };
+                var input = new NumericUpDown
+                {
+                    Name = settings.Fleets[y].Name,
+                    Value = settings.Fleets[y].Order,
+                    Top = 15,
+                    Left = 15,
+                };
+                input.ValueChanged += Input_ValueChanged;
+                group.Controls.Add(input);
+                p.Controls.Add(group);
+            }
+            t.Controls.Add(p);
+            metroTabControl3.Controls.Add(t);
+        }
+
+        private void Input_ValueChanged(object sender, EventArgs e)
+        {
+            settings.Fleets.First(x => x.Name == (sender as NumericUpDown).Name).Order = (int)Math.Round((sender as NumericUpDown).Value);
+
         }
     }
 
