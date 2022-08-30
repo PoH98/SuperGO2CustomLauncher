@@ -48,6 +48,7 @@ namespace GO2FlashLauncher.Script
                     bool spaceStationLocated = false;
                     bool collectedResources = false;
                     bool inStage = false;
+                    int stageCount = 0;
                     DateTime lastCollectTime = DateTime.MinValue;
                     int error = 0;
                     do
@@ -109,6 +110,12 @@ namespace GO2FlashLauncher.Script
                                 if (spaceStationLocation.HasValue)
                                 {
                                     LogInfo("Space station located");
+                                    if(stageCount >= 50)
+                                    {
+                                        //mail full since mail system not yet done
+                                        LogError("Mail is full! Bot stopped!");
+                                        return;
+                                    }
                                     spaceStationLocated = true;
                                     error = 0;
                                     await Task.Delay(1000);
@@ -140,7 +147,18 @@ namespace GO2FlashLauncher.Script
                                                     await Task.Delay(1000);
                                                     bmp = await devTools.Screenshot();
                                                     LogInfo("Refilling fleets");
-                                                    await b.RefillHE3(bmp);
+                                                    if(!await b.RefillHE3(bmp))
+                                                    {
+                                                        //no HE3
+                                                        LogError("Out of HE3!");
+                                                        browser.Reload();
+                                                        inStage = false;
+                                                        mainScreenLocated = false;
+                                                        spaceStationLocated = false;
+                                                        LogInfo("Waiting for resources...");
+                                                        await Task.Delay(new TimeSpan(1,0,0));
+                                                        break;
+                                                    }
                                                     await Task.Delay(1000);
                                                     bmp = await devTools.Screenshot();
                                                     while (!await b.IncreaseFleet(bmp))
@@ -164,6 +182,7 @@ namespace GO2FlashLauncher.Script
                                                     }
                                                     loop = false;
                                                     error = 0;
+                                                    stageCount++;
                                                     LogInfo("Waiting for stage end...");
                                                     inStage = true;
                                                     break;
@@ -196,13 +215,18 @@ namespace GO2FlashLauncher.Script
                                     LogInfo("Battle Ends");
                                     inStage = false;
                                     spaceStationLocated = false;
-                                    //check mailbox
-                                    var mail = bmp.FindImage("Images\\mail.png", 0.6);
+                                    //check mailbox, bugged now and dumb
+                                    /*var mail = bmp.FindImage("Images\\mail.png", 0.6);
                                     if (mail.HasValue)
                                     {
                                         LogInfo("Found Mail");
                                         //collect mail
-                                    }
+                                        if(!await m.CollectMails(bmp))
+                                        {
+                                            //something wrong
+                                            browser.Reload();
+                                        }
+                                    }*/
                                 }
                                 else
                                 {
@@ -215,6 +239,16 @@ namespace GO2FlashLauncher.Script
                                 if(await m.EZRewards(bmp))
                                 {
                                     LogInfo("Collected EZRewards");
+                                    //detect close
+                                    bmp = await devTools.Screenshot();
+                                    await b.CloseButtons(bmp);
+                                    //maybe will works? lol
+                                    var detect = bmp.FindImage("Images\\OK.png", 0.8);
+                                    if(detect != null)
+                                    {
+                                        await host.LeftClick(detect.Value, 120);
+                                    }
+                                    await Task.Delay(1000);
                                 }
                             }
                             if(error > 20)

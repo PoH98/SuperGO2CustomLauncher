@@ -187,7 +187,46 @@ namespace GO2FlashLauncher.Script.GameLogic
                 {
                     await host.LeftClick(mail.Value, rnd.Next(100, 150));
                     await Task.Delay(300);
-                    await host.LeftClick(mail.Value.X, mail.Value.Y + 125, rnd.Next(100, 150));
+                    while (true)
+                    {
+                        await host.LeftClick(mail.Value.X, mail.Value.Y + 125, rnd.Next(100, 150));
+                        await Task.Delay(1000);
+                        bmp = await devtools.Screenshot();
+                        var collect = bmp.FindImageGrayscaled("Images\\allcharge.png", 0.7);
+                        if(collect != null)
+                        {
+                            await host.LeftClick(collect.Value, rnd.Next(100, 150));
+                            await Task.Delay(300);
+                        }
+                        collect = bmp.FindImageGrayscaled("Images\\maildelete.png", 0.7);
+                        if(collect == null)
+                        {
+                            collect = bmp.FindImageGrayscaled("Images\\maildelete2.png", 0.7);
+                        }
+                        if(collect != null)
+                        {
+                            await host.LeftClick(collect.Value, rnd.Next(100, 150));
+                            await Task.Delay(300);
+                        }
+                        else
+                        {
+                            //no more mails found as no more can be deleted
+                            collect = bmp.FindImageGrayscaled("Images\\mailclose.png", 0.7);
+                            if(collect == null)
+                            {
+                                collect = bmp.FindImage("Images\\mailclose2.png", 0.7);
+                            }
+                            if (collect != null)
+                            {
+                                await host.LeftClick(collect.Value, rnd.Next(100, 150));
+                                await Task.Delay(1000);
+                                return true;
+                            }
+                        }
+                        //collected one mail, check if have another one
+                        await Task.Delay(1000);
+                    }
+
                 }
             }
             return false;
