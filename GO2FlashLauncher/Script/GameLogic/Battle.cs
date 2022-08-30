@@ -133,9 +133,26 @@ namespace GO2FlashLauncher.Script.GameLogic
             var result = bmp.FindImageGrayscaled(Path.GetFullPath("Images\\win.png"), 0.7);
             if(result != null)
             {
-                await host.LeftClick(result.Value, rnd.Next(100, 150));
-                await Task.Delay(1000);
-                return true;
+                result = bmp.FindImageGrayscaled("Images\\close.png", 0.7);
+                if(result == null)
+                {
+                    for(int x = 2; x < 20; x++)
+                    {
+                        await Task.Delay(10);
+                        result = bmp.FindImageGrayscaled("Images\\close"+x+".png", 0.7);
+                        if(result != null)
+                        {
+                            break;
+                        }
+                    }
+
+                }
+                if(result != null)
+                {
+                    await host.LeftClick(result.Value, rnd.Next(100, 150));
+                    await Task.Delay(1000);
+                    return true;
+                }
             }
             return false;
         }
