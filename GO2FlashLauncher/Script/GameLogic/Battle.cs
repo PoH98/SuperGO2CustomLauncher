@@ -32,15 +32,20 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             var clickPoint = new Point(firstFleet.Value.X - 200, firstFleet.Value.Y - 90);
             var currentPage = 0;
+            bmp = await devtools.Screenshot();
             foreach(Fleet f in fleets.OrderBy(x => x.Order))
             {
+                if(f.Order < 0)
+                {
+                    continue;
+                }
                 var index = fleets.IndexOf(f);
-                if(index > 9)
+                var page = index / 9;
+                if (index >= 9)
                 {
                     index = index % 9;
                 }
-                var page = index / 9;
-                if(currentPage != page)
+                if (currentPage != page)
                 {
                     if(currentPage > page)
                     {
@@ -53,6 +58,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                         if(prev != null)
                         {
                             await host.LeftClick(prev.Value, rnd.Next(100, 150));
+                            await Task.Delay(500);
                         }
                     }
                     else if(currentPage < page)
@@ -66,6 +72,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                         if (next != null)
                         {
                             await host.LeftClick(next.Value, rnd.Next(100, 150));
+                            await Task.Delay(500);
                         }
                     }
                 }
@@ -76,7 +83,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                         await host.LeftClick(rnd.Next(clickPoint.X, clickPoint.X + 40), rnd.Next(clickPoint.Y, clickPoint.Y + 30), rnd.Next(100, 150));
                         break;
                     case 1:
-                        await host.LeftClick(rnd.Next(clickPoint.X + 200, clickPoint.X + 240), rnd.Next(clickPoint.Y, clickPoint.Y + 30), rnd.Next(100, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X + 200, clickPoint.X + 235), rnd.Next(clickPoint.Y, clickPoint.Y + 30), rnd.Next(100, 150));
                         break;
                     case 2:
                         await host.LeftClick(rnd.Next(clickPoint.X + 400, clickPoint.X + 440), rnd.Next(clickPoint.Y, clickPoint.Y + 30), rnd.Next(100, 150));
@@ -85,7 +92,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                         await host.LeftClick(rnd.Next(clickPoint.X, clickPoint.X + 40), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 130), rnd.Next(100, 150));
                         break;
                     case 4:
-                        await host.LeftClick(rnd.Next(clickPoint.X + 200, clickPoint.X + 240), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 130), rnd.Next(100, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X + 200, clickPoint.X + 235), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 130), rnd.Next(100, 150));
                         break;
                     case 5:
                         await host.LeftClick(rnd.Next(clickPoint.X + 400, clickPoint.X + 440), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 130), rnd.Next(100, 150));
@@ -94,7 +101,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                         await host.LeftClick(rnd.Next(clickPoint.X, clickPoint.X + 40), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 230), rnd.Next(100, 150));
                         break;
                     case 7:
-                        await host.LeftClick(rnd.Next(clickPoint.X + 200, clickPoint.X + 240), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 230), rnd.Next(100, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X + 200, clickPoint.X + 235), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 230), rnd.Next(100, 150));
                         break;
                     case 8:
                         await host.LeftClick(rnd.Next(clickPoint.X + 400, clickPoint.X + 440), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 230), rnd.Next(100, 150));

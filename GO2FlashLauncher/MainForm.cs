@@ -502,7 +502,7 @@ input.dispatchEvent(event);
 
         private void RenderFleets()
         {
-            metroTabControl3.Width = (150 * 3) + 30;
+            metroTabControl3.Width = (170 * 3) + 30;
             metroTabControl3.Controls.Clear();
             int tabs = settings.Fleets.Count / 9;
             int x = 0;
@@ -525,7 +525,7 @@ input.dispatchEvent(event);
                     {
                         Text = settings.Fleets[y].Name,
                         Height = 45,
-                        Width = 150,
+                        Width = 170,
                         ForeColor = Color.White
                     };
                     var input = new NumericUpDown
@@ -534,9 +534,22 @@ input.dispatchEvent(event);
                         Value = settings.Fleets[y].Order,
                         Top = 15,
                         Left = 15,
+                        Width = 120
                     };
+                    var removeFleet = new MetroButton
+                    {
+                        Name = "btnRem_" + settings.Fleets[y].Name,
+                        Text = "🗙",
+                        Top = 15,
+                        Left = 140,
+                        Height = 20,
+                        Width = 20,
+                        Theme = MetroThemeStyle.Dark
+                    };
+                    removeFleet.Click += RemoveFleet_Click;
                     input.ValueChanged += Input_ValueChanged;
                     group.Controls.Add(input);
+                    group.Controls.Add(removeFleet);
                     panel.Controls.Add(group);
                 }
                 tab.Controls.Add(panel);
@@ -559,7 +572,7 @@ input.dispatchEvent(event);
                 {
                     Text = settings.Fleets[y].Name,
                     Height = 45,
-                    Width = 150,
+                    Width = 170,
                     ForeColor = Color.White
                 };
                 var input = new NumericUpDown
@@ -568,13 +581,34 @@ input.dispatchEvent(event);
                     Value = settings.Fleets[y].Order,
                     Top = 15,
                     Left = 15,
+                    Width = 120
                 };
+                var removeFleet = new MetroButton
+                {
+                    Name = "btnRem_" + settings.Fleets[y].Name,
+                    Text = "🗙",
+                    Top = 15,
+                    Left = 140,
+                    Height = 20,
+                    Width = 20,
+                    Theme = MetroThemeStyle.Dark
+                };
+                removeFleet.Click += RemoveFleet_Click;
                 input.ValueChanged += Input_ValueChanged;
                 group.Controls.Add(input);
+                group.Controls.Add(removeFleet);
                 p.Controls.Add(group);
             }
             t.Controls.Add(p);
             metroTabControl3.Controls.Add(t);
+        }
+
+        private void RemoveFleet_Click(object sender, EventArgs e)
+        {
+            var name = (sender as MetroButton).Name.Replace("btnRem_", "");
+            var data = settings.Fleets.First(x => x.Name == name);
+            settings.Fleets.Remove(data);
+            RenderFleets();
         }
 
         private void Input_ValueChanged(object sender, EventArgs e)
