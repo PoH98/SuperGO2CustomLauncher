@@ -122,12 +122,6 @@ namespace GO2FlashLauncher.Script
                                 if (spaceStationLocation.HasValue)
                                 {
                                     LogInfo("Space station located");
-                                    if(stageCount >= 50)
-                                    {
-                                        //mail full since mail system not yet done
-                                        LogError("Mail is full! Bot stopped!");
-                                        return;
-                                    }
                                     spaceStationLocated = true;
                                     error = 0;
                                     await Task.Delay(1000);
@@ -292,6 +286,7 @@ namespace GO2FlashLauncher.Script
                             {
                                 if(lastbmp == bmp)
                                 {
+                                    LogError("Lag detected! Current Lag Timer: " + lag);
                                     lag++;
                                 }
                                 else
@@ -300,7 +295,7 @@ namespace GO2FlashLauncher.Script
                                 }
                                 if(lag > 20)
                                 {
-                                    LogError("Lag detected!");
+                                    LogError("Lag detected! Lag confirmed! Restarting...");
                                     browser.Reload();
                                     inStage = false;
                                     mainScreenLocated = false;
