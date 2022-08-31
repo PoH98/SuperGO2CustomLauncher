@@ -53,6 +53,7 @@ namespace GO2FlashLauncher.Script
                     int error = 0;
                     int lag = 0;
                     Bitmap lastbmp = null;
+                    ClearLog();
                     do
                     {
                         try
@@ -236,7 +237,7 @@ namespace GO2FlashLauncher.Script
                                     inStage = false;
                                     spaceStationLocated = false;
                                     //check mailbox, bugged now and dumb
-                                    /*var mail = bmp.FindImage("Images\\mail.png", 0.6);
+                                    var mail = bmp.FindImage("Images\\mail.png", 0.6);
                                     if (mail.HasValue)
                                     {
                                         LogInfo("Found Mail");
@@ -246,7 +247,8 @@ namespace GO2FlashLauncher.Script
                                             //something wrong
                                             browser.Reload();
                                         }
-                                    }*/
+                                    }
+                                    ClearLog();
                                 }
                                 else
                                 {
@@ -262,8 +264,7 @@ namespace GO2FlashLauncher.Script
                                     //detect close
                                     bmp = await devTools.Screenshot();
                                     await b.CloseButtons(bmp);
-                                    //maybe will works? lol
-                                    var detect = bmp.FindImage("Images\\OK.png", 0.8);
+                                    var detect = bmp.FindImageGrayscaled("Images\\MPOK.png", 0.8);
                                     if(detect != null)
                                     {
                                         await host.LeftClick(detect.Value, 120);
@@ -358,6 +359,14 @@ namespace GO2FlashLauncher.Script
                 logger.Focus();
                 logger.Select(logger.TextLength, 0);
                 logger.ScrollToCaret();
+            });
+        }
+
+        private void ClearLog()
+        {
+            logger.Invoke((MethodInvoker)delegate
+            {
+                logger.Text = "";
             });
         }
     }
