@@ -2,11 +2,8 @@
 using CefSharp.DevTools;
 using CefSharp.WinForms;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GO2FlashLauncher.Script.GameLogic

@@ -51,6 +51,8 @@ namespace GO2FlashLauncher.Script
                     int stageCount = 0;
                     DateTime lastCollectTime = DateTime.MinValue;
                     int error = 0;
+                    int lag = 0;
+                    Bitmap lastbmp = null;
                     do
                     {
                         try
@@ -62,6 +64,12 @@ namespace GO2FlashLauncher.Script
                             {
                                 if (await m.Locate(bmp))
                                 {
+                                    for(int x = 0; x < 3; x++)
+                                    {
+                                        bmp = await devTools.Screenshot();
+                                        await m.Locate(bmp);
+                                        await Task.Delay(100);
+                                    }
                                     LogInfo("Mainscreen located");
                                     mainScreenLocated = true;
                                     error = 0;
@@ -83,6 +91,9 @@ namespace GO2FlashLauncher.Script
                             else if(collectedResources && (DateTime.Now - lastCollectTime).TotalHours >= 1)
                             {
                                 collectedResources = false;
+                                mainScreenLocated = false;
+                                spaceStationLocated = false;
+                                inStage = false;
                             }
                             else if (!collectedResources)
                             {
@@ -198,7 +209,16 @@ namespace GO2FlashLauncher.Script
                                         {
 
                                         }
-
+                                        if(error > 20)
+                                        {
+                                            LogError("Something seriously wrong! Refreshing the game!");
+                                            spaceStationLocated = false;
+                                            mainScreenLocated = false;
+                                            browser.Reload();
+                                            error = 0;
+                                            await Task.Delay(1000);
+                                            break;
+                                        }
                                     }
                                 }
                                 else
@@ -267,6 +287,26 @@ namespace GO2FlashLauncher.Script
                                     inStage = false;
                                 }
                             }
+                            if(lastbmp != null)
+                            {
+                                if(lastbmp == bmp)
+                                {
+                                    lag++;
+                                }
+                                else
+                                {
+                                    lag = 0;
+                                }
+                                if(lag > 20)
+                                {
+                                    LogError("Lag detected!");
+                                    browser.Reload();
+                                    inStage = false;
+                                    mainScreenLocated = false;
+                                    spaceStationLocated = false;
+                                }
+                            }
+                            lastbmp = bmp;
                         }
                         catch (Exception ex)
                         {

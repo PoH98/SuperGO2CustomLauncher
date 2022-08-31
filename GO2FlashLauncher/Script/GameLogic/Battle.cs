@@ -112,7 +112,6 @@ namespace GO2FlashLauncher.Script.GameLogic
             if(fleetType == SelectFleetType.Instance)
             {
                 bmp = await devtools.Screenshot();
-                bmp.Save("selectFleet.bmp");
                 var result = bmp.FindImageGrayscaled("Images\\OK.png", 0.7);
                 if(result == null)
                 {
