@@ -21,7 +21,7 @@ namespace GO2FlashLauncher
 {
     public partial class MainForm : MetroForm
     {
-        ChromiumWebBrowser alpha, beta;
+        ChromiumWebBrowser alpha, beta, krtools;
         Thread redirector;
         string scriptKey = "";
         HttpClient hc = new HttpClient();
@@ -101,6 +101,7 @@ namespace GO2FlashLauncher
                 alpha = new ChromiumWebBrowser(File.ReadAllText(Path.GetFullPath("cache\\config.settings")));
             }
             beta = new ChromiumWebBrowser("blank");
+            krtools = new ChromiumWebBrowser("https://krtools.deajae.co.uk/");
             alpha.RequestContext = new RequestContext(alphaContext);
             beta.RequestContext = new RequestContext(betaContext);
             alpha.BrowserSettings.Plugins = CefState.Enabled;
@@ -111,10 +112,13 @@ namespace GO2FlashLauncher
             });
             alpha.MenuHandler = new CustomMenuHandler();
             beta.MenuHandler = new CustomMenuHandler();
+            krtools.MenuHandler = new CustomMenuHandler();
             panel1.Controls.Add(alpha);
             panel2.Controls.Add(beta);
+            panel3.Controls.Add(krtools);
             alpha.Dock = DockStyle.Fill;
             beta.Dock = DockStyle.Fill;
+            krtools.Dock = DockStyle.Fill;
             beta.IsBrowserInitializedChanged += Beta_IsBrowserInitializedChanged; ;
             alpha.LoadingStateChanged += ChromiumWebBrowser_LoadingStateChanged;
             beta.LoadingStateChanged += ChromiumWebBrowser_LoadingStateChanged;
@@ -601,6 +605,27 @@ input.dispatchEvent(event);
             }
             t.Controls.Add(p);
             metroTabControl3.Controls.Add(t);
+        }
+
+        private void metroButton10_Click(object sender, EventArgs e)
+        {
+            krtools.Reload();
+        }
+
+        private void metroButton9_Click(object sender, EventArgs e)
+        {
+            if (krtools.CanGoBack)
+            {
+                krtools.Back();
+            }
+        }
+
+        private void metroButton11_Click(object sender, EventArgs e)
+        {
+            if (krtools.CanGoForward)
+            {
+                krtools.Forward();
+            }
         }
 
         private void RemoveFleet_Click(object sender, EventArgs e)

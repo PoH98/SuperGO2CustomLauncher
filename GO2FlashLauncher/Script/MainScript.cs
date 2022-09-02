@@ -246,7 +246,7 @@ namespace GO2FlashLauncher.Script
                                 }
                                 else
                                 {
-                                    await Task.Delay(9000);
+                                    await Task.Delay(2000);
                                 }
                             }
                             if (mainScreenLocated)

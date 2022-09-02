@@ -107,7 +107,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                         await host.LeftClick(rnd.Next(clickPoint.X + 400, clickPoint.X + 440), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 230), rnd.Next(120, 150));
                         break;
                 }
-                await Task.Delay(rnd.Next(80, 120));
+                await Task.Delay(rnd.Next(100, 120));
             }
             if(fleetType == SelectFleetType.Instance)
             {
