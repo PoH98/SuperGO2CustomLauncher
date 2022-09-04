@@ -255,6 +255,7 @@ namespace GO2FlashLauncher.Script
                                 if(await m.EZRewards(bmp))
                                 {
                                     LogInfo("Collected EZRewards");
+                                    await Task.Delay(1000);
                                     //detect close
                                     bmp = await devTools.Screenshot();
                                     await b.CloseButtons(bmp);
