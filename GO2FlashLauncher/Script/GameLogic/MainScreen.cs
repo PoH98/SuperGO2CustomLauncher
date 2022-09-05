@@ -18,7 +18,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             devtools = browser.GetBrowser().GetDevToolsClient();
             host = browser.GetBrowser().GetHost();
         }
-        public async Task<bool> Locate(Bitmap bmp)
+        public async Task<bool> Locate(Bitmap bmp, bool clickBase = true)
         {
             var result = bmp.FindImage(Path.GetFullPath("Images\\cancel.png"), 0.8);
             if(result == null)
@@ -38,44 +38,51 @@ namespace GO2FlashLauncher.Script.GameLogic
                 await host.LeftClick(result.Value, rnd.Next(50, 150));
                 return true;
             }
-            if (result == null)
+            if (clickBase)
             {
-                result = bmp.FindImage(Path.GetFullPath("Images\\home.png"), 0.8);
-            }
-            if (result == null)
-            {
-                for (int i = 2; i < 3; i++)
+                if (result == null)
                 {
-                    await Task.Delay(50);
-                    result = bmp.FindImage(Path.GetFullPath("Images\\home" + i + ".png"), 0.8);
-                    if (result != null)
+                    result = bmp.FindImage(Path.GetFullPath("Images\\home.png"), 0.8);
+                }
+                if (result == null)
+                {
+                    for (int i = 2; i < 3; i++)
                     {
-                        break;
+                        await Task.Delay(50);
+                        result = bmp.FindImage(Path.GetFullPath("Images\\home" + i + ".png"), 0.8);
+                        if (result != null)
+                        {
+                            break;
+                        }
                     }
                 }
-            }
-            if (result != null)
-            {
-                await host.LeftClick(result.Value, rnd.Next(100, 150));
-                await Task.Delay(500);
-            }
-            result = bmp.FindImage("Images\\groundbase.png", 0.8);
-            if (result == null)
-            {
-                for (int i = 2; i < 3; i++)
+                if (result != null)
                 {
-                    await Task.Delay(50);
-                    result = bmp.FindImage(Path.GetFullPath("Images\\groundbase" + i + ".png"), 0.8);
-                    if (result != null)
+                    await host.LeftClick(result.Value, rnd.Next(100, 150));
+                    await Task.Delay(500);
+                }
+                result = bmp.FindImage("Images\\groundbase.png", 0.8);
+                if (result == null)
+                {
+                    for (int i = 2; i < 3; i++)
                     {
-                        break;
+                        await Task.Delay(50);
+                        result = bmp.FindImage(Path.GetFullPath("Images\\groundbase" + i + ".png"), 0.8);
+                        if (result != null)
+                        {
+                            break;
+                        }
                     }
                 }
+                if (result != null)
+                {
+                    await host.LeftClick(result.Value, rnd.Next(100, 150));
+                    await Task.Delay(500);
+                    return true;
+                }
             }
-            if(result != null)
+            else
             {
-                await host.LeftClick(result.Value, rnd.Next(100, 150));
-                await Task.Delay(500);
                 return true;
             }
             return false;

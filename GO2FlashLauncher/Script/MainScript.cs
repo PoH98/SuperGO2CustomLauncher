@@ -1,5 +1,6 @@
 ﻿using CefSharp;
 using CefSharp.WinForms;
+using Emgu.CV.Structure;
 using GO2FlashLauncher.Model;
 using GO2FlashLauncher.Script.GameLogic;
 using System;
@@ -44,11 +45,13 @@ namespace GO2FlashLauncher.Script
                     MainScreen m = new MainScreen(browser);
                     SpaceStation s = new SpaceStation(browser);
                     Battle b = new Battle(browser);
+                    LagDetection l = new LagDetection();
                     bool mainScreenLocated = false;
                     bool spaceStationLocated = false;
                     bool collectedResources = false;
                     bool inStage = false;
                     int stageCount = 0;
+                    DateTime noResources = DateTime.MinValue;
                     DateTime lastCollectTime = DateTime.MinValue;
                     int error = 0;
                     int lag = 0;
@@ -68,7 +71,14 @@ namespace GO2FlashLauncher.Script
                                     for(int x = 0; x < 3; x++)
                                     {
                                         bmp = await devTools.Screenshot();
-                                        await m.Locate(bmp);
+                                        if(x <= 1)
+                                        {
+                                            await m.Locate(bmp, false);
+                                        }
+                                        else
+                                        {
+                                            await m.Locate(bmp);
+                                        }
                                         await Task.Delay(100);
                                     }
                                     LogInfo("Mainscreen located");
@@ -111,7 +121,7 @@ namespace GO2FlashLauncher.Script
                                     lastCollectTime = DateTime.Now;
                                 }
                             }
-                            else if(!spaceStationLocated)
+                            else if(!spaceStationLocated && (noResources - DateTime.Now).TotalSeconds <= 0)
                             {
                                 await Task.Delay(1000);
                                 await s.Enter(bmp);
@@ -162,7 +172,7 @@ namespace GO2FlashLauncher.Script
                                                         mainScreenLocated = false;
                                                         spaceStationLocated = false;
                                                         LogInfo("Waiting for resources...");
-                                                        await Task.Delay(new TimeSpan(1,0,0));
+                                                        noResources = DateTime.Now.AddHours(1);
                                                         break;
                                                     }
                                                     await Task.Delay(1000);
@@ -285,16 +295,15 @@ namespace GO2FlashLauncher.Script
                             }
                             if(lastbmp != null)
                             {
-                                if(lastbmp == bmp)
+                                if (l.IsLagging(bmp, lastbmp, inStage))
                                 {
-                                    LogError("Lag detected! Current Lag Timer: " + lag);
                                     lag++;
                                 }
                                 else
                                 {
                                     lag = 0;
                                 }
-                                if(lag > 20)
+                                if(lag > 60)
                                 {
                                     LogError("Lag detected! Lag confirmed! Restarting...");
                                     browser.Reload();
