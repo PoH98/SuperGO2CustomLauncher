@@ -13,7 +13,8 @@ namespace GO2FlashLauncher.Service
             int width = 0, height = 0;
             IntPtr hwnd = IntPtr.Zero;
             IntPtr dc = IntPtr.Zero;
-            c.Invoke(new MethodInvoker(() => {
+            c.Invoke(new MethodInvoker(() =>
+            {
                 width = c.ClientSize.Width;
                 height = c.ClientSize.Height;
                 hwnd = c.Handle;

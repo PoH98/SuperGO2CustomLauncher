@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using Emgu.CV;
+﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using System.Collections.Generic;
+using System.Drawing;
 
 namespace GO2FlashLauncher.Script
 {
@@ -36,7 +36,7 @@ namespace GO2FlashLauncher.Script
                 result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
 
                 // You can try different values of the threshold. I guess somewhere between 0.85 and 0.95 would be good.
-                for(int x = 0; x < maxValues.Length; x++)
+                for (int x = 0; x < maxValues.Length; x++)
                 {
                     if (maxValues[x] > matchRadius)
                     {

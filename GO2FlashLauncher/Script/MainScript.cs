@@ -1,6 +1,5 @@
 ﻿using CefSharp;
 using CefSharp.WinForms;
-using Emgu.CV.Structure;
 using GO2FlashLauncher.Model;
 using GO2FlashLauncher.Script.GameLogic;
 using System;
@@ -21,7 +20,9 @@ namespace GO2FlashLauncher.Script
             this.logger = logger;
             this.botSettings = settings;
         }
-
+        /// <summary>
+        /// Check if script is running
+        /// </summary>
         public bool Running
         {
             get
@@ -29,12 +30,19 @@ namespace GO2FlashLauncher.Script
                 return IsRunning;
             }
         }
+        /// <summary>
+        /// Main loop of script
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="browser"></param>
+        /// <returns></returns>
         public Task Run(CancellationToken token, ChromiumWebBrowser browser)
         {
             return Task.Run(async () =>
             {
                 if (IsRunning)
                 {
+                    //Avoid double run
                     return;
                 }
                 IsRunning = true;
@@ -42,10 +50,12 @@ namespace GO2FlashLauncher.Script
                 var host = browser.GetBrowser().GetHost();
                 try
                 {
+                    //Init sub scripts
                     MainScreen m = new MainScreen(browser);
                     SpaceStation s = new SpaceStation(browser);
                     Battle b = new Battle(browser);
                     LagDetection l = new LagDetection();
+                    //Init status
                     bool mainScreenLocated = false;
                     bool spaceStationLocated = false;
                     bool collectedResources = false;
@@ -56,23 +66,29 @@ namespace GO2FlashLauncher.Script
                     int error = 0;
                     int lag = 0;
                     Bitmap lastbmp = null;
+                    //Clear logs in rtb
                     ClearLog();
                     do
                     {
                         try
                         {
+                            //Script stoped
                             token.ThrowIfCancellationRequested();
+                            //Screenshot browser
                             var bmp = await devTools.Screenshot();
+                            //WinAPI capture, tested not working
                             //var bmp = await browser.Screenshot();
                             if (!mainScreenLocated)
                             {
+                                //locate planet base view
                                 if (await m.Locate(bmp))
                                 {
-                                    for(int x = 0; x < 3; x++)
+                                    for (int x = 0; x < 3; x++)
                                     {
                                         bmp = await devTools.Screenshot();
-                                        if(x <= 1)
+                                        if (x <= 1)
                                         {
+                                            //don't click home base
                                             await m.Locate(bmp, false);
                                         }
                                         else
@@ -87,20 +103,21 @@ namespace GO2FlashLauncher.Script
                                 }
                                 else
                                 {
-                                    if(error == 0)
+                                    if (error == 0)
                                     {
                                         LogInfo("Locating Mainscreen");
                                     }
                                     error++;
-                                    if(error < 20)
+                                    if (error < 20)
                                     {
                                         await Task.Delay(1000);
                                         continue;
                                     }
                                 }
                             }
-                            else if(collectedResources && (DateTime.Now - lastCollectTime).TotalHours >= 1)
+                            else if (collectedResources && (DateTime.Now - lastCollectTime).TotalHours >= 1)
                             {
+                                //reset collected resources and force collect again
                                 collectedResources = false;
                                 mainScreenLocated = false;
                                 spaceStationLocated = false;
@@ -108,7 +125,7 @@ namespace GO2FlashLauncher.Script
                             }
                             else if (!collectedResources)
                             {
-
+                                //collect resources
                                 LogInfo("Collecting Resources");
                                 if (await m.Locate(bmp))
                                 {
@@ -121,8 +138,9 @@ namespace GO2FlashLauncher.Script
                                     lastCollectTime = DateTime.Now;
                                 }
                             }
-                            else if(!spaceStationLocated && (noResources - DateTime.Now).TotalSeconds <= 0)
+                            else if (!spaceStationLocated && (noResources - DateTime.Now).TotalSeconds <= 0)
                             {
+                                //locate space stations
                                 await Task.Delay(1000);
                                 await s.Enter(bmp);
                                 LogInfo("Going to space station");
@@ -163,7 +181,7 @@ namespace GO2FlashLauncher.Script
                                                     await Task.Delay(1000);
                                                     bmp = await devTools.Screenshot();
                                                     LogInfo("Refilling fleets");
-                                                    if(!await b.RefillHE3(bmp))
+                                                    if (!await b.RefillHE3(bmp))
                                                     {
                                                         //no HE3
                                                         LogError("Out of HE3!");
@@ -184,7 +202,7 @@ namespace GO2FlashLauncher.Script
                                                         token.ThrowIfCancellationRequested();
                                                     }
                                                     await Task.Delay(1000);
-                                                    if(!await b.SelectFleet(bmp, botSettings.Fleets, SelectFleetType.Instance))
+                                                    if (!await b.SelectFleet(bmp, botSettings.Fleets, SelectFleetType.Instance))
                                                     {
                                                         LogError("No fleet found!");
                                                         break;
@@ -192,7 +210,7 @@ namespace GO2FlashLauncher.Script
                                                     await Task.Delay(1000);
                                                     bmp = await devTools.Screenshot();
                                                     var p = bmp.FindImage("Images\\instanceStart.png", 0.7);
-                                                    if(p != null)
+                                                    if (p != null)
                                                     {
                                                         await host.LeftClick(p.Value, 100);
                                                     }
@@ -214,7 +232,7 @@ namespace GO2FlashLauncher.Script
                                         {
 
                                         }
-                                        if(error > 20)
+                                        if (error > 20)
                                         {
                                             LogError("Something seriously wrong! Refreshing the game!");
                                             spaceStationLocated = false;
@@ -246,7 +264,7 @@ namespace GO2FlashLauncher.Script
                                     {
                                         LogInfo("Found Mail");
                                         //collect mail
-                                        if(!await m.CollectMails(bmp))
+                                        if (!await m.CollectMails(bmp))
                                         {
                                             //something wrong
                                             browser.Reload();
@@ -259,10 +277,11 @@ namespace GO2FlashLauncher.Script
                                     await Task.Delay(2000);
                                 }
                             }
+                            //collecting EZRewards
                             if (mainScreenLocated)
                             {
                                 await Task.Delay(1000);
-                                if(await m.EZRewards(bmp))
+                                if (await m.EZRewards(bmp))
                                 {
                                     LogInfo("Collected EZRewards");
                                     await Task.Delay(1000);
@@ -270,14 +289,15 @@ namespace GO2FlashLauncher.Script
                                     bmp = await devTools.Screenshot();
                                     await b.CloseButtons(bmp);
                                     var detect = bmp.FindImageGrayscaled("Images\\MPOK.png", 0.8);
-                                    if(detect != null)
+                                    if (detect != null)
                                     {
                                         await host.LeftClick(detect.Value, 120);
                                     }
                                     await Task.Delay(1000);
                                 }
                             }
-                            if(error > 20)
+                            //error too much
+                            if (error > 20)
                             {
                                 if (m.DetectDisconnect(bmp))
                                 {
@@ -293,7 +313,8 @@ namespace GO2FlashLauncher.Script
                                     inStage = false;
                                 }
                             }
-                            if(lastbmp != null)
+                            //lag detection
+                            if (lastbmp != null)
                             {
                                 if (l.IsLagging(bmp, lastbmp, inStage))
                                 {
@@ -303,7 +324,7 @@ namespace GO2FlashLauncher.Script
                                 {
                                     lag = 0;
                                 }
-                                if(lag > 60)
+                                if (lag > 60)
                                 {
                                     LogError("Lag detected! Lag confirmed! Restarting...");
                                     browser.Reload();
@@ -332,6 +353,10 @@ namespace GO2FlashLauncher.Script
                 }
             });
         }
+        /// <summary>
+        /// Log info
+        /// </summary>
+        /// <param name="info"></param>
         private void LogInfo(string info)
         {
             if (logger == null)
@@ -343,15 +368,19 @@ namespace GO2FlashLauncher.Script
                 logger.SelectionStart = logger.TextLength;
                 logger.SelectionLength = 0;
                 logger.SelectionColor = Color.Green;
-                logger.AppendText("\n" + "[" + DateTime.Now.ToString("HH:mm") +  "]: " + info);
+                logger.AppendText("\n" + "[" + DateTime.Now.ToString("HH:mm") + "]: " + info);
                 logger.Focus();
                 logger.Select(logger.TextLength, 0);
                 logger.ScrollToCaret();
             });
         }
+        /// <summary>
+        /// Log error
+        /// </summary>
+        /// <param name="info"></param>
         private void LogError(string info)
         {
-            if(logger == null)
+            if (logger == null)
             {
                 return;
             }
@@ -366,7 +395,9 @@ namespace GO2FlashLauncher.Script
                 logger.ScrollToCaret();
             });
         }
-
+        /// <summary>
+        /// Clear logs
+        /// </summary>
         private void ClearLog()
         {
             logger.Invoke((MethodInvoker)delegate

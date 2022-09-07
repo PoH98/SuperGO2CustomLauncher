@@ -25,7 +25,7 @@ namespace GO2FlashLauncher.Script.GameLogic
         {
             var crop = await bmp.Crop(new Point(0, 0), new Size(bmp.Width - 300, bmp.Height - 300));
             var firstFleet = crop.FindImage("Images\\fleettransmittimemarker.png", 0.6);
-            if(firstFleet == null)
+            if (firstFleet == null)
             {
                 //no fleet
                 return false;
@@ -33,9 +33,9 @@ namespace GO2FlashLauncher.Script.GameLogic
             var clickPoint = new Point(firstFleet.Value.X - 200, firstFleet.Value.Y - 90);
             var currentPage = 0;
             bmp = await devtools.Screenshot();
-            foreach(Fleet f in fleets.OrderBy(x => x.Order))
+            foreach (Fleet f in fleets.OrderBy(x => x.Order))
             {
-                if(f.Order < 0)
+                if (f.Order < 0)
                 {
                     continue;
                 }
@@ -47,21 +47,21 @@ namespace GO2FlashLauncher.Script.GameLogic
                 }
                 if (currentPage != page)
                 {
-                    if(currentPage > page)
+                    if (currentPage > page)
                     {
                         var prev = bmp.FindImage("Images\\selectshipsprevpage.png", 0.7);
-                        if(prev == null)
+                        if (prev == null)
                         {
                             await Task.Delay(100);
                             prev = bmp.FindImage("Images\\selectshipsprevpage2.png", 0.7);
                         }
-                        if(prev != null)
+                        if (prev != null)
                         {
                             await host.LeftClick(prev.Value, rnd.Next(120, 150));
                             await Task.Delay(500);
                         }
                     }
-                    else if(currentPage < page)
+                    else if (currentPage < page)
                     {
                         var next = bmp.FindImage("Images\\selectshipsnextpage.png", 0.7);
                         if (next == null)
@@ -109,23 +109,23 @@ namespace GO2FlashLauncher.Script.GameLogic
                 }
                 await Task.Delay(rnd.Next(100, 120));
             }
-            if(fleetType == SelectFleetType.Instance)
+            if (fleetType == SelectFleetType.Instance)
             {
                 bmp = await devtools.Screenshot();
                 var result = bmp.FindImageGrayscaled("Images\\OK.png", 0.7);
-                if(result == null)
+                if (result == null)
                 {
-                    for(int i = 2; i < 7; i++)
+                    for (int i = 2; i < 7; i++)
                     {
                         await Task.Delay(10);
-                        result = bmp.FindImageGrayscaled("Images\\OK"+i+".png", 0.7); 
-                        if(result != null)
+                        result = bmp.FindImageGrayscaled("Images\\OK" + i + ".png", 0.7);
+                        if (result != null)
                         {
                             break;
                         }
                     }
                 }
-                if(result != null)
+                if (result != null)
                 {
                     await host.LeftClick(result.Value, rnd.Next(120, 150));
                     return true;
@@ -137,7 +137,7 @@ namespace GO2FlashLauncher.Script.GameLogic
         public async Task<bool> BattleEnds(Bitmap bmp)
         {
             var result = bmp.FindImageGrayscaled(Path.GetFullPath("Images\\win.png"), 0.7);
-            if(result != null)
+            if (result != null)
             {
                 return await CloseButtons(bmp);
             }
@@ -172,11 +172,11 @@ namespace GO2FlashLauncher.Script.GameLogic
         {
             var fullysupply = true;
             var result = bmp.FindImage(Path.GetFullPath("Images\\fleetsupplies.png"), 0.8);
-            if(result == null)
+            if (result == null)
             {
                 result = bmp.FindImage(Path.GetFullPath("Images\\fleetsupplies2.png"), 0.8);
             }
-            if(result != null)
+            if (result != null)
             {
                 await host.LeftClick(result.Value, rnd.Next(120, 150));
                 await Task.Delay(1000);
@@ -193,7 +193,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                     fullysupply = false;
                 }
                 result = bmp.FindImage("Images\\supplyconfirm.png", 0.8);
-                if(result == null)
+                if (result == null)
                 {
                     for (int i = 1; i < 2; i++)
                     {

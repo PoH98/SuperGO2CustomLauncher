@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace GO2FlashLauncher.Service
 {
@@ -56,7 +54,7 @@ namespace GO2FlashLauncher.Service
         }
         public static Profile Decrypt(string hash)
         {
-            var passPhrase = hash.Substring(hash.Length - 16, 16) + hash.Substring(0,16);
+            var passPhrase = hash.Substring(hash.Length - 16, 16) + hash.Substring(0, 16);
             var realHash = hash.Substring(16, hash.Length - 32);
             var cipherTextBytesWithSaltAndIv = Convert.FromBase64String(realHash);
             // Get the saltbytes by extracting the first 32 bytes from the supplied cipherText bytes.

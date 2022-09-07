@@ -21,13 +21,13 @@ namespace GO2FlashLauncher.Script.GameLogic
         public async Task<bool> Locate(Bitmap bmp, bool clickBase = true)
         {
             var result = bmp.FindImage(Path.GetFullPath("Images\\cancel.png"), 0.8);
-            if(result == null)
+            if (result == null)
             {
-                for(int i = 2; i < 7; i++)
+                for (int i = 2; i < 7; i++)
                 {
                     await Task.Delay(50);
-                    result = bmp.FindImage(Path.GetFullPath("Images\\cancel"+i+".png"), 0.8);
-                    if(result != null)
+                    result = bmp.FindImage(Path.GetFullPath("Images\\cancel" + i + ".png"), 0.8);
+                    if (result != null)
                     {
                         break;
                     }
@@ -91,7 +91,7 @@ namespace GO2FlashLauncher.Script.GameLogic
         public async Task<bool> LocateWarehouse(Bitmap bmp)
         {
             var result = bmp.FindImage(Path.GetFullPath("Images\\warehouse.png"), 0.8);
-            if(result == null)
+            if (result == null)
             {
                 for (int i = 2; i < 9; i++)
                 {
@@ -103,7 +103,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                     }
                 }
             }
-            if(result == null)
+            if (result == null)
             {
                 return false;
             }
@@ -155,7 +155,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                     }
                 }
             }
-            if(result != null)
+            if (result != null)
             {
                 await host.LeftClick(result.Value.X + 10, result.Value.Y + 5, rnd.Next(100, 200));
                 return true;
@@ -178,19 +178,19 @@ namespace GO2FlashLauncher.Script.GameLogic
                 await Task.Delay(1000);
                 bmp = await devtools.Screenshot();
                 mail = bmp.FindImage("Images\\mailitemfilter.png", 0.7);
-                if(mail == null)
+                if (mail == null)
                 {
                     for (int x = 2; x < 4; x++)
                     {
                         await Task.Delay(10);
-                        mail = bmp.FindImage("Images\\mailitemfilter"+x+".png", 0.7);
-                        if(mail != null)
+                        mail = bmp.FindImage("Images\\mailitemfilter" + x + ".png", 0.7);
+                        if (mail != null)
                         {
                             break;
                         }
                     }
                 }
-                if(mail != null)
+                if (mail != null)
                 {
                     await host.LeftClick(mail.Value, rnd.Next(100, 150));
                     await Task.Delay(300);

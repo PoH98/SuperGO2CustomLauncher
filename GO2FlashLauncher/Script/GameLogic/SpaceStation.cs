@@ -21,7 +21,7 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         public async Task Enter(Bitmap bmp)
         {
-            for(int x = 0; x < 10; x++)
+            for (int x = 0; x < 10; x++)
             {
                 var result = bmp.FindImage(Path.GetFullPath("Images\\spacebase.png"), 0.8);
                 if (result == null)
@@ -43,11 +43,11 @@ namespace GO2FlashLauncher.Script.GameLogic
             var result = bmp.FindImage(Path.GetFullPath("Images\\station.png"), 0.8);
             if (result == null)
             {
-                for(int i = 2; i < 8; i++)
+                for (int i = 2; i < 8; i++)
                 {
                     await Task.Delay(10);
-                    result = bmp.FindImage(Path.GetFullPath("Images\\station" + i+".png"), 0.8);
-                    if(result != null)
+                    result = bmp.FindImage(Path.GetFullPath("Images\\station" + i + ".png"), 0.8);
+                    if (result != null)
                     {
                         break;
                     }

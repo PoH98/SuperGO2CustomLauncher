@@ -20,14 +20,14 @@ namespace GO2FlashLauncher.Script.GameLogic
                     //if diff = 0 exact match, otherwise there are some difference.
                     if (inStage)
                     {
-                        if(diff < 2000)
+                        if (diff < 2000)
                         {
                             return true;
                         }
                     }
                     else
                     {
-                        if(diff < 30000)
+                        if (diff < 30000)
                         {
                             return true;
                         }

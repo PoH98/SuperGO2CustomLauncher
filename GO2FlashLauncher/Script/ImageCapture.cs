@@ -1,15 +1,11 @@
 ﻿using CefSharp.DevTools;
 using CefSharp.WinForms;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace GO2FlashLauncher.Script
 {
@@ -173,7 +169,7 @@ namespace GO2FlashLauncher.Script
 
         public static Task<Bitmap> Screenshot(this ChromiumWebBrowser browser)
         {
-            return Task.Run(()=>
+            return Task.Run(() =>
             {
                 return (Bitmap)browser.Invoke((Func<Bitmap>)delegate
                 {

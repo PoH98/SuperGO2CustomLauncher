@@ -7,6 +7,7 @@ namespace GO2FlashLauncher.Model
         public int Instance { get; set; } = 1;
         public bool RunBot { get; set; } = true;
         public List<Fleet> Fleets { get; set; } = new List<Fleet>();
+        public string CredentialHash { get; set; }
     }
 
     internal class Fleet
