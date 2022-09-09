@@ -31,7 +31,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 }
                 if (result != null)
                 {
-                    await host.LeftClick(result.Value, rnd.Next(10, 50));
+                    await host.LeftClick(result.Value.X, result.Value.Y + 5, rnd.Next(10, 50));
                     return;
                 }
             }

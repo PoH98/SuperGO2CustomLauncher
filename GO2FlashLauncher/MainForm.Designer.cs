@@ -59,9 +59,6 @@
             this.metroButton5 = new MetroFramework.Controls.MetroButton();
             this.metroButton4 = new MetroFramework.Controls.MetroButton();
             this.metroButton1 = new MetroFramework.Controls.MetroButton();
-            this.closeBtn = new MetroFramework.Controls.MetroButton();
-            this.maximizeBtn = new MetroFramework.Controls.MetroButton();
-            this.minimizeBtn = new MetroFramework.Controls.MetroButton();
             this.label1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.discordRPC = new System.Windows.Forms.Timer(this.components);
@@ -84,11 +81,11 @@
             this.metroTabControl1.Controls.Add(this.metroTabPage3);
             this.metroTabControl1.Controls.Add(this.metroTabPage5);
             this.metroTabControl1.Controls.Add(this.metroTabPage2);
-            this.metroTabControl1.Location = new System.Drawing.Point(4, 45);
+            this.metroTabControl1.Location = new System.Drawing.Point(4, 23);
             this.metroTabControl1.Multiline = true;
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 1;
-            this.metroTabControl1.Size = new System.Drawing.Size(1235, 650);
+            this.metroTabControl1.SelectedIndex = 0;
+            this.metroTabControl1.Size = new System.Drawing.Size(1246, 634);
             this.metroTabControl1.TabIndex = 0;
             this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroTabControl1.UseSelectable = true;
@@ -106,7 +103,7 @@
             this.metroTabPage1.HorizontalScrollbarSize = 10;
             this.metroTabPage1.Location = new System.Drawing.Point(4, 38);
             this.metroTabPage1.Name = "metroTabPage1";
-            this.metroTabPage1.Size = new System.Drawing.Size(1227, 608);
+            this.metroTabPage1.Size = new System.Drawing.Size(1238, 592);
             this.metroTabPage1.TabIndex = 0;
             this.metroTabPage1.Text = "Alpha";
             this.metroTabPage1.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -141,9 +138,9 @@
             // 
             this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBox1.Location = new System.Drawing.Point(1046, 34);
+            this.richTextBox1.Location = new System.Drawing.Point(1057, 34);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(178, 574);
+            this.richTextBox1.Size = new System.Drawing.Size(178, 558);
             this.richTextBox1.TabIndex = 6;
             this.richTextBox1.Text = "";
             // 
@@ -155,7 +152,7 @@
             this.panel1.BackColor = System.Drawing.Color.Transparent;
             this.panel1.Location = new System.Drawing.Point(3, 34);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1037, 581);
+            this.panel1.Size = new System.Drawing.Size(1048, 565);
             this.panel1.TabIndex = 5;
             // 
             // metroButton3
@@ -476,50 +473,12 @@
             this.metroButton1.UseSelectable = true;
             this.metroButton1.Click += new System.EventHandler(this.metroButton1_Click);
             // 
-            // closeBtn
-            // 
-            this.closeBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.closeBtn.BackColor = System.Drawing.Color.Red;
-            this.closeBtn.Location = new System.Drawing.Point(1232, 7);
-            this.closeBtn.Name = "closeBtn";
-            this.closeBtn.Size = new System.Drawing.Size(25, 20);
-            this.closeBtn.TabIndex = 6;
-            this.closeBtn.Text = "🗙";
-            this.closeBtn.Theme = MetroFramework.MetroThemeStyle.Dark;
-            this.closeBtn.UseCustomBackColor = true;
-            this.closeBtn.UseSelectable = true;
-            this.closeBtn.Click += new System.EventHandler(this.closeBtn_Click);
-            // 
-            // maximizeBtn
-            // 
-            this.maximizeBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.maximizeBtn.Location = new System.Drawing.Point(1201, 7);
-            this.maximizeBtn.Name = "maximizeBtn";
-            this.maximizeBtn.Size = new System.Drawing.Size(25, 20);
-            this.maximizeBtn.TabIndex = 7;
-            this.maximizeBtn.Text = "🗖";
-            this.maximizeBtn.Theme = MetroFramework.MetroThemeStyle.Dark;
-            this.maximizeBtn.UseSelectable = true;
-            this.maximizeBtn.Click += new System.EventHandler(this.maximizeBtn_Click);
-            // 
-            // minimizeBtn
-            // 
-            this.minimizeBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.minimizeBtn.Location = new System.Drawing.Point(1170, 7);
-            this.minimizeBtn.Name = "minimizeBtn";
-            this.minimizeBtn.Size = new System.Drawing.Size(25, 20);
-            this.minimizeBtn.TabIndex = 8;
-            this.minimizeBtn.Text = "🗕";
-            this.minimizeBtn.Theme = MetroFramework.MetroThemeStyle.Dark;
-            this.minimizeBtn.UseSelectable = true;
-            this.minimizeBtn.Click += new System.EventHandler(this.minimizeBtn_Click);
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.DarkGray;
-            this.label1.Location = new System.Drawing.Point(8, 29);
+            this.label1.Location = new System.Drawing.Point(11, 14);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(107, 16);
             this.label1.TabIndex = 9;
@@ -539,18 +498,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1260, 720);
-            this.ControlBox = false;
+            this.BackColor = System.Drawing.Color.Black;
+            this.ClientSize = new System.Drawing.Size(1254, 661);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.minimizeBtn);
-            this.Controls.Add(this.maximizeBtn);
-            this.Controls.Add(this.closeBtn);
             this.Controls.Add(this.metroTabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.Padding = new System.Windows.Forms.Padding(1, 60, 1, 1);
-            this.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
@@ -578,9 +533,6 @@
         private MetroFramework.Controls.MetroButton metroButton2;
         private MetroFramework.Controls.MetroButton metroButton3;
         private System.Windows.Forms.Panel panel1;
-        private MetroFramework.Controls.MetroButton closeBtn;
-        private MetroFramework.Controls.MetroButton maximizeBtn;
-        private MetroFramework.Controls.MetroButton minimizeBtn;
         private MetroFramework.Controls.MetroButton metroButton4;
         private MetroFramework.Controls.MetroButton metroButton5;
         private System.Windows.Forms.Label label1;

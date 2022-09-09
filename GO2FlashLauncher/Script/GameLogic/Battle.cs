@@ -23,14 +23,14 @@ namespace GO2FlashLauncher.Script.GameLogic
         }
         public async Task<bool> SelectFleet(Bitmap bmp, List<Fleet> fleets, SelectFleetType fleetType)
         {
-            var crop = await bmp.Crop(new Point(0, 0), new Size(bmp.Width - 300, bmp.Height - 300));
+            var crop = await bmp.Crop(new Point(250, 150), new Size(bmp.Width - 300, bmp.Height - 300));
             var firstFleet = crop.FindImage("Images\\fleettransmittimemarker.png", 0.6);
             if (firstFleet == null)
             {
                 //no fleet
                 return false;
             }
-            var clickPoint = new Point(firstFleet.Value.X - 200, firstFleet.Value.Y - 90);
+            var clickPoint = new Point(firstFleet.Value.X + 100, firstFleet.Value.Y + 20);
             var currentPage = 0;
             bmp = await devtools.Screenshot();
             foreach (Fleet f in fleets.OrderBy(x => x.Order))
@@ -168,9 +168,13 @@ namespace GO2FlashLauncher.Script.GameLogic
             return false;
         }
 
-        public async Task<bool> RefillHE3(Bitmap bmp)
+        public async Task<bool> RefillHE3(Bitmap bmp, BaseResources resources)
         {
             var fullysupply = true;
+            if(resources.HE3 < 1)
+            {
+                return false;
+            }
             var result = bmp.FindImage(Path.GetFullPath("Images\\fleetsupplies.png"), 0.8);
             if (result == null)
             {
@@ -185,12 +189,6 @@ namespace GO2FlashLauncher.Script.GameLogic
                 if (result != null)
                 {
                     await host.LeftClick(result.Value, rnd.Next(120, 150));
-                }
-                bmp = await devtools.Screenshot();
-                if (bmp.FindImage("Images\\noHE3.png", 0.95) != null)
-                {
-                    //no HE3
-                    fullysupply = false;
                 }
                 result = bmp.FindImage("Images\\supplyconfirm.png", 0.8);
                 if (result == null)

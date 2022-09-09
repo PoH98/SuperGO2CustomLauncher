@@ -1,9 +1,15 @@
 ﻿using CefSharp;
 using CefSharp.DevTools;
 using CefSharp.WinForms;
+using Emgu.CV;
+using Emgu.CV.OCR;
+using Emgu.CV.Structure;
+using GO2FlashLauncher.Model;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace GO2FlashLauncher.Script.GameLogic
@@ -13,10 +19,14 @@ namespace GO2FlashLauncher.Script.GameLogic
         private readonly IBrowserHost host;
         private readonly Random rnd = new Random();
         private readonly DevToolsClient devtools;
+        private readonly Tesseract ocr;
+
         public MainScreen(ChromiumWebBrowser browser)
         {
             devtools = browser.GetBrowser().GetDevToolsClient();
             host = browser.GetBrowser().GetHost();
+            ocr = new Tesseract("libs", "eng", OcrEngineMode.TesseractLstmCombined);
+            ocr.SetVariable("tessedit_char_whitelist", "1234567890");
         }
         public async Task<bool> Locate(Bitmap bmp, bool clickBase = true)
         {
@@ -228,6 +238,30 @@ namespace GO2FlashLauncher.Script.GameLogic
                 }
             }
             return false;
+        }
+
+        public async Task<BaseResources> DetectResource(Bitmap bmp)
+        {
+            var metal = await bmp.Crop(new Point(bmp.Width - 210, 22), new Size(90, 17));
+            var he3 = await bmp.Crop(new Point(bmp.Width - 210, 41), new Size(90, 17));
+            var gold = await bmp.Crop(new Point(bmp.Width - 106, 22), new Size(90, 17));
+            var result = new BaseResources();
+            Image<Gray, byte> mi = metal.ToImage<Gray, byte>();
+            Image<Gray, byte> hi = he3.ToImage<Gray, byte>();
+            Image<Gray, byte> gl = gold.ToImage<Gray, byte>();
+            ocr.SetImage(mi);
+            ocr.Recognize();
+            var m = long.Parse(new String(ocr.GetUTF8Text().Where(Char.IsDigit).ToArray()));
+            ocr.SetImage(hi);
+            ocr.Recognize();
+            var h = long.Parse(new String(ocr.GetUTF8Text().Where(Char.IsDigit).ToArray()));
+            ocr.SetImage(gl);
+            ocr.Recognize();
+            var g = long.Parse(new String(ocr.GetUTF8Text().Where(Char.IsDigit).ToArray()));
+            result.Metal = m;
+            result.HE3 = h;
+            result.Gold = g;
+            return result;
         }
     }
 }

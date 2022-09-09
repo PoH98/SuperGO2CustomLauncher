@@ -6,21 +6,24 @@ using GO2FlashLauncher.Script;
 using GO2FlashLauncher.Service;
 using MetroFramework;
 using MetroFramework.Controls;
-using MetroFramework.Forms;
 using Newtonsoft.Json;
 using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GO2FlashLauncher
 {
-    public partial class MainForm : MetroForm
+    public partial class MainForm : Form
     {
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool AllocConsole();
         ChromiumWebBrowser alpha, beta, krtools;
         Thread redirector;
         string scriptKey = "";
@@ -50,15 +53,18 @@ namespace GO2FlashLauncher
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            if (File.Exists("debug.txt"))
+            {
+                Console.SetOut(new DebugLogger(richTextBox1));
+            }
 #if !DEBUG
-            metroButton3.Hide();
+            metroButton3.Hide();      
 #endif
             if (File.Exists("debug.log"))
             {
                 File.Delete("debug.log");
             }
             WindowState = FormWindowState.Maximized;
-            maximizeBtn.Text = "\U0001F5D7";
             metroTabControl1.SelectedIndex = 0;
             var settings = new CefSettings();
             settings.CachePath = Path.GetFullPath("cache");
@@ -330,12 +336,10 @@ catch
             if (WindowState == FormWindowState.Normal)
             {
                 WindowState = FormWindowState.Maximized;
-                maximizeBtn.Text = "\U0001F5D7";
             }
             else
             {
                 WindowState = FormWindowState.Normal;
-                maximizeBtn.Text = "\U0001F5D6";
             }
         }
 
@@ -363,7 +367,7 @@ catch
             {
                 richTextBox1.Invoke((MethodInvoker)delegate
                 {
-                    richTextBox1.AppendText("No auto login creditials detected!\n");
+                    richTextBox1.AppendText("\nNo auto login creditials detected!\n");
                 });
                 return;
             }
@@ -445,13 +449,13 @@ input.dispatchEvent(event);
 
         private void MainForm_Resize(object sender, EventArgs e)
         {
-            if (Width < 720)
+            if (Width < 1260)
             {
-                Width = 720;
+                Width = 1260;
             }
-            if (Height < 1260)
+            if (Height < 1060)
             {
-                Height = 1260;
+                Height = 1060;
             }
             if (alpha == null)
             {

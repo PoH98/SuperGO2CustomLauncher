@@ -16,6 +16,7 @@ namespace GO2FlashLauncher.Script
         {
             var rndX = rnd.Next(x - 1, x + 1);
             var rndY = rnd.Next(y - 1, y + 1);
+            Console.WriteLine("Clicked: x: " + rndX + ", y: " + rndY);
             browser.SendMouseClickEvent(rndX, rndY, MouseButtonType.Left, false, 1, CefEventFlags.None);
             await Task.Delay(interval);
             browser.SendMouseClickEvent(rndX, rndY, MouseButtonType.Left, true, 1, CefEventFlags.None);

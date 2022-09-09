@@ -55,6 +55,7 @@ namespace GO2FlashLauncher.Script
                     SpaceStation s = new SpaceStation(browser);
                     Battle b = new Battle(browser);
                     LagDetection l = new LagDetection();
+                    BaseResources resources = new BaseResources();
                     //Init status
                     bool mainScreenLocated = false;
                     bool spaceStationLocated = false;
@@ -98,6 +99,10 @@ namespace GO2FlashLauncher.Script
                                         await Task.Delay(100);
                                     }
                                     LogInfo("Mainscreen located");
+                                    resources = await m.DetectResource(bmp);
+                                    LogInfo("Detected Metal: " + resources.Metal);
+                                    LogInfo("Detected HE3: " + resources.HE3);
+                                    LogInfo("Detected Gold: " + resources.Gold);
                                     mainScreenLocated = true;
                                     error = 0;
                                 }
@@ -153,6 +158,10 @@ namespace GO2FlashLauncher.Script
                                     spaceStationLocated = true;
                                     error = 0;
                                     await Task.Delay(1000);
+                                    resources = await m.DetectResource(bmp);
+                                    LogInfo("Detected Metal: " + resources.Metal);
+                                    LogInfo("Detected HE3: " + resources.HE3);
+                                    LogInfo("Detected Gold: " + resources.Gold);
                                     await host.LeftClick(spaceStationLocation.Value, 100);
                                     await Task.Delay(200);
                                     LogInfo("Entering Instance");
@@ -181,7 +190,7 @@ namespace GO2FlashLauncher.Script
                                                     await Task.Delay(1000);
                                                     bmp = await devTools.Screenshot();
                                                     LogInfo("Refilling fleets");
-                                                    if (!await b.RefillHE3(bmp))
+                                                    if (!await b.RefillHE3(bmp, resources))
                                                     {
                                                         //no HE3
                                                         LogError("Out of HE3!");
@@ -200,11 +209,39 @@ namespace GO2FlashLauncher.Script
                                                         bmp = await devTools.Screenshot();
                                                         await Task.Delay(100);
                                                         token.ThrowIfCancellationRequested();
+                                                        error++;
+                                                        if(error > 10)
+                                                        {
+                                                            loop = false;
+                                                            //something wrong
+                                                            spaceStationLocated = false;
+                                                            mainScreenLocated = false;
+                                                            inStage = false;
+                                                            IsRunning = false;
+                                                            browser.Reload();
+                                                            return;
+                                                        }
                                                     }
                                                     await Task.Delay(1000);
-                                                    if (!await b.SelectFleet(bmp, botSettings.Fleets, SelectFleetType.Instance))
+                                                    bmp = await devTools.Screenshot();
+                                                    await Task.Delay(1000);
+                                                    while (!await b.SelectFleet(bmp, botSettings.Fleets, SelectFleetType.Instance))
                                                     {
                                                         LogError("No fleet found!");
+                                                        bmp = await devTools.Screenshot();
+                                                        await Task.Delay(100);
+                                                        error++;
+                                                        if (error > 10)
+                                                        {
+                                                            loop = false;
+                                                            //something wrong
+                                                            spaceStationLocated = false;
+                                                            mainScreenLocated = false;
+                                                            inStage = false;
+                                                            IsRunning = false;
+                                                            browser.Reload();
+                                                            return;
+                                                        }
                                                         break;
                                                     }
                                                     await Task.Delay(1000);
@@ -237,6 +274,7 @@ namespace GO2FlashLauncher.Script
                                             LogError("Something seriously wrong! Refreshing the game!");
                                             spaceStationLocated = false;
                                             mainScreenLocated = false;
+                                            inStage = false;
                                             browser.Reload();
                                             error = 0;
                                             await Task.Delay(1000);
@@ -267,6 +305,9 @@ namespace GO2FlashLauncher.Script
                                         if (!await m.CollectMails(bmp))
                                         {
                                             //something wrong
+                                            spaceStationLocated = false;
+                                            mainScreenLocated = false;
+                                            inStage = false;
                                             browser.Reload();
                                         }
                                     }
@@ -316,14 +357,18 @@ namespace GO2FlashLauncher.Script
                             //lag detection
                             if (lastbmp != null)
                             {
-                                if (l.IsLagging(bmp, lastbmp, inStage))
+                                if(bmp.Size == lastbmp.Size)
                                 {
-                                    lag++;
+                                    if (l.IsLagging(bmp, lastbmp, inStage))
+                                    {
+                                        lag++;
+                                    }
+                                    else
+                                    {
+                                        lag = 0;
+                                    }
                                 }
-                                else
-                                {
-                                    lag = 0;
-                                }
+
                                 if (lag > 60)
                                 {
                                     LogError("Lag detected! Lag confirmed! Restarting...");
@@ -341,7 +386,7 @@ namespace GO2FlashLauncher.Script
                             {
                                 throw;
                             }
-                            LogError(ex.Message + "\n" + ex?.InnerException?.Message);
+                            LogError(ex.ToString());
                         }
                         await Task.Delay(1000);
                     }
