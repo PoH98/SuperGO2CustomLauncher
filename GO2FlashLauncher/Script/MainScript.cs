@@ -2,6 +2,7 @@
 using CefSharp.WinForms;
 using GO2FlashLauncher.Model;
 using GO2FlashLauncher.Script.GameLogic;
+using GO2FlashLauncher.Service;
 using System;
 using System.Drawing;
 using System.Threading;
@@ -13,11 +14,9 @@ namespace GO2FlashLauncher.Script
     internal class MainScript
     {
         private bool IsRunning;
-        private readonly RichTextBox logger;
         private readonly BotSettings botSettings;
-        public MainScript(RichTextBox logger, BotSettings settings)
+        public MainScript(BotSettings settings)
         {
-            this.logger = logger;
             this.botSettings = settings;
         }
         /// <summary>
@@ -68,7 +67,7 @@ namespace GO2FlashLauncher.Script
                     int lag = 0;
                     Bitmap lastbmp = null;
                     //Clear logs in rtb
-                    ClearLog();
+                    Logger.ClearLog();
                     do
                     {
                         try
@@ -98,11 +97,11 @@ namespace GO2FlashLauncher.Script
                                         }
                                         await Task.Delay(100);
                                     }
-                                    LogInfo("Mainscreen located");
+                                    Logger.LogInfo("Mainscreen located");
                                     resources = await m.DetectResource(bmp);
-                                    LogInfo("Detected Metal: " + resources.Metal);
-                                    LogInfo("Detected HE3: " + resources.HE3);
-                                    LogInfo("Detected Gold: " + resources.Gold);
+                                    Logger.LogInfo("Detected Metal: " + resources.Metal);
+                                    Logger.LogInfo("Detected HE3: " + resources.HE3);
+                                    Logger.LogInfo("Detected Gold: " + resources.Gold);
                                     mainScreenLocated = true;
                                     error = 0;
                                 }
@@ -110,7 +109,7 @@ namespace GO2FlashLauncher.Script
                                 {
                                     if (error == 0)
                                     {
-                                        LogInfo("Locating Mainscreen");
+                                        Logger.LogInfo("Locating Mainscreen");
                                     }
                                     error++;
                                     if (error < 20)
@@ -131,7 +130,7 @@ namespace GO2FlashLauncher.Script
                             else if (!collectedResources)
                             {
                                 //collect resources
-                                LogInfo("Collecting Resources");
+                                Logger.LogInfo("Collecting Resources");
                                 if (await m.Locate(bmp))
                                 {
                                     await Task.Delay(1000);
@@ -148,23 +147,23 @@ namespace GO2FlashLauncher.Script
                                 //locate space stations
                                 await Task.Delay(1000);
                                 await s.Enter(bmp);
-                                LogInfo("Going to space station");
+                                Logger.LogInfo("Going to space station");
                                 await Task.Delay(1000);
                                 bmp = await devTools.Screenshot();
                                 var spaceStationLocation = await s.Locate(bmp);
                                 if (spaceStationLocation.HasValue)
                                 {
-                                    LogInfo("Space station located");
+                                    Logger.LogInfo("Space station located");
                                     spaceStationLocated = true;
                                     error = 0;
                                     await Task.Delay(1000);
                                     resources = await m.DetectResource(bmp);
-                                    LogInfo("Detected Metal: " + resources.Metal);
-                                    LogInfo("Detected HE3: " + resources.HE3);
-                                    LogInfo("Detected Gold: " + resources.Gold);
+                                    Logger.LogInfo("Detected Metal: " + resources.Metal);
+                                    Logger.LogInfo("Detected HE3: " + resources.HE3);
+                                    Logger.LogInfo("Detected Gold: " + resources.Gold);
                                     await host.LeftClick(spaceStationLocation.Value, 100);
                                     await Task.Delay(200);
-                                    LogInfo("Entering Instance");
+                                    Logger.LogInfo("Entering Instance");
                                     bool loop = true;
                                     while (loop)
                                     {
@@ -177,10 +176,12 @@ namespace GO2FlashLauncher.Script
                                             {
                                                 case InstanceEnterState.Error:
                                                     error++;
-                                                    LogError("Error on entering instance!");
+                                                    spaceStationLocated = false;
+                                                    loop = false;
+                                                    Logger.LogError("Error on entering instance!");
                                                     break;
                                                 case InstanceEnterState.IncreaseFleet:
-                                                    LogInfo("Selecting fleets");
+                                                    Logger.LogInfo("Selecting fleets");
                                                     while (!await b.IncreaseFleet(bmp))
                                                     {
                                                         bmp = await devTools.Screenshot();
@@ -189,16 +190,16 @@ namespace GO2FlashLauncher.Script
                                                     }
                                                     await Task.Delay(1000);
                                                     bmp = await devTools.Screenshot();
-                                                    LogInfo("Refilling fleets");
-                                                    if (!await b.RefillHE3(bmp, resources))
+                                                    Logger.LogInfo("Refilling fleets");
+                                                    if (!await b.RefillHE3(bmp, resources, botSettings.HaltOn))
                                                     {
                                                         //no HE3
-                                                        LogError("Out of HE3!");
+                                                        Logger.LogWarning("Out of HE3! Halt attack now!");
                                                         browser.Reload();
                                                         inStage = false;
                                                         mainScreenLocated = false;
                                                         spaceStationLocated = false;
-                                                        LogInfo("Waiting for resources...");
+                                                        Logger.LogInfo("Waiting for resources...");
                                                         noResources = DateTime.Now.AddHours(1);
                                                         break;
                                                     }
@@ -210,7 +211,7 @@ namespace GO2FlashLauncher.Script
                                                         await Task.Delay(100);
                                                         token.ThrowIfCancellationRequested();
                                                         error++;
-                                                        if(error > 10)
+                                                        if (error > 10)
                                                         {
                                                             loop = false;
                                                             //something wrong
@@ -227,7 +228,7 @@ namespace GO2FlashLauncher.Script
                                                     await Task.Delay(1000);
                                                     while (!await b.SelectFleet(bmp, botSettings.Fleets, SelectFleetType.Instance))
                                                     {
-                                                        LogError("No fleet found!");
+                                                        Logger.LogError("No fleet found!");
                                                         bmp = await devTools.Screenshot();
                                                         await Task.Delay(100);
                                                         error++;
@@ -254,13 +255,13 @@ namespace GO2FlashLauncher.Script
                                                     loop = false;
                                                     error = 0;
                                                     stageCount++;
-                                                    LogInfo("Waiting for stage end...");
+                                                    Logger.LogInfo("Waiting for stage end...");
                                                     inStage = true;
                                                     break;
                                                 case InstanceEnterState.InStage:
                                                     error = 0;
                                                     loop = false;
-                                                    LogInfo("Already in stage");
+                                                    Logger.LogInfo("Already in stage");
                                                     inStage = true;
                                                     break;
                                             }
@@ -271,7 +272,7 @@ namespace GO2FlashLauncher.Script
                                         }
                                         if (error > 20)
                                         {
-                                            LogError("Something seriously wrong! Refreshing the game!");
+                                            Logger.LogError("Something seriously wrong! Refreshing the game!");
                                             spaceStationLocated = false;
                                             mainScreenLocated = false;
                                             inStage = false;
@@ -284,7 +285,7 @@ namespace GO2FlashLauncher.Script
                                 }
                                 else
                                 {
-                                    LogInfo("Locating Space station");
+                                    Logger.LogInfo("Locating Space station");
                                     error++;
                                     continue;
                                 }
@@ -293,14 +294,14 @@ namespace GO2FlashLauncher.Script
                             {
                                 if (await b.BattleEnds(bmp))
                                 {
-                                    LogInfo("Battle Ends");
+                                    Logger.LogInfo("Battle Ends");
                                     inStage = false;
                                     spaceStationLocated = false;
                                     //check mailbox, bugged now and dumb
                                     var mail = bmp.FindImage("Images\\mail.png", 0.6);
                                     if (mail.HasValue)
                                     {
-                                        LogInfo("Found Mail");
+                                        Logger.LogInfo("Found Mail");
                                         //collect mail
                                         if (!await m.CollectMails(bmp))
                                         {
@@ -311,7 +312,7 @@ namespace GO2FlashLauncher.Script
                                             browser.Reload();
                                         }
                                     }
-                                    ClearLog();
+                                    Logger.ClearLog();
                                 }
                                 else
                                 {
@@ -324,7 +325,7 @@ namespace GO2FlashLauncher.Script
                                 await Task.Delay(1000);
                                 if (await m.EZRewards(bmp))
                                 {
-                                    LogInfo("Collected EZRewards");
+                                    Logger.LogInfo("Collected EZRewards");
                                     await Task.Delay(1000);
                                     //detect close
                                     bmp = await devTools.Screenshot();
@@ -342,8 +343,8 @@ namespace GO2FlashLauncher.Script
                             {
                                 if (m.DetectDisconnect(bmp))
                                 {
-                                    LogError("Please refresh the browser! Server disconnected! Maybe is in server maintainance! ");
-                                    LogInfo("Bot Stopped");
+                                    Logger.LogError("Please refresh the browser! Server disconnected! Maybe is in server maintainance! ");
+                                    Logger.LogInfo("Bot Stopped");
                                     return;
                                 }
                                 else
@@ -357,7 +358,7 @@ namespace GO2FlashLauncher.Script
                             //lag detection
                             if (lastbmp != null)
                             {
-                                if(bmp.Size == lastbmp.Size)
+                                if (bmp.Size == lastbmp.Size)
                                 {
                                     if (l.IsLagging(bmp, lastbmp, inStage))
                                     {
@@ -369,10 +370,11 @@ namespace GO2FlashLauncher.Script
                                     }
                                 }
 
-                                if (lag > 60)
+                                if (lag > 120)
                                 {
-                                    LogError("Lag detected! Lag confirmed! Restarting...");
+                                    Logger.LogError("Lag detected! Lag confirmed! Restarting...");
                                     browser.Reload();
+                                    lag = 0;
                                     inStage = false;
                                     mainScreenLocated = false;
                                     spaceStationLocated = false;
@@ -386,7 +388,7 @@ namespace GO2FlashLauncher.Script
                             {
                                 throw;
                             }
-                            LogError(ex.ToString());
+                            Logger.LogError(ex.ToString());
                         }
                         await Task.Delay(1000);
                     }
@@ -396,58 +398,6 @@ namespace GO2FlashLauncher.Script
                 {
                     IsRunning = false;
                 }
-            });
-        }
-        /// <summary>
-        /// Log info
-        /// </summary>
-        /// <param name="info"></param>
-        private void LogInfo(string info)
-        {
-            if (logger == null)
-            {
-                return;
-            }
-            logger.Invoke((MethodInvoker)delegate
-            {
-                logger.SelectionStart = logger.TextLength;
-                logger.SelectionLength = 0;
-                logger.SelectionColor = Color.Green;
-                logger.AppendText("\n" + "[" + DateTime.Now.ToString("HH:mm") + "]: " + info);
-                logger.Focus();
-                logger.Select(logger.TextLength, 0);
-                logger.ScrollToCaret();
-            });
-        }
-        /// <summary>
-        /// Log error
-        /// </summary>
-        /// <param name="info"></param>
-        private void LogError(string info)
-        {
-            if (logger == null)
-            {
-                return;
-            }
-            logger.Invoke((MethodInvoker)delegate
-            {
-                logger.SelectionStart = logger.TextLength;
-                logger.SelectionLength = 0;
-                logger.SelectionColor = Color.Red;
-                logger.AppendText("\n" + "[" + DateTime.Now.ToString("HH:mm") + "]: " + info);
-                logger.Focus();
-                logger.Select(logger.TextLength, 0);
-                logger.ScrollToCaret();
-            });
-        }
-        /// <summary>
-        /// Clear logs
-        /// </summary>
-        private void ClearLog()
-        {
-            logger.Invoke((MethodInvoker)delegate
-            {
-                logger.Text = "";
             });
         }
     }

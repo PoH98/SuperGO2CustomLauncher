@@ -1,5 +1,6 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
+using GO2FlashLauncher.Service;
 using System.Drawing;
 
 namespace GO2FlashLauncher.Script.GameLogic
@@ -22,6 +23,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                     {
                         if (diff < 2000)
                         {
+                            Logger.LogDebug("Lag detection: similarity " + diff + " in stage");
                             return true;
                         }
                     }
@@ -29,6 +31,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                     {
                         if (diff < 30000)
                         {
+                            Logger.LogDebug("Lag detection: similarity " + diff + " in home");
                             return true;
                         }
                     }

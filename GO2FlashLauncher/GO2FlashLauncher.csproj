@@ -114,7 +114,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Script\Clicker.cs" />
-    <Compile Include="Script\DebugLogger.cs" />
     <Compile Include="Script\GameLogic\Battle.cs" />
     <Compile Include="Script\GameLogic\LagDetection.cs" />
     <Compile Include="Script\GameLogic\MainScreen.cs" />
@@ -124,6 +123,7 @@
     <Compile Include="Script\ImageNotFound.cs" />
     <Compile Include="Script\MainScript.cs" />
     <Compile Include="Service\ControlSnapshot.cs" />
+    <Compile Include="Service\Logger.cs" />
     <Compile Include="Service\RPC.cs" />
     <Compile Include="Service\Encryption.cs" />
     <EmbeddedResource Include="Login.resx">

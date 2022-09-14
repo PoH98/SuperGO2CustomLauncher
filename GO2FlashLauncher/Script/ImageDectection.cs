@@ -3,6 +3,7 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace GO2FlashLauncher.Script
 {
@@ -33,14 +34,31 @@ namespace GO2FlashLauncher.Script
             using (Image<Gray, float> result = source.MatchTemplate(find, TemplateMatchingType.CcoeffNormed))
             {
                 CvInvoke.Threshold(result, result, matchRadius, 1, ThresholdType.ToZero);
-                result.MinMax(out double[] minValues, out double[] maxValues, out Point[] minLocations, out Point[] maxLocations);
+                var resultWithPadding = new Image<Gray, float>(source.Size);
+                var heightOfPadding = (source.Height - result.Height) / 2;
+                var widthOfPadding = (source.Width - result.Width) / 2;
+                resultWithPadding.ROI = new Rectangle() { X = heightOfPadding, Y = widthOfPadding, Width = result.Width, Height = result.Height };
+                result.CopyTo(resultWithPadding);
+                resultWithPadding.ROI = Rectangle.Empty;
 
-                // You can try different values of the threshold. I guess somewhere between 0.85 and 0.95 would be good.
-                for (int x = 0; x < maxValues.Length; x++)
+                for (int i = 0; i < resultWithPadding.Width; i++)
                 {
-                    if (maxValues[x] > matchRadius)
+                    for (int j = 0; j < resultWithPadding.Height; j++)
                     {
-                        points.Add(maxLocations[x]);
+                        var centerOfRoi = new Point() { X = i + find.Width / 2, Y = j + find.Height / 2 };
+                        var roi = new Rectangle() { X = i, Y = j, Width = find.Width, Height = find.Height };
+                        resultWithPadding.ROI = roi;
+                        double[] minValues, maxValues;
+                        Point[] minLocations, maxLocations;
+                        resultWithPadding.MinMax(out minValues, out maxValues, out minLocations, out maxLocations);
+                        resultWithPadding.ROI = Rectangle.Empty;
+                        var maxLocation = maxLocations.First();
+                        if (maxLocation.X == roi.Width / 2 && maxLocation.Y == roi.Height / 2)
+                        {
+                            var point = new Point() { X = centerOfRoi.X, Y = centerOfRoi.Y };
+                            points.Add(point);
+                        }
+
                     }
                 }
             }

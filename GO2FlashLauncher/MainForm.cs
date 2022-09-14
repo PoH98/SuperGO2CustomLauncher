@@ -49,14 +49,11 @@ namespace GO2FlashLauncher
                 settings = JsonConvert.DeserializeObject<BotSettings>(File.ReadAllText("Profile\\" + profileName + "\\config.json"));
             }
             scriptKey = Encryption.RandomString(10);
+            Logger.Init(richTextBox1, profileName);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            if (File.Exists("debug.txt"))
-            {
-                Console.SetOut(new DebugLogger(richTextBox1));
-            }
 #if !DEBUG
             metroButton3.Hide();      
 #endif
@@ -98,15 +95,8 @@ namespace GO2FlashLauncher
                 throw new Exception("Unable to Initialize Cef");
             }
 
-            if (!File.Exists(Path.GetFullPath("cache\\config.settings")))
-            {
-                alpha = new ChromiumWebBrowser("https://beta.supergo2.com/");
-            }
-            else
-            {
-                alpha = new ChromiumWebBrowser(File.ReadAllText(Path.GetFullPath("cache\\config.settings")));
-            }
             beta = new ChromiumWebBrowser("blank");
+            alpha = new ChromiumWebBrowser("blank");
             krtools = new ChromiumWebBrowser("https://krtools.deajae.co.uk/");
             alpha.RequestContext = new RequestContext(alphaContext);
             beta.RequestContext = new RequestContext(betaContext);
@@ -126,7 +116,8 @@ namespace GO2FlashLauncher
             alpha.Dock = DockStyle.Fill;
             beta.Dock = DockStyle.Fill;
             krtools.Dock = DockStyle.Fill;
-            beta.IsBrowserInitializedChanged += Beta_IsBrowserInitializedChanged; ;
+            beta.IsBrowserInitializedChanged += Beta_IsBrowserInitializedChanged;
+            alpha.IsBrowserInitializedChanged += Alpha_IsBrowserInitializedChanged;
             alpha.LoadingStateChanged += ChromiumWebBrowser_LoadingStateChanged;
             beta.LoadingStateChanged += ChromiumWebBrowser_LoadingStateChanged;
             alpha.ConsoleMessage += ChromiumWebBrowser_ConsoleMessage;
@@ -139,6 +130,20 @@ namespace GO2FlashLauncher
 #if !DEBUG
             metroTabControl1.Controls.Remove(metroTabPage3);
 #endif
+        }
+
+        private void Alpha_IsBrowserInitializedChanged(object sender, EventArgs e)
+        {
+            if (!File.Exists(Path.GetFullPath("cache\\config.settings")))
+            {
+                alpha.GetDevToolsClient().Emulation.SetUserAgentOverrideAsync("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) supergo2-btr/1.0.0-btr Chrome/85.0.4183.121 Electron/10.1.3 Safari/537.36");
+                alpha.Load("https://beta.supergo2.com/");
+            }
+            else
+            {
+                alpha.GetDevToolsClient().Emulation.SetUserAgentOverrideAsync("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) supergo2-btr/1.0.0-btr Chrome/85.0.4183.121 Electron/10.1.3 Safari/537.36");
+                alpha.Load(File.ReadAllText(Path.GetFullPath("cache\\config.settings")));
+            }
         }
 
         private void Beta_IsBrowserInitializedChanged(object sender, EventArgs e)
@@ -279,7 +284,7 @@ catch
                 return;
             }
             cancellation = new CancellationTokenSource();
-            script = new MainScript(richTextBox1, settings);
+            script = new MainScript(settings);
             _ = script.Run(cancellation.Token, chrome).ConfigureAwait(false);
         }
 
@@ -434,7 +439,6 @@ input.dispatchEvent(event);
                 Directory.CreateDirectory("Profile\\" + profileName);
             }
             File.WriteAllText("Profile\\" + profileName + "\\config.json", JsonConvert.SerializeObject(settings));
-
             Cef.Shutdown();
         }
 
@@ -461,6 +465,7 @@ input.dispatchEvent(event);
             {
                 return;
             }
+            FormBorderStyle = FormBorderStyle.Sizable;
             Task.Run(() =>
             {
                 do
@@ -497,7 +502,7 @@ input.dispatchEvent(event);
             beta.ShowDevTools();
         }
 
-        private void metroToggle1_CheckedChanged(object sender, EventArgs e)
+        private async void metroToggle1_CheckedChanged(object sender, EventArgs e)
         {
             if (cancellation != null)
             {
@@ -507,26 +512,14 @@ input.dispatchEvent(event);
             settings.RunBot = metroToggle1.Checked;
             if (metroToggle1.Checked)
             {
-                richTextBox1.Invoke((MethodInvoker)delegate
-                {
-                    richTextBox1.SelectionStart = richTextBox1.TextLength;
-                    richTextBox1.SelectionLength = 0;
-                    richTextBox1.SelectionColor = Color.Black;
-                    richTextBox1.Text += "\n" + "[" + DateTime.Now.ToString("HH:mm") + "]: Bot Restarted";
-                    richTextBox1.ScrollToCaret();
-                });
+                Logger.ClearLog();
+                await Task.Delay(1000);
+                Logger.LogWarning("Bot Started");
                 RunScript(alpha);
             }
             else
             {
-                richTextBox1.Invoke((MethodInvoker)delegate
-                {
-                    richTextBox1.SelectionStart = richTextBox1.TextLength;
-                    richTextBox1.SelectionLength = 0;
-                    richTextBox1.SelectionColor = Color.Black;
-                    richTextBox1.Text += "\n" + "[" + DateTime.Now.ToString("HH:mm") + "]: Bot Stopped";
-                    richTextBox1.ScrollToCaret();
-                });
+                Logger.LogWarning("Bot Stopped");
             }
         }
 
@@ -677,6 +670,11 @@ input.dispatchEvent(event);
         private void discordRPC_Tick(object sender, EventArgs e)
         {
             rpc.SetPresence();
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            settings.HaltOn = Convert.ToInt64(numericUpDown1.Value);
         }
 
         private void RemoveFleet_Click(object sender, EventArgs e)

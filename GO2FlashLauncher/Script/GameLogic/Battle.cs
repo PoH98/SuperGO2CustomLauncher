@@ -24,13 +24,14 @@ namespace GO2FlashLauncher.Script.GameLogic
         public async Task<bool> SelectFleet(Bitmap bmp, List<Fleet> fleets, SelectFleetType fleetType)
         {
             var crop = await bmp.Crop(new Point(250, 150), new Size(bmp.Width - 300, bmp.Height - 300));
-            var firstFleet = crop.FindImage("Images\\fleettransmittimemarker.png", 0.6);
-            if (firstFleet == null)
+            var detectedFleets = crop.FindImageArray("Images\\fleettransmittimemarker.png", 0.8);
+            if (detectedFleets.Length < 1)
             {
                 //no fleet
                 return false;
             }
-            var clickPoint = new Point(firstFleet.Value.X + 100, firstFleet.Value.Y + 20);
+            var firstFleet = detectedFleets.OrderBy(x => x.X).First();
+            var clickPoint = new Point(firstFleet.X + 300, firstFleet.Y + 20);
             var currentPage = 0;
             bmp = await devtools.Screenshot();
             foreach (Fleet f in fleets.OrderBy(x => x.Order))
@@ -80,31 +81,31 @@ namespace GO2FlashLauncher.Script.GameLogic
                 switch (index)
                 {
                     case 0:
-                        await host.LeftClick(rnd.Next(clickPoint.X, clickPoint.X + 40), rnd.Next(clickPoint.Y, clickPoint.Y + 30), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X, clickPoint.X + 10), rnd.Next(clickPoint.Y, clickPoint.Y + 5), rnd.Next(120, 150));
                         break;
                     case 1:
-                        await host.LeftClick(rnd.Next(clickPoint.X + 200, clickPoint.X + 235), rnd.Next(clickPoint.Y, clickPoint.Y + 30), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X + 170, clickPoint.X + 180), rnd.Next(clickPoint.Y, clickPoint.Y + 5), rnd.Next(120, 150));
                         break;
                     case 2:
-                        await host.LeftClick(rnd.Next(clickPoint.X + 400, clickPoint.X + 440), rnd.Next(clickPoint.Y, clickPoint.Y + 30), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X + 380, clickPoint.X + 390), rnd.Next(clickPoint.Y, clickPoint.Y + 5), rnd.Next(120, 150));
                         break;
                     case 3:
-                        await host.LeftClick(rnd.Next(clickPoint.X, clickPoint.X + 40), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 130), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X, clickPoint.X + 10), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 105), rnd.Next(120, 150));
                         break;
                     case 4:
-                        await host.LeftClick(rnd.Next(clickPoint.X + 200, clickPoint.X + 235), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 130), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X + 170, clickPoint.X + 180), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 105), rnd.Next(120, 150));
                         break;
                     case 5:
-                        await host.LeftClick(rnd.Next(clickPoint.X + 400, clickPoint.X + 440), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 130), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X + 380, clickPoint.X + 390), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 105), rnd.Next(120, 150));
                         break;
                     case 6:
-                        await host.LeftClick(rnd.Next(clickPoint.X, clickPoint.X + 40), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 230), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X, clickPoint.X + 10), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 205), rnd.Next(120, 150));
                         break;
                     case 7:
-                        await host.LeftClick(rnd.Next(clickPoint.X + 200, clickPoint.X + 235), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 230), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X + 170, clickPoint.X + 180), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 205), rnd.Next(120, 150));
                         break;
                     case 8:
-                        await host.LeftClick(rnd.Next(clickPoint.X + 400, clickPoint.X + 440), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 230), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X + 380, clickPoint.X + 390), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 205), rnd.Next(120, 150));
                         break;
                 }
                 await Task.Delay(rnd.Next(100, 120));
@@ -168,10 +169,10 @@ namespace GO2FlashLauncher.Script.GameLogic
             return false;
         }
 
-        public async Task<bool> RefillHE3(Bitmap bmp, BaseResources resources)
+        public async Task<bool> RefillHE3(Bitmap bmp, BaseResources resources, long HaltOn)
         {
             var fullysupply = true;
-            if(resources.HE3 < 1)
+            if(resources.HE3 <= HaltOn)
             {
                 return false;
             }

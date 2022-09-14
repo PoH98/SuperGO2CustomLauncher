@@ -50,6 +50,8 @@
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
             this.metroTabControl2 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.metroLabel4 = new MetroFramework.Controls.MetroLabel();
             this.metroTabControl3 = new MetroFramework.Controls.MetroTabControl();
             this.fleetPage1 = new MetroFramework.Controls.MetroTabPage();
             this.metroButton8 = new MetroFramework.Controls.MetroButton();
@@ -69,6 +71,7 @@
             this.metroTabPage2.SuspendLayout();
             this.metroTabControl2.SuspendLayout();
             this.metroTabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.metroTabControl3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -138,6 +141,8 @@
             // 
             this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBox1.BackColor = System.Drawing.Color.Black;
+            this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.richTextBox1.Location = new System.Drawing.Point(1057, 34);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(178, 558);
@@ -187,7 +192,7 @@
             this.metroTabPage3.HorizontalScrollbarSize = 10;
             this.metroTabPage3.Location = new System.Drawing.Point(4, 38);
             this.metroTabPage3.Name = "metroTabPage3";
-            this.metroTabPage3.Size = new System.Drawing.Size(1227, 608);
+            this.metroTabPage3.Size = new System.Drawing.Size(1238, 592);
             this.metroTabPage3.TabIndex = 2;
             this.metroTabPage3.Text = "Beta";
             this.metroTabPage3.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -239,7 +244,7 @@
             this.metroTabPage5.HorizontalScrollbarSize = 10;
             this.metroTabPage5.Location = new System.Drawing.Point(4, 38);
             this.metroTabPage5.Name = "metroTabPage5";
-            this.metroTabPage5.Size = new System.Drawing.Size(1227, 608);
+            this.metroTabPage5.Size = new System.Drawing.Size(1238, 592);
             this.metroTabPage5.TabIndex = 3;
             this.metroTabPage5.Text = "KRTools";
             this.metroTabPage5.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -302,7 +307,7 @@
             this.metroTabPage2.HorizontalScrollbarSize = 10;
             this.metroTabPage2.Location = new System.Drawing.Point(4, 38);
             this.metroTabPage2.Name = "metroTabPage2";
-            this.metroTabPage2.Size = new System.Drawing.Size(1227, 608);
+            this.metroTabPage2.Size = new System.Drawing.Size(1238, 592);
             this.metroTabPage2.TabIndex = 1;
             this.metroTabPage2.Text = "Customize MODs";
             this.metroTabPage2.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -323,6 +328,8 @@
             // 
             // metroTabPage4
             // 
+            this.metroTabPage4.Controls.Add(this.numericUpDown1);
+            this.metroTabPage4.Controls.Add(this.metroLabel4);
             this.metroTabPage4.Controls.Add(this.metroTabControl3);
             this.metroTabPage4.Controls.Add(this.metroButton8);
             this.metroTabPage4.Controls.Add(this.metroLabel3);
@@ -340,6 +347,24 @@
             this.metroTabPage4.VerticalScrollbarBarColor = true;
             this.metroTabPage4.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage4.VerticalScrollbarSize = 10;
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(388, 13);
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDown1.TabIndex = 9;
+            this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
+            // 
+            // metroLabel4
+            // 
+            this.metroLabel4.AutoSize = true;
+            this.metroLabel4.Location = new System.Drawing.Point(233, 13);
+            this.metroLabel4.Name = "metroLabel4";
+            this.metroLabel4.Size = new System.Drawing.Size(149, 19);
+            this.metroLabel4.TabIndex = 8;
+            this.metroLabel4.Text = "Halt Attack if HE3 below";
+            this.metroLabel4.Theme = MetroFramework.MetroThemeStyle.Dark;
             // 
             // metroTabControl3
             // 
@@ -518,6 +543,7 @@
             this.metroTabControl2.ResumeLayout(false);
             this.metroTabPage4.ResumeLayout(false);
             this.metroTabPage4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.metroTabControl3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -558,6 +584,8 @@
         private MetroFramework.Controls.MetroButton metroButton11;
         private MetroFramework.Controls.MetroButton metroButton9;
         private System.Windows.Forms.Timer discordRPC;
+        private MetroFramework.Controls.MetroLabel metroLabel4;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
     }
 }
 

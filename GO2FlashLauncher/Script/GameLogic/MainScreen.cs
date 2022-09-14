@@ -152,13 +152,14 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         public async Task<bool> EZRewards(Bitmap bmp)
         {
-            var result = bmp.FindImage(Path.GetFullPath("Images\\EZReward.png"), 0.95);
+            var crop = await bmp.Crop(new Point(0, 0), new Size(150, 500));
+            var result = crop.FindImage(Path.GetFullPath("Images\\EZReward.png"), 0.95);
             if (result == null)
             {
                 for (int i = 2; i < 3; i++)
                 {
                     await Task.Delay(50);
-                    result = bmp.FindImage(Path.GetFullPath("Images\\EZReward" + i + ".png"), 0.95);
+                    result = crop.FindImage(Path.GetFullPath("Images\\EZReward" + i + ".png"), 0.95);
                     if (result != null)
                     {
                         break;
