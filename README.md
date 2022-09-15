@@ -6,4 +6,4 @@ A custom launcher for SuperGO2
 * Change website background
 * Show full descriptions for BP
 
-Nothing else provided
+Nothing else provided （´◔ ₃ ◔`)
