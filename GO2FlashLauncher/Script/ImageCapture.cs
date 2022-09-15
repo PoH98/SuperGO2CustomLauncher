@@ -1,5 +1,6 @@
 ﻿using CefSharp.DevTools;
 using CefSharp.WinForms;
+using GO2FlashLauncher.Service;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -188,6 +189,7 @@ namespace GO2FlashLauncher.Script
                 {
                     bmp = new Bitmap(ms);
                 }
+                Logger.LogDebug("Image captured with " + bmp.Width + "x" + bmp.Height);
                 return bmp;
             }
             catch

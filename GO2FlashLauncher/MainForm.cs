@@ -126,6 +126,7 @@ namespace GO2FlashLauncher
             discordRPC_Tick(null, null);
             instanceSelection.SelectedIndex = this.settings.Instance - 1;
             metroToggle1.Checked = this.settings.RunBot;
+            numericUpDown1.Value = this.settings.HaltOn;
             RenderFleets();
 #if !DEBUG
             metroTabControl1.Controls.Remove(metroTabPage3);
@@ -136,12 +137,12 @@ namespace GO2FlashLauncher
         {
             if (!File.Exists(Path.GetFullPath("cache\\config.settings")))
             {
-                alpha.GetDevToolsClient().Emulation.SetUserAgentOverrideAsync("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) supergo2-btr/1.0.0-btr Chrome/85.0.4183.121 Electron/10.1.3 Safari/537.36");
+                alpha.GetDevToolsClient().Emulation.SetUserAgentOverrideAsync("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) supergo2-beta/1.0.0-beta Chrome/85.0.4183.121 Electron/10.1.3 Safari/537.36");
                 alpha.Load("https://beta.supergo2.com/");
             }
             else
             {
-                alpha.GetDevToolsClient().Emulation.SetUserAgentOverrideAsync("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) supergo2-btr/1.0.0-btr Chrome/85.0.4183.121 Electron/10.1.3 Safari/537.36");
+                alpha.GetDevToolsClient().Emulation.SetUserAgentOverrideAsync("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) supergo2-beta/1.0.0-beta Chrome/85.0.4183.121 Electron/10.1.3 Safari/537.36");
                 alpha.Load(File.ReadAllText(Path.GetFullPath("cache\\config.settings")));
             }
         }
@@ -466,6 +467,7 @@ input.dispatchEvent(event);
                 return;
             }
             FormBorderStyle = FormBorderStyle.Sizable;
+            metroTabPage1.Dock = DockStyle.Fill;
             Task.Run(() =>
             {
                 do
@@ -674,7 +676,12 @@ input.dispatchEvent(event);
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            settings.HaltOn = Convert.ToInt64(numericUpDown1.Value);
+            settings.HaltOn = numericUpDown1.Value;
+        }
+
+        private void numericUpDown1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            settings.HaltOn = numericUpDown1.Value;
         }
 
         private void RemoveFleet_Click(object sender, EventArgs e)

@@ -23,15 +23,15 @@ namespace GO2FlashLauncher.Script.GameLogic
         }
         public async Task<bool> SelectFleet(Bitmap bmp, List<Fleet> fleets, SelectFleetType fleetType)
         {
-            var crop = await bmp.Crop(new Point(250, 150), new Size(bmp.Width - 300, bmp.Height - 300));
-            var detectedFleets = crop.FindImageArray("Images\\fleettransmittimemarker.png", 0.8);
+            var crop = await bmp.Crop(new Point(200, 150), new Size(bmp.Width - 300, bmp.Height - 300));
+            var detectedFleets = crop.FindImageArray("Images\\fleettransmittimemarker.png", 0.75);
             if (detectedFleets.Length < 1)
             {
                 //no fleet
                 return false;
             }
-            var firstFleet = detectedFleets.OrderBy(x => x.X).First();
-            var clickPoint = new Point(firstFleet.X + 300, firstFleet.Y + 20);
+            var firstFleet = detectedFleets.OrderBy(x => x.X).OrderBy(x => x.Y).First();
+            var clickPoint = new Point(firstFleet.X + 250, firstFleet.Y + 150);
             var currentPage = 0;
             bmp = await devtools.Screenshot();
             foreach (Fleet f in fleets.OrderBy(x => x.Order))
@@ -169,7 +169,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             return false;
         }
 
-        public async Task<bool> RefillHE3(Bitmap bmp, BaseResources resources, long HaltOn)
+        public async Task<bool> RefillHE3(Bitmap bmp, BaseResources resources, decimal HaltOn)
         {
             var fullysupply = true;
             if(resources.HE3 <= HaltOn)

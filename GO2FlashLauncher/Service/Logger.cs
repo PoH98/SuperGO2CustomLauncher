@@ -48,7 +48,6 @@ namespace GO2FlashLauncher.Service
                 logger.SelectionLength = 0;
                 logger.SelectionColor = Color.Lime;
                 logger.AppendText(text);
-                logger.Focus();
                 logger.Select(logger.TextLength, 0);
                 logger.ScrollToCaret();
             });
@@ -72,7 +71,6 @@ namespace GO2FlashLauncher.Service
                 logger.SelectionLength = 0;
                 logger.SelectionColor = Color.Red;
                 logger.AppendText(text);
-                logger.Focus();
                 logger.Select(logger.TextLength, 0);
                 logger.ScrollToCaret();
             });
@@ -106,7 +104,6 @@ namespace GO2FlashLauncher.Service
                 logger.SelectionLength = 0;
                 logger.SelectionColor = Color.LightGray;
                 logger.AppendText(text);
-                logger.Focus();
                 logger.Select(logger.TextLength, 0);
                 logger.ScrollToCaret();
             });
@@ -128,7 +125,6 @@ namespace GO2FlashLauncher.Service
                 logger.SelectionLength = 0;
                 logger.SelectionColor = Color.Yellow;
                 logger.AppendText(text);
-                logger.Focus();
                 logger.Select(logger.TextLength, 0);
                 logger.ScrollToCaret();
             });

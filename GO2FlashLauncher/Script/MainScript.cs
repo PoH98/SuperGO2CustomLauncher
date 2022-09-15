@@ -329,6 +329,7 @@ namespace GO2FlashLauncher.Script
                                     await Task.Delay(1000);
                                     //detect close
                                     bmp = await devTools.Screenshot();
+                                    bmp = await bmp.Crop(new Point(0,0), new Size(bmp.Width, bmp.Height - 300));
                                     await b.CloseButtons(bmp);
                                     var detect = bmp.FindImageGrayscaled("Images\\MPOK.png", 0.8);
                                     if (detect != null)
@@ -358,17 +359,25 @@ namespace GO2FlashLauncher.Script
                             //lag detection
                             if (lastbmp != null)
                             {
-                                if (bmp.Size == lastbmp.Size)
+                                if ((noResources - DateTime.Now).TotalSeconds >= 0)
                                 {
-                                    if (l.IsLagging(bmp, lastbmp, inStage))
+                                    Logger.LogDebug("Halt attack, disabled lag detection");
+                                }
+                                else
+                                {
+                                    if (bmp.Size == lastbmp.Size)
                                     {
-                                        lag++;
-                                    }
-                                    else
-                                    {
-                                        lag = 0;
+                                        if (l.IsLagging(bmp, lastbmp, inStage))
+                                        {
+                                            lag++;
+                                        }
+                                        else
+                                        {
+                                            lag = 0;
+                                        }
                                     }
                                 }
+
 
                                 if (lag > 120)
                                 {
