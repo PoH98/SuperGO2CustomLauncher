@@ -521,9 +521,9 @@ input.dispatchEvent(event);
                 if(resources != null)
                 {
                     //set resources gain
-                    metalTotal.Text = (script.Resources.Metal - resources.Metal).ToString();
-                    heTotal.Text = (script.Resources.HE3 - resources.HE3).ToString();
-                    goldTotal.Text = (script.Resources.Metal - resources.Metal).ToString();
+                    metalTotal.Text = (script.Resources.Metal - resources.Metal).ToString("N0");
+                    heTotal.Text = (script.Resources.HE3 - resources.HE3).ToString("N0");
+                    goldTotal.Text = (script.Resources.Metal - resources.Metal).ToString("N0");
                 }
             }
         }
