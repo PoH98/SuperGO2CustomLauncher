@@ -115,6 +115,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Script\Clicker.cs" />
     <Compile Include="Script\GameLogic\Battle.cs" />
+    <Compile Include="Script\GameLogic\Inventory.cs" />
     <Compile Include="Script\GameLogic\LagDetection.cs" />
     <Compile Include="Script\GameLogic\MainScreen.cs" />
     <Compile Include="Script\GameLogic\SpaceStation.cs" />

@@ -33,6 +33,7 @@ namespace GO2FlashLauncher
         string profileName = "Bot1";
         BotSettings settings = new BotSettings();
         readonly RPC rpc = new RPC();
+        BaseResources resources;
         public MainForm()
         {
             InitializeComponent();
@@ -54,13 +55,11 @@ namespace GO2FlashLauncher
 
         private void Form1_Load(object sender, EventArgs e)
         {
-#if !DEBUG
-            metroButton3.Hide();      
-#endif
             if (File.Exists("debug.log"))
             {
                 File.Delete("debug.log");
             }
+            
             WindowState = FormWindowState.Maximized;
             metroTabControl1.SelectedIndex = 0;
             var settings = new CefSettings();
@@ -75,6 +74,18 @@ namespace GO2FlashLauncher
             settings.CefCommandLineArgs["plugin-policy"] = "allow";
             settings.CefCommandLineArgs.Add("allow-outdated-plugins");
             settings.CefCommandLineArgs.Add("use-angle", "gl");
+            settings.CefCommandLineArgs.Add("disable-quic");
+            settings.CefCommandLineArgs.Add("off-screen-rendering-enabled");
+            settings.CefCommandLineArgs.Add("no-activate");
+#if !DEBUG
+            metroButton3.Hide();
+            if (File.Exists("debug.txt"))
+            {
+                File.Delete("debug.txt");
+            }
+            settings.LogSeverity = LogSeverity.Disable;
+#endif
+
             var alphaContext = new RequestContextSettings
             {
                 IgnoreCertificateErrors = true,
@@ -231,6 +242,7 @@ namespace GO2FlashLauncher
                 else if (chrome.Address.StartsWith(host + "play") && alpha.CanExecuteJavascriptInMainFrame)
                 {
                     //player in game
+                    //here might need do more shit, like directly call the APIs and just load the iframe
                     File.WriteAllText(Path.GetFullPath("cache\\config.settings"), alpha.Address);
                     chrome.ExecuteScriptAsync(@"(function () {
 var iv = setInterval(()=>{
@@ -496,7 +508,24 @@ input.dispatchEvent(event);
             {
                 label1.Text = "Online Players: 0";
             }
-
+            if(script != null)
+            {
+                if (!script.Running)
+                {
+                    return;
+                }
+                if(resources == null && (script.Resources.Metal != 0 || script.Resources.HE3 != 0 || script.Resources.Gold != 0))
+                {
+                    resources = script.Resources;
+                }
+                if(resources != null)
+                {
+                    //set resources gain
+                    metalTotal.Text = (script.Resources.Metal - resources.Metal).ToString();
+                    heTotal.Text = (script.Resources.HE3 - resources.HE3).ToString();
+                    goldTotal.Text = (script.Resources.Metal - resources.Metal).ToString();
+                }
+            }
         }
 
         private void metroButton6_Click(object sender, EventArgs e)
@@ -522,6 +551,7 @@ input.dispatchEvent(event);
             else
             {
                 Logger.LogWarning("Bot Stopped");
+                resources = null;
             }
         }
 

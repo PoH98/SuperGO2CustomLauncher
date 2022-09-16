@@ -15,6 +15,22 @@ namespace GO2FlashLauncher.Script
     {
         private bool IsRunning;
         private readonly BotSettings botSettings;
+        private BaseResources resources = new BaseResources();
+        private DateTime BotStartTime;
+        public BaseResources Resources
+        {
+            get
+            {
+                return resources;
+            }
+        }
+        public TimeSpan BotRuntime
+        {
+            get
+            {
+                return DateTime.Now - BotStartTime;
+            }
+        }
         public MainScript(BotSettings settings)
         {
             this.botSettings = settings;
@@ -45,6 +61,7 @@ namespace GO2FlashLauncher.Script
                     return;
                 }
                 IsRunning = true;
+                BotStartTime = DateTime.Now;
                 var devTools = browser.GetBrowser().GetDevToolsClient();
                 var host = browser.GetBrowser().GetHost();
                 try
@@ -53,8 +70,9 @@ namespace GO2FlashLauncher.Script
                     MainScreen m = new MainScreen(browser);
                     SpaceStation s = new SpaceStation(browser);
                     Battle b = new Battle(browser);
+                    Inventory i = new Inventory(browser);
                     LagDetection l = new LagDetection();
-                    BaseResources resources = new BaseResources();
+
                     //Init status
                     bool mainScreenLocated = false;
                     bool spaceStationLocated = false;
@@ -218,7 +236,6 @@ namespace GO2FlashLauncher.Script
                                                             spaceStationLocated = false;
                                                             mainScreenLocated = false;
                                                             inStage = false;
-                                                            IsRunning = false;
                                                             browser.Reload();
                                                             return;
                                                         }
@@ -239,7 +256,6 @@ namespace GO2FlashLauncher.Script
                                                             spaceStationLocated = false;
                                                             mainScreenLocated = false;
                                                             inStage = false;
-                                                            IsRunning = false;
                                                             browser.Reload();
                                                             return;
                                                         }
@@ -292,26 +308,48 @@ namespace GO2FlashLauncher.Script
                             }
                             else if (inStage)
                             {
+                                var mail = bmp.FindImage("Images\\mail.png", 0.6);
+                                if (mail.HasValue)
+                                {
+                                    Logger.LogInfo("Found Mail");
+                                    //collect mail
+                                    if (!await m.CollectMails(bmp))
+                                    {
+                                        //something wrong
+                                        spaceStationLocated = false;
+                                        mainScreenLocated = false;
+                                        inStage = false;
+                                        browser.Reload();
+                                    }
+                                    else
+                                    {
+                                        bmp = await browser.Screenshot();
+                                    }
+                                }
+                                if (stageCount > 3)
+                                {
+                                    if(await i.OpenInventory(bmp))
+                                    {
+                                        bmp = await browser.Screenshot();
+                                        //open boxes
+                                        await i.OpenTreasury(bmp, stageCount);
+                                        await b.CloseButtons(bmp);
+                                        stageCount = 0;
+                                    }
+                                    else
+                                    {
+                                        await b.CloseButtons(bmp);
+                                    }
+                                }
+                                if(stageCount > 5)
+                                {
+                                    //go open boxes
+                                }
                                 if (await b.BattleEnds(bmp))
                                 {
                                     Logger.LogInfo("Battle Ends");
                                     inStage = false;
                                     spaceStationLocated = false;
-                                    //check mailbox, bugged now and dumb
-                                    var mail = bmp.FindImage("Images\\mail.png", 0.6);
-                                    if (mail.HasValue)
-                                    {
-                                        Logger.LogInfo("Found Mail");
-                                        //collect mail
-                                        if (!await m.CollectMails(bmp))
-                                        {
-                                            //something wrong
-                                            spaceStationLocated = false;
-                                            mainScreenLocated = false;
-                                            inStage = false;
-                                            browser.Reload();
-                                        }
-                                    }
                                     Logger.ClearLog();
                                 }
                                 else
