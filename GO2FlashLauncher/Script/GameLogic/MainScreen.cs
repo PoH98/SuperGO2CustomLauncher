@@ -243,22 +243,22 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         public async Task<BaseResources> DetectResource(Bitmap bmp)
         {
-            var metal = await bmp.Crop(new Point(bmp.Width - 210, 22), new Size(90, 17));
-            var he3 = await bmp.Crop(new Point(bmp.Width - 210, 41), new Size(90, 17));
-            var gold = await bmp.Crop(new Point(bmp.Width - 106, 22), new Size(90, 17));
+            var metal = await bmp.Crop(new Point(bmp.Width - 210, 1), new Size(90, 15));
+            var he3 = await bmp.Crop(new Point(bmp.Width - 210, 25), new Size(90, 15));
+            var gold = await bmp.Crop(new Point(bmp.Width - 100, 1), new Size(90, 15));
             var result = new BaseResources();
             Image<Gray, byte> mi = metal.ToImage<Gray, byte>();
             Image<Gray, byte> hi = he3.ToImage<Gray, byte>();
             Image<Gray, byte> gl = gold.ToImage<Gray, byte>();
             ocr.SetImage(mi);
             ocr.Recognize();
-            var m = long.Parse(new String(ocr.GetUTF8Text().Where(Char.IsDigit).ToArray()));
+            long.TryParse(new String(ocr.GetUTF8Text().Where(Char.IsDigit).ToArray()), out long m);
             ocr.SetImage(hi);
             ocr.Recognize();
-            var h = long.Parse(new String(ocr.GetUTF8Text().Where(Char.IsDigit).ToArray()));
+            long.TryParse(new String(ocr.GetUTF8Text().Where(Char.IsDigit).ToArray()), out long h);
             ocr.SetImage(gl);
             ocr.Recognize();
-            var g = long.Parse(new String(ocr.GetUTF8Text().Where(Char.IsDigit).ToArray()));
+            long.TryParse(new String(ocr.GetUTF8Text().Where(Char.IsDigit).ToArray()), out long g);
             result.Metal = m;
             result.HE3 = h;
             result.Gold = g;

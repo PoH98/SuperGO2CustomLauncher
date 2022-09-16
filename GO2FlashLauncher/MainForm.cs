@@ -34,6 +34,7 @@ namespace GO2FlashLauncher
         BotSettings settings = new BotSettings();
         readonly RPC rpc = new RPC();
         BaseResources resources;
+        GO2HttpService GO2HttpService = new GO2HttpService();
         public MainForm()
         {
             InitializeComponent();
@@ -50,6 +51,8 @@ namespace GO2FlashLauncher
                 settings = JsonConvert.DeserializeObject<BotSettings>(File.ReadAllText("Profile\\" + profileName + "\\config.json"));
             }
             scriptKey = Encryption.RandomString(10);
+            numericUpDown1.Maximum = decimal.MaxValue;
+            numericUpDown2.Maximum = decimal.MaxValue;
             Logger.Init(richTextBox1, profileName);
         }
 
@@ -83,7 +86,7 @@ namespace GO2FlashLauncher
             {
                 File.Delete("debug.txt");
             }
-            settings.LogSeverity = LogSeverity.Disable;
+            settings.LogSeverity = LogSeverity.Fatal;
 #endif
 
             var alphaContext = new RequestContextSettings
@@ -108,6 +111,8 @@ namespace GO2FlashLauncher
 
             beta = new ChromiumWebBrowser("blank");
             alpha = new ChromiumWebBrowser("blank");
+            alpha.BackColor = Color.Black;
+            beta.BackColor = Color.Black;
             krtools = new ChromiumWebBrowser("https://krtools.deajae.co.uk/");
             alpha.RequestContext = new RequestContext(alphaContext);
             beta.RequestContext = new RequestContext(betaContext);
@@ -128,88 +133,115 @@ namespace GO2FlashLauncher
             beta.Dock = DockStyle.Fill;
             krtools.Dock = DockStyle.Fill;
             beta.IsBrowserInitializedChanged += Beta_IsBrowserInitializedChanged;
-            alpha.IsBrowserInitializedChanged += Alpha_IsBrowserInitializedChanged;
+            alpha.IsBrowserInitializedChanged += BrowserInitializedChanged;
             alpha.LoadingStateChanged += ChromiumWebBrowser_LoadingStateChanged;
             beta.LoadingStateChanged += ChromiumWebBrowser_LoadingStateChanged;
-            alpha.ConsoleMessage += ChromiumWebBrowser_ConsoleMessage;
             timer1_Tick(null, null);
             timer1.Start();
             discordRPC_Tick(null, null);
             instanceSelection.SelectedIndex = this.settings.Instance - 1;
             metroToggle1.Checked = this.settings.RunBot;
             numericUpDown1.Value = this.settings.HaltOn;
+            numericUpDown2.Value = this.settings.InstanceHitCount;
             RenderFleets();
 #if !DEBUG
             metroTabControl1.Controls.Remove(metroTabPage3);
 #endif
         }
 
-        private void Alpha_IsBrowserInitializedChanged(object sender, EventArgs e)
+        private async void BrowserInitializedChanged(object sender, EventArgs e)
         {
-            if (!File.Exists(Path.GetFullPath("cache\\config.settings")))
+            if (string.IsNullOrEmpty(settings.AuthKey))
             {
-                alpha.GetDevToolsClient().Emulation.SetUserAgentOverrideAsync("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) supergo2-beta/1.0.0-beta Chrome/85.0.4183.121 Electron/10.1.3 Safari/537.36");
-                alpha.Load("https://beta.supergo2.com/");
+                if (string.IsNullOrEmpty(settings.CredentialHash))
+                {
+                    //need login
+                    Login login = new Login(profileName);
+                    if (login.ShowDialog() == DialogResult.OK)
+                    {
+                        if (File.Exists("Profile\\" + profileName + "\\config.json"))
+                        {
+                            settings = JsonConvert.DeserializeObject<BotSettings>(File.ReadAllText("Profile\\" + profileName + "\\config.json"));
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("We can't log you in without your credentials! Exiting...");
+                        Close();
+                    }
+                }
+                try
+                {
+                    var profile = Encryption.Decrypt(settings.CredentialHash);
+                    Logger.LogInfo("Logging " + profile.Email + " in....Please be patient!");
+                    var credential = await GO2HttpService.Login(profile.Email, profile.Password);
+                    var planet = await GO2HttpService.GetPlanets();
+                    PlanetSelection planetSelection;
+                    do
+                    {
+                        planetSelection = new PlanetSelection(planet);
+                    }
+                    while (planetSelection.ShowDialog() != DialogResult.OK);
+                    //get selected planet
+                    var selectedPlanet = planet.Data[planetSelection.SelectedProfile];
+                    var url = await GO2HttpService.GetIFrameUrl(selectedPlanet.UserId);
+                    alpha.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                    Logger.LogInfo("Logging " + profile.Email + " success!");
+                    settings.AuthKey = credential.Data.Token;
+                    if (planetSelection.RememberMe)
+                    {
+                        settings.PlanetId = url.Data.UserId;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    settings.AuthKey = null;
+                    Logger.LogError("Login failed! Retrying...\nError Info: \n" + ex.ToString());
+                    BrowserInitializedChanged(sender, e);
+                }
             }
             else
             {
-                alpha.GetDevToolsClient().Emulation.SetUserAgentOverrideAsync("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) supergo2-beta/1.0.0-beta Chrome/85.0.4183.121 Electron/10.1.3 Safari/537.36");
-                alpha.Load(File.ReadAllText(Path.GetFullPath("cache\\config.settings")));
+                try
+                {
+                    GO2HttpService.SetToken(settings.AuthKey);
+                    if (settings.PlanetId == -1)
+                    {
+                        var planet = await GO2HttpService.GetPlanets();
+                        PlanetSelection planetSelection;
+                        do
+                        {
+                            planetSelection = new PlanetSelection(planet);
+                        }
+                        while (planetSelection.ShowDialog() != DialogResult.OK);
+                        var selectedPlanet = planet.Data[planetSelection.SelectedProfile];
+                        var url = await GO2HttpService.GetIFrameUrl(selectedPlanet.UserId);
+                        if (planetSelection.RememberMe)
+                        {
+                            settings.PlanetId = url.Data.UserId;
+                        }
+                        (sender as ChromiumWebBrowser).Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                    }
+                    else
+                    {
+                        var url = await GO2HttpService.GetIFrameUrl(settings.PlanetId);
+                        (sender as ChromiumWebBrowser).Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                    }
+                }
+                catch
+                {
+                    settings.AuthKey = null;
+                    BrowserInitializedChanged(sender, e);
+                }
+
+
             }
         }
 
         private void Beta_IsBrowserInitializedChanged(object sender, EventArgs e)
         {
-            if (!File.Exists(Path.GetFullPath("cache\\config.beta.settings")))
-            {
-                beta.GetDevToolsClient().Emulation.SetUserAgentOverrideAsync("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) supergo2-btr/1.0.0-btr Chrome/85.0.4183.121 Electron/10.1.3 Safari/537.36");
-                beta.Load("http://149.56.143.181:3000/");
-            }
-            else
-            {
-                beta.GetDevToolsClient().Emulation.SetUserAgentOverrideAsync("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) supergo2-btr/1.0.0-btr Chrome/85.0.4183.121 Electron/10.1.3 Safari/537.36");
-                beta.Load(File.ReadAllText(Path.GetFullPath("cache\\config.beta.settings")));
-            }
-        }
 
-        private void ChromiumWebBrowser_ConsoleMessage(object sender, ConsoleMessageEventArgs e)
-        {
-            var chrome = (ChromiumWebBrowser)sender;
-            if (e.Message == "back to home!")
-            {
-                if (redirector != null)
-                {
-                    if (redirector.IsAlive)
-                        return;
-                }
-                redirector = new Thread(() =>
-                {
-                    Thread.Sleep(5000);
-                    chrome.Load("https://beta.supergo2.com/");
-                });
-                redirector.Start();
-            }
-            else if (e.Message == "LAAL")
-            {
-                if (redirector != null)
-                {
-                    redirector.Abort();
-                    redirector = null;
-                }
-            }
-            else if (e.Message.StartsWith("Login result:"))
-            {
-                if (!e.Message.Contains("Invalid"))
-                {
-                    chrome.ExecuteScriptAsync("document.querySelector(\"a[href = '/myplanets']\").click()");
-                }
-            }
-            else if (e.Message == scriptKey)
-            {
-                RunScript(chrome);
-            }
         }
-
         private void ChromiumWebBrowser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
             var chrome = (ChromiumWebBrowser)sender;
@@ -217,68 +249,31 @@ namespace GO2FlashLauncher
             {
                 return;
             }
-            var uri = new Uri(chrome.Address);
-            var host = uri.Scheme + "://" + uri.Host;
-            if (!uri.IsDefaultPort)
-            {
-                host += ":" + uri.Port;
-            }
-            if (!host.EndsWith("/"))
-            {
-                host += "/";
-            }
-
             if (!e.IsLoading)
             {
+
                 if (chrome.Address.Contains("igg"))
                 {
                     chrome.Back();
                     return;
-                }
-                else if (chrome.Address == host && File.Exists(Path.GetFullPath("cache\\credential.settings")))
+                }              
+                else if (chrome.Address.StartsWith("https://beta-client.supergo2.com/?userId="))
                 {
-                    LoginWeb(chrome);
-                }
-                else if (chrome.Address.StartsWith(host + "play") && alpha.CanExecuteJavascriptInMainFrame)
-                {
-                    //player in game
-                    //here might need do more shit, like directly call the APIs and just load the iframe
-                    File.WriteAllText(Path.GetFullPath("cache\\config.settings"), alpha.Address);
-                    chrome.ExecuteScriptAsync(@"(function () {
-var iv = setInterval(()=>{
-try
-{ 
-if(document.getElementsByTagName('iframe')){
-   document.getElementById('wrapper').style.overflow = 'hidden';
-   document.getElementsByTagName('iframe')[0].height = '" + (chrome.Size.Height - 110) + @"';
-   document.getElementsByTagName('iframe')[0].width = '" + (chrome.Size.Width > 1920 ? 1920 : chrome.Size.Width) + @"';
-   document.getElementsByTagName('iframe')[0].style.minHeight = '" + (chrome.Size.Height - 110) + @"px';
-   document.getElementsByTagName('iframe')[0].style.minWidth = '" + (chrome.Size.Width > 1920 ? 1920 : chrome.Size.Width) + @"px';
-   document.getElementsByTagName('iframe')[0].style.maxWidth = '1920px';
-   document.getElementsByTagName('iframe')[0].style.marginLeft = 'auto';
-   document.getElementsByTagName('iframe')[0].style.marginRight = 'auto';
-   document.getElementsByTagName('iframe')[0].style.marginTop = '15px';
-   document.getElementsByTagName('iframe')[0].style.marginBottom = '15px';
-   console.log('" + scriptKey + @"');
-   document.querySelector('#wrapper .row').style.display = 'none';
-   clearInterval(iv);
-}
-}
-catch
-{ 
-   console.log('back to home!') 
-}
-}, 1000);
-})();");
+                    if (!e.Browser.HasDocument)
+                    {
+                        //error
+                        settings.AuthKey = null;
+                        BrowserInitializedChanged(sender, e);
+                    }
                     RunScript(chrome);
                 }
                 if (!File.Exists(Path.GetFullPath("cache\\background.settings")) && chrome.CanExecuteJavascriptInMainFrame)
                 {
-                    chrome.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'none'");
+                    chrome.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'none';");
                 }
                 else if (chrome.CanExecuteJavascriptInMainFrame)
                 {
-                    chrome.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'url(data:image/png;base64," + ConvertImage(File.ReadAllText(Path.GetFullPath("cache\\background.settings"))) + ")'");
+                    chrome.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'url(data:image/png;base64," + ConvertImage(File.ReadAllText(Path.GetFullPath("cache\\background.settings"))) + ");");
                 }
             }
         }
@@ -361,86 +356,6 @@ catch
             }
         }
 
-        private void metroButton4_Click(object sender, EventArgs e)
-        {
-            Login login = new Login(profileName);
-            login.Show();
-            login.FormClosed += Login_FormClosed;
-        }
-
-        private void Login_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            if (File.Exists("Profile\\" + profileName + "\\config.json"))
-            {
-                settings = JsonConvert.DeserializeObject<BotSettings>(File.ReadAllText("Profile\\" + profileName + "\\config.json"));
-            }
-            LoginWeb(alpha);
-            LoginWeb(beta);
-        }
-
-        private async void LoginWeb(ChromiumWebBrowser web)
-        {
-            var hashed = settings.CredentialHash;
-            if(hashed == null)
-            {
-                richTextBox1.Invoke((MethodInvoker)delegate
-                {
-                    richTextBox1.AppendText("\nNo auto login creditials detected!\n");
-                });
-                return;
-            }
-            var login = Encryption.Decrypt(hashed);
-            try
-            {
-                web.ExecuteScriptAsync("document.querySelector('#navbarDropdown').click();");
-                web.ExecuteScriptAsync(@"(function(){
-var text = '" + login.Email + @"';
-var input = document.querySelector('input[name=" + "\"username\"" + @"]');
-var nativeTextAreaValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
-nativeTextAreaValueSetter.call(input, text);
-
-const event = new Event('input', { bubbles: true });
-input.dispatchEvent(event);
-})()");
-                await Task.Delay((login.Email.Length * 50) + 100);
-                web.ExecuteScriptAsync(@"(function(){
-var text = '" + login.Password + @"';
-var input = document.querySelector('input[name=" + "\"password\"" + @"]');
-var nativeTextAreaValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
-nativeTextAreaValueSetter.call(input, text);
-
-const event = new Event('input', { bubbles: true });
-input.dispatchEvent(event);
-})()");
-                await Task.Delay((login.Password.Length * 50) + 100);
-                web.ExecuteScriptAsync("document.querySelector('.loginBox__button.btn-primary').click();");
-                await Task.Delay(3000);
-                web.ExecuteScriptAsync("console.log(\"Login result:\"+document.querySelector('#swal2-html-container').innerText)");
-            }
-            catch(Exception ex)
-            {
-                if(ex.Message.Contains("Unable to execute javascript at this time"))
-                {
-                    while (!web.CanExecuteJavascriptInMainFrame)
-                    {
-                        await Task.Delay(1000);
-                    }
-                    LoginWeb(web);
-                }
-                richTextBox1.Invoke((MethodInvoker)delegate
-                {
-                    richTextBox1.SelectionStart = richTextBox1.TextLength;
-                    richTextBox1.SelectionLength = 0;
-                    richTextBox1.SelectionColor = Color.Red;
-                    richTextBox1.AppendText("\n" + "[" + DateTime.Now.ToString("HH:mm") + "]: " + ex.Message);
-                    richTextBox1.Focus();
-                    richTextBox1.Select(richTextBox1.TextLength, 0);
-                    richTextBox1.ScrollToCaret();
-                });
-            }
-
-        }
-
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (!Directory.Exists("Profile"))
@@ -480,20 +395,6 @@ input.dispatchEvent(event);
             }
             FormBorderStyle = FormBorderStyle.Sizable;
             metroTabPage1.Dock = DockStyle.Fill;
-            Task.Run(() =>
-            {
-                do
-                {
-                    Thread.Sleep(200);
-                }
-                while (!alpha.CanExecuteJavascriptInMainFrame);
-                alpha.ExecuteScriptAsync(@"
-   document.getElementsByTagName('iframe')[0].height = '" + (alpha.Size.Height - 110) + @"';
-   document.getElementsByTagName('iframe')[0].width = '" + alpha.Size.Width + @"';
-   document.getElementsByTagName('iframe')[0].style.minHeight = '" + (alpha.Size.Height - 110) + @"px';
-   document.getElementsByTagName('iframe')[0].style.minWidth = '" + alpha.Size.Width + @"px';
-");
-            });
         }
 
         private async void timer1_Tick(object sender, EventArgs e)
@@ -523,7 +424,14 @@ input.dispatchEvent(event);
                     //set resources gain
                     metalTotal.Text = (script.Resources.Metal - resources.Metal).ToString("N0");
                     heTotal.Text = (script.Resources.HE3 - resources.HE3).ToString("N0");
-                    goldTotal.Text = (script.Resources.Metal - resources.Metal).ToString("N0");
+                    goldTotal.Text = (script.Resources.Gold - resources.Gold).ToString("N0");
+                    if(script.BotRuntime.TotalHours < 0)
+                    {
+                        return;
+                    }
+                    metalPerHour.Text = ((script.Resources.Metal - resources.Metal) / script.BotRuntime.TotalHours).ToString("N0") + "/h";
+                    hePerHour.Text = ((script.Resources.HE3 - resources.HE3) / script.BotRuntime.TotalHours).ToString("N0") + "/h";
+                    goldPerHour.Text = ((script.Resources.Gold - resources.Gold) / script.BotRuntime.TotalHours).ToString("N0") + "/h";
                 }
             }
         }
@@ -712,6 +620,16 @@ input.dispatchEvent(event);
         private void numericUpDown1_KeyPress(object sender, KeyPressEventArgs e)
         {
             settings.HaltOn = numericUpDown1.Value;
+        }
+
+        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        {
+            settings.InstanceHitCount = numericUpDown2.Value;
+        }
+
+        private void numericUpDown2_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            settings.InstanceHitCount = numericUpDown2.Value;
         }
 
         private void RemoveFleet_Click(object sender, EventArgs e)

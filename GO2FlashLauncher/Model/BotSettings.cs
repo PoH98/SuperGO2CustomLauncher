@@ -9,6 +9,9 @@ namespace GO2FlashLauncher.Model
         public List<Fleet> Fleets { get; set; } = new List<Fleet>();
         public string CredentialHash { get; set; }
         public decimal HaltOn { get; set; }
+        public decimal InstanceHitCount { get; set; } = 1;
+        public string AuthKey { get; set; }
+        public int PlanetId { get; set; } = -1;
     }
 
     internal class Fleet

@@ -70,6 +70,7 @@ namespace GO2FlashLauncher.Script.GameLogic
         public async Task<bool> OpenTreasury(Bitmap bmp, int loopCount = 5)
         {
             bool filtered = false;
+            bmp.Save("debug.bmp");
             for(int y = 0; y < loopCount; y++)
             {
                 Point? point;
@@ -79,10 +80,10 @@ namespace GO2FlashLauncher.Script.GameLogic
                     if (!filtered)
                     {
                         //click on filter
-                        point = bmp.FindImage("Images\\bagitemfilter.png", 0.8);
+                        point = bmp.FindImage("Images\\bagitemfilter.png", 0.7);
                         if (point == null)
                         {
-                            point = bmp.FindImage("Images\\bagitemfilter2.png", 0.8);
+                            point = bmp.FindImage("Images\\bagitemfilter2.png", 0.7);
                             if (point == null)
                             {
                                 //error

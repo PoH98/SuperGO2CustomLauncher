@@ -32,6 +32,19 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.metroTabControl1 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.goldTotal = new System.Windows.Forms.Label();
+            this.heTotal = new System.Windows.Forms.Label();
+            this.metalTotal = new System.Windows.Forms.Label();
+            this.goldPerHour = new System.Windows.Forms.Label();
+            this.hePerHour = new System.Windows.Forms.Label();
+            this.metalPerHour = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroToggle1 = new MetroFramework.Controls.MetroToggle();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
@@ -50,6 +63,8 @@
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
             this.metroTabControl2 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
+            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+            this.metroLabel5 = new MetroFramework.Controls.MetroLabel();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.metroLabel4 = new MetroFramework.Controls.MetroLabel();
             this.metroTabControl3 = new MetroFramework.Controls.MetroTabControl();
@@ -59,34 +74,21 @@
             this.instanceSelection = new MetroFramework.Controls.MetroComboBox();
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
             this.metroButton5 = new MetroFramework.Controls.MetroButton();
-            this.metroButton4 = new MetroFramework.Controls.MetroButton();
             this.metroButton1 = new MetroFramework.Controls.MetroButton();
             this.label1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.discordRPC = new System.Windows.Forms.Timer(this.components);
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.metalPerHour = new System.Windows.Forms.Label();
-            this.hePerHour = new System.Windows.Forms.Label();
-            this.goldPerHour = new System.Windows.Forms.Label();
-            this.metalTotal = new System.Windows.Forms.Label();
-            this.heTotal = new System.Windows.Forms.Label();
-            this.goldTotal = new System.Windows.Forms.Label();
             this.metroTabControl1.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.metroTabPage3.SuspendLayout();
             this.metroTabPage5.SuspendLayout();
             this.metroTabPage2.SuspendLayout();
             this.metroTabControl2.SuspendLayout();
             this.metroTabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.metroTabControl3.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // metroTabControl1
@@ -101,7 +103,7 @@
             this.metroTabControl1.Location = new System.Drawing.Point(4, 23);
             this.metroTabControl1.Multiline = true;
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 0;
+            this.metroTabControl1.SelectedIndex = 3;
             this.metroTabControl1.Size = new System.Drawing.Size(1246, 634);
             this.metroTabControl1.TabIndex = 0;
             this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -128,6 +130,138 @@
             this.metroTabPage1.VerticalScrollbarBarColor = true;
             this.metroTabPage1.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage1.VerticalScrollbarSize = 10;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.BackColor = System.Drawing.Color.Black;
+            this.groupBox1.Controls.Add(this.goldTotal);
+            this.groupBox1.Controls.Add(this.heTotal);
+            this.groupBox1.Controls.Add(this.metalTotal);
+            this.groupBox1.Controls.Add(this.goldPerHour);
+            this.groupBox1.Controls.Add(this.hePerHour);
+            this.groupBox1.Controls.Add(this.metalPerHour);
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.label6);
+            this.groupBox1.Controls.Add(this.label7);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.ForeColor = System.Drawing.Color.White;
+            this.groupBox1.Location = new System.Drawing.Point(1057, 479);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(178, 110);
+            this.groupBox1.TabIndex = 14;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Gain Resources";
+            // 
+            // goldTotal
+            // 
+            this.goldTotal.AutoSize = true;
+            this.goldTotal.Location = new System.Drawing.Point(45, 90);
+            this.goldTotal.Name = "goldTotal";
+            this.goldTotal.Size = new System.Drawing.Size(13, 13);
+            this.goldTotal.TabIndex = 11;
+            this.goldTotal.Text = "0";
+            // 
+            // heTotal
+            // 
+            this.heTotal.AutoSize = true;
+            this.heTotal.Location = new System.Drawing.Point(45, 77);
+            this.heTotal.Name = "heTotal";
+            this.heTotal.Size = new System.Drawing.Size(13, 13);
+            this.heTotal.TabIndex = 10;
+            this.heTotal.Text = "0";
+            // 
+            // metalTotal
+            // 
+            this.metalTotal.AutoSize = true;
+            this.metalTotal.Location = new System.Drawing.Point(45, 64);
+            this.metalTotal.Name = "metalTotal";
+            this.metalTotal.Size = new System.Drawing.Size(13, 13);
+            this.metalTotal.TabIndex = 9;
+            this.metalTotal.Text = "0";
+            // 
+            // goldPerHour
+            // 
+            this.goldPerHour.AutoSize = true;
+            this.goldPerHour.Location = new System.Drawing.Point(45, 42);
+            this.goldPerHour.Name = "goldPerHour";
+            this.goldPerHour.Size = new System.Drawing.Size(24, 13);
+            this.goldPerHour.TabIndex = 8;
+            this.goldPerHour.Text = "0/h";
+            // 
+            // hePerHour
+            // 
+            this.hePerHour.AutoSize = true;
+            this.hePerHour.Location = new System.Drawing.Point(45, 29);
+            this.hePerHour.Name = "hePerHour";
+            this.hePerHour.Size = new System.Drawing.Size(24, 13);
+            this.hePerHour.TabIndex = 7;
+            this.hePerHour.Text = "0/h";
+            // 
+            // metalPerHour
+            // 
+            this.metalPerHour.AutoSize = true;
+            this.metalPerHour.Location = new System.Drawing.Point(45, 16);
+            this.metalPerHour.Name = "metalPerHour";
+            this.metalPerHour.Size = new System.Drawing.Size(24, 13);
+            this.metalPerHour.TabIndex = 6;
+            this.metalPerHour.Text = "0/h";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 90);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(29, 13);
+            this.label5.TabIndex = 5;
+            this.label5.Text = "Gold";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 77);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(28, 13);
+            this.label6.TabIndex = 4;
+            this.label6.Text = "HE3";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(6, 64);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(33, 13);
+            this.label7.TabIndex = 3;
+            this.label7.Text = "Metal";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 42);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(29, 13);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Gold";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 29);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(28, 13);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "HE3";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 16);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(33, 13);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Metal";
             // 
             // metroLabel1
             // 
@@ -315,7 +449,6 @@
             // 
             this.metroTabPage2.Controls.Add(this.metroTabControl2);
             this.metroTabPage2.Controls.Add(this.metroButton5);
-            this.metroTabPage2.Controls.Add(this.metroButton4);
             this.metroTabPage2.Controls.Add(this.metroButton1);
             this.metroTabPage2.HorizontalScrollbarBarColor = true;
             this.metroTabPage2.HorizontalScrollbarHighlightOnWheel = false;
@@ -343,6 +476,8 @@
             // 
             // metroTabPage4
             // 
+            this.metroTabPage4.Controls.Add(this.numericUpDown2);
+            this.metroTabPage4.Controls.Add(this.metroLabel5);
             this.metroTabPage4.Controls.Add(this.numericUpDown1);
             this.metroTabPage4.Controls.Add(this.metroLabel4);
             this.metroTabPage4.Controls.Add(this.metroTabControl3);
@@ -362,6 +497,36 @@
             this.metroTabPage4.VerticalScrollbarBarColor = true;
             this.metroTabPage4.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage4.VerticalScrollbarSize = 10;
+            // 
+            // numericUpDown2
+            // 
+            this.numericUpDown2.Location = new System.Drawing.Point(784, 13);
+            this.numericUpDown2.Maximum = new decimal(new int[] {
+            999999999,
+            0,
+            0,
+            0});
+            this.numericUpDown2.Name = "numericUpDown2";
+            this.numericUpDown2.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDown2.TabIndex = 11;
+            this.numericUpDown2.ThousandsSeparator = true;
+            this.numericUpDown2.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown2.ValueChanged += new System.EventHandler(this.numericUpDown2_ValueChanged);
+            this.numericUpDown2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.numericUpDown2_KeyPress);
+            // 
+            // metroLabel5
+            // 
+            this.metroLabel5.AutoSize = true;
+            this.metroLabel5.Location = new System.Drawing.Point(534, 13);
+            this.metroLabel5.Name = "metroLabel5";
+            this.metroLabel5.Size = new System.Drawing.Size(233, 19);
+            this.metroLabel5.TabIndex = 10;
+            this.metroLabel5.Text = "Open box when hit X times of instance";
+            this.metroLabel5.Theme = MetroFramework.MetroThemeStyle.Dark;
             // 
             // numericUpDown1
             // 
@@ -498,17 +663,6 @@
             this.metroButton5.UseSelectable = true;
             this.metroButton5.Click += new System.EventHandler(this.metroButton5_Click);
             // 
-            // metroButton4
-            // 
-            this.metroButton4.Location = new System.Drawing.Point(297, 3);
-            this.metroButton4.Name = "metroButton4";
-            this.metroButton4.Size = new System.Drawing.Size(141, 39);
-            this.metroButton4.TabIndex = 7;
-            this.metroButton4.Text = "Auto Login";
-            this.metroButton4.Theme = MetroFramework.MetroThemeStyle.Dark;
-            this.metroButton4.UseSelectable = true;
-            this.metroButton4.Click += new System.EventHandler(this.metroButton4_Click);
-            // 
             // metroButton1
             // 
             this.metroButton1.Location = new System.Drawing.Point(3, 3);
@@ -541,138 +695,6 @@
             this.discordRPC.Interval = 1000;
             this.discordRPC.Tick += new System.EventHandler(this.discordRPC_Tick);
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.BackColor = System.Drawing.Color.Black;
-            this.groupBox1.Controls.Add(this.goldTotal);
-            this.groupBox1.Controls.Add(this.heTotal);
-            this.groupBox1.Controls.Add(this.metalTotal);
-            this.groupBox1.Controls.Add(this.goldPerHour);
-            this.groupBox1.Controls.Add(this.hePerHour);
-            this.groupBox1.Controls.Add(this.metalPerHour);
-            this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.label7);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.ForeColor = System.Drawing.Color.White;
-            this.groupBox1.Location = new System.Drawing.Point(1057, 479);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(178, 110);
-            this.groupBox1.TabIndex = 14;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Gain Resources";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 16);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(33, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Metal";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 29);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(28, 13);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "HE3";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 42);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(29, 13);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Gold";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 90);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(29, 13);
-            this.label5.TabIndex = 5;
-            this.label5.Text = "Gold";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 77);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(28, 13);
-            this.label6.TabIndex = 4;
-            this.label6.Text = "HE3";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 64);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(33, 13);
-            this.label7.TabIndex = 3;
-            this.label7.Text = "Metal";
-            // 
-            // metalPerHour
-            // 
-            this.metalPerHour.AutoSize = true;
-            this.metalPerHour.Location = new System.Drawing.Point(45, 16);
-            this.metalPerHour.Name = "metalPerHour";
-            this.metalPerHour.Size = new System.Drawing.Size(24, 13);
-            this.metalPerHour.TabIndex = 6;
-            this.metalPerHour.Text = "0/h";
-            // 
-            // hePerHour
-            // 
-            this.hePerHour.AutoSize = true;
-            this.hePerHour.Location = new System.Drawing.Point(45, 29);
-            this.hePerHour.Name = "hePerHour";
-            this.hePerHour.Size = new System.Drawing.Size(24, 13);
-            this.hePerHour.TabIndex = 7;
-            this.hePerHour.Text = "0/h";
-            // 
-            // goldPerHour
-            // 
-            this.goldPerHour.AutoSize = true;
-            this.goldPerHour.Location = new System.Drawing.Point(45, 42);
-            this.goldPerHour.Name = "goldPerHour";
-            this.goldPerHour.Size = new System.Drawing.Size(24, 13);
-            this.goldPerHour.TabIndex = 8;
-            this.goldPerHour.Text = "0/h";
-            // 
-            // metalTotal
-            // 
-            this.metalTotal.AutoSize = true;
-            this.metalTotal.Location = new System.Drawing.Point(45, 64);
-            this.metalTotal.Name = "metalTotal";
-            this.metalTotal.Size = new System.Drawing.Size(13, 13);
-            this.metalTotal.TabIndex = 9;
-            this.metalTotal.Text = "0";
-            // 
-            // heTotal
-            // 
-            this.heTotal.AutoSize = true;
-            this.heTotal.Location = new System.Drawing.Point(45, 77);
-            this.heTotal.Name = "heTotal";
-            this.heTotal.Size = new System.Drawing.Size(13, 13);
-            this.heTotal.TabIndex = 10;
-            this.heTotal.Text = "0";
-            // 
-            // goldTotal
-            // 
-            this.goldTotal.AutoSize = true;
-            this.goldTotal.Location = new System.Drawing.Point(45, 90);
-            this.goldTotal.Name = "goldTotal";
-            this.goldTotal.Size = new System.Drawing.Size(13, 13);
-            this.goldTotal.TabIndex = 11;
-            this.goldTotal.Text = "0";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -685,22 +707,24 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.Padding = new System.Windows.Forms.Padding(1, 60, 1, 1);
+            this.Text = "Not So Super GO II";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.metroTabControl1.ResumeLayout(false);
             this.metroTabPage1.ResumeLayout(false);
             this.metroTabPage1.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.metroTabPage3.ResumeLayout(false);
             this.metroTabPage5.ResumeLayout(false);
             this.metroTabPage2.ResumeLayout(false);
             this.metroTabControl2.ResumeLayout(false);
             this.metroTabPage4.ResumeLayout(false);
             this.metroTabPage4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.metroTabControl3.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -715,7 +739,6 @@
         private MetroFramework.Controls.MetroButton metroButton2;
         private MetroFramework.Controls.MetroButton metroButton3;
         private System.Windows.Forms.Panel panel1;
-        private MetroFramework.Controls.MetroButton metroButton4;
         private MetroFramework.Controls.MetroButton metroButton5;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer timer1;
@@ -755,6 +778,8 @@
         private System.Windows.Forms.Label goldPerHour;
         private System.Windows.Forms.Label hePerHour;
         private System.Windows.Forms.Label metalPerHour;
+        private System.Windows.Forms.NumericUpDown numericUpDown2;
+        private MetroFramework.Controls.MetroLabel metroLabel5;
     }
 }
 

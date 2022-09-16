@@ -96,6 +96,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\SGO2\GetFrameResponse.cs" />
+    <Compile Include="Model\SGO2\GetPlanetResponse.cs" />
+    <Compile Include="Model\SGO2\LoginResponse.cs" />
+    <Compile Include="PlanetSelection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PlanetSelection.Designer.cs">
+      <DependentUpon>PlanetSelection.cs</DependentUpon>
+    </Compile>
     <Compile Include="Login.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -124,9 +133,13 @@
     <Compile Include="Script\ImageNotFound.cs" />
     <Compile Include="Script\MainScript.cs" />
     <Compile Include="Service\ControlSnapshot.cs" />
+    <Compile Include="Service\GO2HttpService.cs" />
     <Compile Include="Service\Logger.cs" />
     <Compile Include="Service\RPC.cs" />
     <Compile Include="Service\Encryption.cs" />
+    <EmbeddedResource Include="PlanetSelection.resx">
+      <DependentUpon>PlanetSelection.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.cs</DependentUpon>
     </EmbeddedResource>
@@ -162,6 +175,9 @@
   <ItemGroup>
     <Content Include="favicon.ico" />
     <Content Include="Images\allcharge.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\bag2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\close11.png">
@@ -201,6 +217,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\supplyconfirm2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\treasurebox3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\treasurebox4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\usebtn.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\win.png">
@@ -270,9 +295,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\bag.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\bag2.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\bag3.png">
@@ -2007,12 +2029,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\treasurebox2.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\treasurebox3.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\treasurebox4.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\treasurebox5.png">

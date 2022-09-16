@@ -313,37 +313,33 @@ namespace GO2FlashLauncher.Script
                                 {
                                     Logger.LogInfo("Found Mail");
                                     //collect mail
-                                    if (!await m.CollectMails(bmp))
+                                    if (await m.CollectMails(bmp))
                                     {
-                                        //something wrong
-                                        spaceStationLocated = false;
-                                        mainScreenLocated = false;
-                                        inStage = false;
-                                        browser.Reload();
-                                    }
-                                    else
-                                    {
-                                        bmp = await browser.Screenshot();
+                                        bmp = await devTools.Screenshot();
                                     }
                                 }
-                                if (stageCount > 3)
+                                if (stageCount >= botSettings.InstanceHitCount && botSettings.InstanceHitCount > 0)
                                 {
+                                    //open box
                                     if(await i.OpenInventory(bmp))
                                     {
-                                        bmp = await browser.Screenshot();
+                                        await Task.Delay(2000);
+                                        bmp = await devTools.Screenshot();
                                         //open boxes
-                                        await i.OpenTreasury(bmp, stageCount);
+                                        if (await i.OpenTreasury(bmp, stageCount))
+                                        {
+                                            stageCount = 0;
+                                        }
+                                        await Task.Delay(1000);
+                                        bmp = await devTools.Screenshot();
                                         await b.CloseButtons(bmp);
-                                        stageCount = 0;
                                     }
                                     else
                                     {
+                                        await Task.Delay(1000);
+                                        bmp = await devTools.Screenshot();
                                         await b.CloseButtons(bmp);
                                     }
-                                }
-                                if(stageCount > 5)
-                                {
-                                    //go open boxes
                                 }
                                 if (await b.BattleEnds(bmp))
                                 {
