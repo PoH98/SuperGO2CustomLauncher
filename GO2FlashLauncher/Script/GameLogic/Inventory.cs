@@ -41,7 +41,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             {
                 return false;
             }
-            await host.LeftClick(new Point(point.Value.X + bmp.Width - 200, point.Value.Y + bmp.Height - 500), rnd.Next(120, 150));
+            await host.LeftClick(new Point(point.Value.X + bmp.Width - 200, point.Value.Y + bmp.Height - 500), rnd.Next(80, 100));
             await Task.Delay(1000);
             bmp = await devtools.Screenshot();
             crop = await bmp.Crop(new Point(bmp.Width - 300, bmp.Height - 500), new Size(300, 500));
@@ -62,7 +62,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             {
                 return false;
             }
-            await host.LeftClick(new Point(point.Value.X + bmp.Width - 300, point.Value.Y + bmp.Height - 500), rnd.Next(120, 150));
+            await host.LeftClick(new Point(point.Value.X + bmp.Width - 300, point.Value.Y + bmp.Height - 500), rnd.Next(80, 100));
             await Task.Delay(2000);
             return true;
         }
@@ -70,7 +70,6 @@ namespace GO2FlashLauncher.Script.GameLogic
         public async Task<bool> OpenTreasury(Bitmap bmp, int loopCount = 5)
         {
             bool filtered = false;
-            bmp.Save("debug.bmp");
             for(int y = 0; y < loopCount; y++)
             {
                 Point? point;
@@ -91,7 +90,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                             }
                         }
                         filtered = true;
-                        await host.LeftClick(point.Value, rnd.Next(120, 150));
+                        await host.LeftClick(point.Value, rnd.Next(80, 100));
                         await Task.Delay(500);
                     }
                     bmp = await devtools.Screenshot();
@@ -115,7 +114,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                         point = bmp.FindImage("Images\\bagnext.png", 0.8);
                         if (point != null)
                         {
-                            await host.LeftClick(point.Value, rnd.Next(120, 150));
+                            await host.LeftClick(point.Value, rnd.Next(80, 100));
                         }
                     }
                     else
@@ -131,7 +130,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                     //nothing found, exit
                     return false;
                 }
-                await host.LeftClick(point.Value, rnd.Next(120, 150));
+                await host.LeftClick(point.Value, rnd.Next(80, 100));
                 await Task.Delay(500);
                 //open button
                 bmp = await devtools.Screenshot();
@@ -139,13 +138,13 @@ namespace GO2FlashLauncher.Script.GameLogic
                 if (point == null)
                 {
                     //click away
-                    await host.LeftClick(new Point(250, 250), rnd.Next(100, 150));
+                    await host.LeftClick(new Point(250, 250), rnd.Next(80, 100));
                     //exit
                     return false;
                 }
-                await host.LeftClick(point.Value, rnd.Next(120, 150));
+                await host.LeftClick(point.Value, rnd.Next(80, 100));
                 //clicked use
-                await Task.Delay(2000);
+                await Task.Delay(1000);
                 bmp = await devtools.Screenshot();
                 //close reward window
                 point = bmp.FindImage("Images\\treasurerewardconfirm.png", 0.8);
@@ -158,7 +157,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                     //error, exit
                     return false;
                 }
-                await host.LeftClick(point.Value, rnd.Next(120, 150));
+                await host.LeftClick(point.Value, rnd.Next(80, 100));
             }
             //success
             return true;

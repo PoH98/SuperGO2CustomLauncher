@@ -1,4 +1,5 @@
 ﻿using CefSharp;
+using CefSharp.Handler;
 using CefSharp.WinForms;
 using GO2FlashLauncher.Model;
 using GO2FlashLauncher.Models;
@@ -25,8 +26,6 @@ namespace GO2FlashLauncher
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool AllocConsole();
         ChromiumWebBrowser alpha, beta, krtools;
-        Thread redirector;
-        string scriptKey = "";
         HttpClient hc = new HttpClient();
         CancellationTokenSource cancellation;
         MainScript script;
@@ -35,6 +34,7 @@ namespace GO2FlashLauncher
         readonly RPC rpc = new RPC();
         BaseResources resources;
         GO2HttpService GO2HttpService = new GO2HttpService();
+        int userId;
         public MainForm()
         {
             InitializeComponent();
@@ -50,7 +50,6 @@ namespace GO2FlashLauncher
             {
                 settings = JsonConvert.DeserializeObject<BotSettings>(File.ReadAllText("Profile\\" + profileName + "\\config.json"));
             }
-            scriptKey = Encryption.RandomString(10);
             numericUpDown1.Maximum = decimal.MaxValue;
             numericUpDown2.Maximum = decimal.MaxValue;
             Logger.Init(richTextBox1, profileName);
@@ -94,7 +93,8 @@ namespace GO2FlashLauncher
                 IgnoreCertificateErrors = true,
                 PersistUserPreferences = true,
                 PersistSessionCookies = true,
-                CachePath = Path.GetFullPath("cache")
+                CachePath = Path.GetFullPath("cache"),
+                
             }
             ;
             var betaContext = new RequestContextSettings
@@ -143,6 +143,7 @@ namespace GO2FlashLauncher
             metroToggle1.Checked = this.settings.RunBot;
             numericUpDown1.Value = this.settings.HaltOn;
             numericUpDown2.Value = this.settings.InstanceHitCount;
+            numericUpDown3.Value = this.settings.Delays;
             RenderFleets();
 #if !DEBUG
             metroTabControl1.Controls.Remove(metroTabPage3);
@@ -192,6 +193,7 @@ namespace GO2FlashLauncher
                     {
                         settings.PlanetId = url.Data.UserId;
                     }
+                    userId = url.Data.UserId;
                 }
                 catch (Exception ex)
                 {
@@ -220,10 +222,12 @@ namespace GO2FlashLauncher
                         {
                             settings.PlanetId = url.Data.UserId;
                         }
+                        userId = url.Data.UserId;
                         (sender as ChromiumWebBrowser).Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                     }
                     else
                     {
+                        userId = settings.PlanetId;
                         var url = await GO2HttpService.GetIFrameUrl(settings.PlanetId);
                         (sender as ChromiumWebBrowser).Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                     }
@@ -233,8 +237,6 @@ namespace GO2FlashLauncher
                     settings.AuthKey = null;
                     BrowserInitializedChanged(sender, e);
                 }
-
-
             }
         }
 
@@ -293,7 +295,7 @@ namespace GO2FlashLauncher
             }
             cancellation = new CancellationTokenSource();
             script = new MainScript(settings);
-            _ = script.Run(cancellation.Token, chrome).ConfigureAwait(false);
+            _ = script.Run(cancellation.Token, chrome, userId, GO2HttpService).ConfigureAwait(false);
         }
 
         private string ConvertImage(string path)
@@ -322,9 +324,14 @@ namespace GO2FlashLauncher
             }
         }
 
-        private void metroButton2_Click(object sender, EventArgs e)
+        private async void metroButton2_Click(object sender, EventArgs e)
         {
-            alpha.Reload(true);
+            if(alpha == null)
+            {
+                return;
+            }
+            var url = await GO2HttpService.GetIFrameUrl(settings.PlanetId);
+            alpha.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
             if (cancellation != null)
                 cancellation.Cancel();
         }
@@ -447,7 +454,6 @@ namespace GO2FlashLauncher
             {
                 cancellation.Cancel();
             }
-
             settings.RunBot = metroToggle1.Checked;
             if (metroToggle1.Checked)
             {
@@ -630,6 +636,16 @@ namespace GO2FlashLauncher
         private void numericUpDown2_KeyPress(object sender, KeyPressEventArgs e)
         {
             settings.InstanceHitCount = numericUpDown2.Value;
+        }
+
+        private void numericUpDown3_ValueChanged(object sender, EventArgs e)
+        {
+            settings.Delays = (int)Math.Round(numericUpDown3.Value);
+        }
+
+        private void numericUpDown3_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            settings.Delays = (int)Math.Round(numericUpDown3.Value);
         }
 
         private void RemoveFleet_Click(object sender, EventArgs e)

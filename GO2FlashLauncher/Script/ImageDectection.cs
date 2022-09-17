@@ -1,7 +1,9 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using GO2FlashLauncher.Service;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 
@@ -11,6 +13,7 @@ namespace GO2FlashLauncher.Script
     {
         public static Point? FindImage(this Bitmap bitmap, string findPath, double matchRadius)
         {
+            var watch = Stopwatch.StartNew();
             Image<Rgb, byte> source = bitmap.ToImage<Rgb, byte>();
             Image<Rgb, byte> find = new Image<Rgb, byte>(findPath);
             using (Image<Gray, float> result = source.MatchTemplate(find, TemplateMatchingType.CcoeffNormed))
@@ -20,14 +23,19 @@ namespace GO2FlashLauncher.Script
                 // You can try different values of the threshold. I guess somewhere between 0.85 and 0.95 would be good.
                 if (maxValues[0] > matchRadius)
                 {
+                    watch.Stop();
+                    Logger.LogDebug("Image detected with X:" + maxLocations[0].X + " Y:" + maxLocations[0].Y + " in " + watch.ElapsedMilliseconds + "ms");
                     return maxLocations[0];
                 }
             }
+            watch.Stop();
+            Logger.LogDebug("Image detection failed in " + watch.ElapsedMilliseconds + "ms");
             return null;
         }
 
         public static Point[] FindImageArray(this Bitmap bitmap, string findPath, double matchRadius)
         {
+            var watch = Stopwatch.StartNew();
             Image<Rgb, byte> source = bitmap.ToImage<Rgb, byte>();
             Image<Rgb, byte> find = new Image<Rgb, byte>(findPath);
             List<Point> points = new List<Point>();
@@ -62,11 +70,14 @@ namespace GO2FlashLauncher.Script
                     }
                 }
             }
+            watch.Stop();
+            Logger.LogDebug("Image detected with "+points.Count+" points in " + watch.ElapsedMilliseconds + "ms");
             return points.ToArray();
         }
 
         public static Point? FindImageGrayscaled(this Bitmap bitmap, string findPath, double matchRadius)
         {
+            var watch = Stopwatch.StartNew();
             Image<Gray, byte> source = bitmap.ToImage<Gray, byte>();
             Image<Gray, byte> find = new Image<Gray, byte>(findPath);
             using (Image<Gray, float> result = source.MatchTemplate(find, TemplateMatchingType.CcoeffNormed))
@@ -76,9 +87,13 @@ namespace GO2FlashLauncher.Script
                 // You can try different values of the threshold. I guess somewhere between 0.85 and 0.95 would be good.
                 if (maxValues[0] > matchRadius)
                 {
+                    watch.Stop();
+                    Logger.LogDebug("Image detected with X:" + maxLocations[0].X + " Y:" + maxLocations[0].Y + " in " + watch.ElapsedMilliseconds + "ms");
                     return maxLocations[0];
                 }
             }
+            watch.Stop();
+            Logger.LogDebug("Image detection failed in " + watch.ElapsedMilliseconds + "ms");
             return null;
         }
     }

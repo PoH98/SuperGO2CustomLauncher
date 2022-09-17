@@ -63,6 +63,8 @@
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
             this.metroTabControl2 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
+            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
+            this.metroLabel6 = new MetroFramework.Controls.MetroLabel();
             this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
             this.metroLabel5 = new MetroFramework.Controls.MetroLabel();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
@@ -86,6 +88,7 @@
             this.metroTabPage2.SuspendLayout();
             this.metroTabControl2.SuspendLayout();
             this.metroTabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.metroTabControl3.SuspendLayout();
@@ -476,6 +479,8 @@
             // 
             // metroTabPage4
             // 
+            this.metroTabPage4.Controls.Add(this.numericUpDown3);
+            this.metroTabPage4.Controls.Add(this.metroLabel6);
             this.metroTabPage4.Controls.Add(this.numericUpDown2);
             this.metroTabPage4.Controls.Add(this.metroLabel5);
             this.metroTabPage4.Controls.Add(this.numericUpDown1);
@@ -497,6 +502,40 @@
             this.metroTabPage4.VerticalScrollbarBarColor = true;
             this.metroTabPage4.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage4.VerticalScrollbarSize = 10;
+            // 
+            // numericUpDown3
+            // 
+            this.numericUpDown3.Location = new System.Drawing.Point(784, 49);
+            this.numericUpDown3.Maximum = new decimal(new int[] {
+            2000,
+            0,
+            0,
+            0});
+            this.numericUpDown3.Minimum = new decimal(new int[] {
+            500,
+            0,
+            0,
+            0});
+            this.numericUpDown3.Name = "numericUpDown3";
+            this.numericUpDown3.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDown3.TabIndex = 13;
+            this.numericUpDown3.Value = new decimal(new int[] {
+            800,
+            0,
+            0,
+            0});
+            this.numericUpDown3.ValueChanged += new System.EventHandler(this.numericUpDown3_ValueChanged);
+            this.numericUpDown3.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.numericUpDown3_KeyPress);
+            // 
+            // metroLabel6
+            // 
+            this.metroLabel6.AutoSize = true;
+            this.metroLabel6.Location = new System.Drawing.Point(534, 49);
+            this.metroLabel6.Name = "metroLabel6";
+            this.metroLabel6.Size = new System.Drawing.Size(144, 19);
+            this.metroLabel6.TabIndex = 12;
+            this.metroLabel6.Text = "Bot Default Delays (ms)";
+            this.metroLabel6.Theme = MetroFramework.MetroThemeStyle.Dark;
             // 
             // numericUpDown2
             // 
@@ -539,7 +578,6 @@
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(120, 20);
             this.numericUpDown1.TabIndex = 9;
-            this.numericUpDown1.ThousandsSeparator = true;
             this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
             this.numericUpDown1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.numericUpDown1_KeyPress);
             // 
@@ -722,6 +760,7 @@
             this.metroTabControl2.ResumeLayout(false);
             this.metroTabPage4.ResumeLayout(false);
             this.metroTabPage4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.metroTabControl3.ResumeLayout(false);
@@ -780,6 +819,8 @@
         private System.Windows.Forms.Label metalPerHour;
         private System.Windows.Forms.NumericUpDown numericUpDown2;
         private MetroFramework.Controls.MetroLabel metroLabel5;
+        private System.Windows.Forms.NumericUpDown numericUpDown3;
+        private MetroFramework.Controls.MetroLabel metroLabel6;
     }
 }
 

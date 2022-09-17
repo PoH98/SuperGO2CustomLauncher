@@ -68,7 +68,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 }
                 if (result != null)
                 {
-                    await host.LeftClick(result.Value, rnd.Next(100, 150));
+                    await host.LeftClick(result.Value, rnd.Next(80, 100));
                     await Task.Delay(500);
                 }
                 result = bmp.FindImage("Images\\groundbase.png", 0.8);
@@ -86,7 +86,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 }
                 if (result != null)
                 {
-                    await host.LeftClick(result.Value, rnd.Next(100, 150));
+                    await host.LeftClick(result.Value, rnd.Next(80, 100));
                     await Task.Delay(500);
                     return true;
                 }
@@ -182,10 +182,27 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         public async Task<bool> CollectMails(Bitmap bmp)
         {
-            var mail = bmp.FindImage("Images\\mail.png", 0.6);
+            var crop = await bmp.Crop(new Point(bmp.Width - 200, bmp.Height - 500), new Size(200, 500));
+            var point = crop.FindImage("Images\\tools.png", 0.8);
+            if (point == null)
+            {
+                for (int x = 2; x < 8; x++)
+                {
+                    await Task.Delay(10);
+                    point = crop.FindImage("Images\\tools.png", 0.8);
+                }
+            }
+            if (point == null)
+            {
+                return false;
+            }
+            await host.LeftClick(new Point(point.Value.X + bmp.Width - 200, point.Value.Y + bmp.Height - 500), rnd.Next(80, 100));
+            bmp = await devtools.Screenshot();
+            crop = await bmp.Crop(new Point(bmp.Width - 200, bmp.Height - 500), new Size(200, 500));
+            var mail = crop.FindImage("Images\\toolsemailicon.png", 0.6);
             if (mail != null)
             {
-                await host.LeftClick(mail.Value, rnd.Next(100, 150));
+                await host.LeftClick(new Point(mail.Value.X + bmp.Width - 200, mail.Value.Y + bmp.Height - 500), rnd.Next(80, 100));
                 await Task.Delay(1000);
                 bmp = await devtools.Screenshot();
                 mail = bmp.FindImage("Images\\mailitemfilter.png", 0.7);
@@ -203,15 +220,15 @@ namespace GO2FlashLauncher.Script.GameLogic
                 }
                 if (mail != null)
                 {
-                    await host.LeftClick(mail.Value, rnd.Next(100, 150));
+                    await host.LeftClick(mail.Value, rnd.Next(80, 100));
                     await Task.Delay(300);
-                    await host.LeftClick(mail.Value.X, mail.Value.Y + 125, rnd.Next(100, 150));
+                    await host.LeftClick(mail.Value.X, mail.Value.Y + 125, rnd.Next(80, 100));
                     await Task.Delay(1000);
                     bmp = await devtools.Screenshot();
                     var collect = bmp.FindImageGrayscaled("Images\\allcharge.png", 0.7);
                     if (collect != null)
                     {
-                        await host.LeftClick(collect.Value, rnd.Next(100, 150));
+                        await host.LeftClick(collect.Value, rnd.Next(80, 100));
                         await Task.Delay(300);
                     }
                     collect = bmp.FindImageGrayscaled("Images\\maildelete.png", 0.7);
@@ -221,7 +238,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                     }
                     if (collect != null)
                     {
-                        await host.LeftClick(collect.Value, rnd.Next(100, 150));
+                        await host.LeftClick(collect.Value, rnd.Next(80, 100));
                         await Task.Delay(300);
                     }
                     //close mailbox
@@ -232,7 +249,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                     }
                     if (collect != null)
                     {
-                        await host.LeftClick(collect.Value, rnd.Next(100, 150));
+                        await host.LeftClick(collect.Value, rnd.Next(80, 100));
                         await Task.Delay(1000);
                         return true;
                     }
@@ -243,9 +260,9 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         public async Task<BaseResources> DetectResource(Bitmap bmp)
         {
-            var metal = await bmp.Crop(new Point(bmp.Width - 210, 1), new Size(90, 15));
+            var metal = await bmp.Crop(new Point(bmp.Width - 210, 6), new Size(90, 15));
             var he3 = await bmp.Crop(new Point(bmp.Width - 210, 25), new Size(90, 15));
-            var gold = await bmp.Crop(new Point(bmp.Width - 100, 1), new Size(90, 15));
+            var gold = await bmp.Crop(new Point(bmp.Width - 103, 6), new Size(90, 15));
             var result = new BaseResources();
             Image<Gray, byte> mi = metal.ToImage<Gray, byte>();
             Image<Gray, byte> hi = he3.ToImage<Gray, byte>();

@@ -58,8 +58,8 @@ namespace GO2FlashLauncher.Script.GameLogic
                         }
                         if (prev != null)
                         {
-                            await host.LeftClick(prev.Value, rnd.Next(120, 150));
-                            await Task.Delay(500);
+                            await host.LeftClick(prev.Value, rnd.Next(80, 100));
+                            await Task.Delay(300);
                         }
                     }
                     else if (currentPage < page)
@@ -72,8 +72,8 @@ namespace GO2FlashLauncher.Script.GameLogic
                         }
                         if (next != null)
                         {
-                            await host.LeftClick(next.Value, rnd.Next(120, 150));
-                            await Task.Delay(500);
+                            await host.LeftClick(next.Value, rnd.Next(80, 100));
+                            await Task.Delay(300);
                         }
                     }
                 }
@@ -81,34 +81,34 @@ namespace GO2FlashLauncher.Script.GameLogic
                 switch (index)
                 {
                     case 0:
-                        await host.LeftClick(rnd.Next(clickPoint.X, clickPoint.X + 10), rnd.Next(clickPoint.Y, clickPoint.Y + 5), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X, clickPoint.X + 10), rnd.Next(clickPoint.Y, clickPoint.Y + 5), rnd.Next(80, 100));
                         break;
                     case 1:
-                        await host.LeftClick(rnd.Next(clickPoint.X + 170, clickPoint.X + 180), rnd.Next(clickPoint.Y, clickPoint.Y + 5), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X + 170, clickPoint.X + 180), rnd.Next(clickPoint.Y, clickPoint.Y + 5), rnd.Next(80, 100));
                         break;
                     case 2:
-                        await host.LeftClick(rnd.Next(clickPoint.X + 380, clickPoint.X + 390), rnd.Next(clickPoint.Y, clickPoint.Y + 5), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X + 380, clickPoint.X + 390), rnd.Next(clickPoint.Y, clickPoint.Y + 5), rnd.Next(80, 100));
                         break;
                     case 3:
-                        await host.LeftClick(rnd.Next(clickPoint.X, clickPoint.X + 10), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 105), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X, clickPoint.X + 10), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 105), rnd.Next(80, 100));
                         break;
                     case 4:
-                        await host.LeftClick(rnd.Next(clickPoint.X + 170, clickPoint.X + 180), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 105), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X + 170, clickPoint.X + 180), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 105), rnd.Next(80, 100));
                         break;
                     case 5:
-                        await host.LeftClick(rnd.Next(clickPoint.X + 380, clickPoint.X + 390), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 105), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X + 380, clickPoint.X + 390), rnd.Next(clickPoint.Y + 100, clickPoint.Y + 105), rnd.Next(80, 100));
                         break;
                     case 6:
-                        await host.LeftClick(rnd.Next(clickPoint.X, clickPoint.X + 10), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 205), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X, clickPoint.X + 10), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 205), rnd.Next(80, 100));
                         break;
                     case 7:
-                        await host.LeftClick(rnd.Next(clickPoint.X + 170, clickPoint.X + 180), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 205), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X + 170, clickPoint.X + 180), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 205), rnd.Next(80, 100));
                         break;
                     case 8:
-                        await host.LeftClick(rnd.Next(clickPoint.X + 380, clickPoint.X + 390), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 205), rnd.Next(120, 150));
+                        await host.LeftClick(rnd.Next(clickPoint.X + 380, clickPoint.X + 390), rnd.Next(clickPoint.Y + 200, clickPoint.Y + 205), rnd.Next(80, 100));
                         break;
                 }
-                await Task.Delay(rnd.Next(100, 120));
+                await Task.Delay(rnd.Next(50, 80));
             }
             if (fleetType == SelectFleetType.Instance)
             {
@@ -128,7 +128,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 }
                 if (result != null)
                 {
-                    await host.LeftClick(result.Value, rnd.Next(120, 150));
+                    await host.LeftClick(result.Value, rnd.Next(80, 100));
                     return true;
                 }
             }
@@ -162,8 +162,8 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             if (result != null)
             {
-                await host.LeftClick(result.Value, rnd.Next(120, 150));
-                await Task.Delay(1000);
+                await host.LeftClick(result.Value, rnd.Next(80, 100));
+                await Task.Delay(500);
                 return true;
             }
             return false;
@@ -183,13 +183,13 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             if (result != null)
             {
-                await host.LeftClick(result.Value, rnd.Next(120, 150));
-                await Task.Delay(1000);
+                await host.LeftClick(result.Value, rnd.Next(80, 100));
+                await Task.Delay(800);
                 bmp = await devtools.Screenshot();
                 result = bmp.FindImage("Images\\supplyall.png", 0.8);
                 if (result != null)
                 {
-                    await host.LeftClick(result.Value, rnd.Next(120, 150));
+                    await host.LeftClick(result.Value, rnd.Next(80, 100));
                 }
                 result = bmp.FindImage("Images\\supplyconfirm.png", 0.8);
                 if (result == null)
@@ -206,7 +206,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 }
                 if (result != null)
                 {
-                    await host.LeftClick(result.Value, rnd.Next(120, 150));
+                    await host.LeftClick(result.Value, rnd.Next(80, 100));
                 }
             }
             return fullysupply;
@@ -229,8 +229,8 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             if (result != null)
             {
-                await host.LeftClick(result.Value, rnd.Next(120, 150));
-                await Task.Delay(2000);
+                await host.LeftClick(result.Value, rnd.Next(80, 100));
+                await Task.Delay(1000);
                 return true;
             }
             return false;

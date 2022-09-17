@@ -66,7 +66,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             if (result != null)
             {
                 await host.LeftClick(result.Value, rnd.Next(10, 50));
-                await Task.Delay(1500);
+                await Task.Delay(800);
                 bmp = await devtools.Screenshot();
 
             }
@@ -81,7 +81,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 if (result != null)
                 {
                     await Task.Delay(500);
-                    await host.LeftClick(result.Value, rnd.Next(100, 150));
+                    await host.LeftClick(result.Value, rnd.Next(80, 100));
                     await Task.Delay(500);
                     return InstanceEnterState.IncreaseFleet;
                 }

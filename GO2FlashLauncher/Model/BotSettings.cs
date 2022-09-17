@@ -12,6 +12,7 @@ namespace GO2FlashLauncher.Model
         public decimal InstanceHitCount { get; set; } = 1;
         public string AuthKey { get; set; }
         public int PlanetId { get; set; } = -1;
+        public int Delays { get; set; } = 800;
     }
 
     internal class Fleet

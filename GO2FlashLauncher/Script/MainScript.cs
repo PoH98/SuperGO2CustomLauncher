@@ -7,7 +7,6 @@ using System;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace GO2FlashLauncher.Script
 {
@@ -51,7 +50,7 @@ namespace GO2FlashLauncher.Script
         /// <param name="token"></param>
         /// <param name="browser"></param>
         /// <returns></returns>
-        public Task Run(CancellationToken token, ChromiumWebBrowser browser)
+        public Task Run(CancellationToken token, ChromiumWebBrowser browser, int userID, GO2HttpService httpService)
         {
             return Task.Run(async () =>
             {
@@ -78,6 +77,7 @@ namespace GO2FlashLauncher.Script
                     bool spaceStationLocated = false;
                     bool collectedResources = false;
                     bool inStage = false;
+                    bool suspendCollect = false;
                     int stageCount = 0;
                     DateTime noResources = DateTime.MinValue;
                     DateTime lastCollectTime = DateTime.MinValue;
@@ -92,10 +92,26 @@ namespace GO2FlashLauncher.Script
                         {
                             //Script stoped
                             token.ThrowIfCancellationRequested();
+                            //error too much
+                            if (error > 20)
+                            {
+                                var lagging = await devTools.Screenshot();
+                                if (m.DetectDisconnect(lagging))
+                                {
+                                    Logger.LogError("Please refresh the browser! Server disconnected! Maybe is in server maintainance! ");
+                                    Logger.LogInfo("Bot Stopped");
+                                    return;
+                                }
+                                else
+                                {
+                                    //start over again
+                                    mainScreenLocated = false;
+                                    spaceStationLocated = false;
+                                    inStage = false;
+                                }
+                            }
                             //Screenshot browser
                             var bmp = await devTools.Screenshot();
-                            //WinAPI capture, tested not working
-                            //var bmp = await browser.Screenshot();
                             if (!mainScreenLocated)
                             {
                                 //locate planet base view
@@ -132,7 +148,7 @@ namespace GO2FlashLauncher.Script
                                     error++;
                                     if (error < 20)
                                     {
-                                        await Task.Delay(1000);
+                                        await Task.Delay(botSettings.Delays);
                                         continue;
                                     }
                                 }
@@ -151,9 +167,9 @@ namespace GO2FlashLauncher.Script
                                 Logger.LogInfo("Collecting Resources");
                                 if (await m.Locate(bmp))
                                 {
-                                    await Task.Delay(1000);
+                                    await Task.Delay(botSettings.Delays / 2);
                                     await m.LocateWarehouse(bmp);
-                                    await Task.Delay(1500);
+                                    await Task.Delay(botSettings.Delays);
                                     bmp = await devTools.Screenshot();
                                     await m.Collect(bmp);
                                     collectedResources = true;
@@ -163,22 +179,22 @@ namespace GO2FlashLauncher.Script
                             else if (!spaceStationLocated && (noResources - DateTime.Now).TotalSeconds <= 0)
                             {
                                 //locate space stations
-                                await Task.Delay(1000);
+                                await Task.Delay(botSettings.Delays / 4 * 3);
                                 await s.Enter(bmp);
                                 Logger.LogInfo("Going to space station");
-                                await Task.Delay(1000);
+                                await Task.Delay(botSettings.Delays / 4 * 3);
                                 bmp = await devTools.Screenshot();
+                                resources = await m.DetectResource(bmp);
+                                Logger.LogInfo("Detected Metal: " + resources.Metal);
+                                Logger.LogInfo("Detected HE3: " + resources.HE3);
+                                Logger.LogInfo("Detected Gold: " + resources.Gold);
                                 var spaceStationLocation = await s.Locate(bmp);
                                 if (spaceStationLocation.HasValue)
                                 {
                                     Logger.LogInfo("Space station located");
                                     spaceStationLocated = true;
                                     error = 0;
-                                    await Task.Delay(1000);
-                                    resources = await m.DetectResource(bmp);
-                                    Logger.LogInfo("Detected Metal: " + resources.Metal);
-                                    Logger.LogInfo("Detected HE3: " + resources.HE3);
-                                    Logger.LogInfo("Detected Gold: " + resources.Gold);
+                                    await Task.Delay(botSettings.Delays / 4 * 3);
                                     await host.LeftClick(spaceStationLocation.Value, 100);
                                     await Task.Delay(200);
                                     Logger.LogInfo("Entering Instance");
@@ -188,7 +204,7 @@ namespace GO2FlashLauncher.Script
                                         token.ThrowIfCancellationRequested();
                                         try
                                         {
-                                            await Task.Delay(500);
+                                            await Task.Delay(botSettings.Delays);
                                             bmp = await devTools.Screenshot();
                                             switch (await s.EnterInstance(bmp, botSettings.Instance))
                                             {
@@ -206,14 +222,15 @@ namespace GO2FlashLauncher.Script
                                                         await Task.Delay(100);
                                                         token.ThrowIfCancellationRequested();
                                                     }
-                                                    await Task.Delay(1000);
+                                                    await Task.Delay(botSettings.Delays);
                                                     bmp = await devTools.Screenshot();
                                                     Logger.LogInfo("Refilling fleets");
                                                     if (!await b.RefillHE3(bmp, resources, botSettings.HaltOn))
                                                     {
                                                         //no HE3
                                                         Logger.LogWarning("Out of HE3! Halt attack now!");
-                                                        browser.Reload();
+                                                        var url = await httpService.GetIFrameUrl(userID);
+                                                        browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                         inStage = false;
                                                         mainScreenLocated = false;
                                                         spaceStationLocated = false;
@@ -221,47 +238,47 @@ namespace GO2FlashLauncher.Script
                                                         noResources = DateTime.Now.AddHours(1);
                                                         break;
                                                     }
-                                                    await Task.Delay(1000);
+                                                    await Task.Delay(botSettings.Delays);
                                                     bmp = await devTools.Screenshot();
                                                     while (!await b.IncreaseFleet(bmp))
                                                     {
                                                         bmp = await devTools.Screenshot();
-                                                        await Task.Delay(100);
                                                         token.ThrowIfCancellationRequested();
                                                         error++;
-                                                        if (error > 10)
+                                                        if (error > 5)
                                                         {
                                                             loop = false;
                                                             //something wrong
                                                             spaceStationLocated = false;
                                                             mainScreenLocated = false;
                                                             inStage = false;
-                                                            browser.Reload();
+                                                            var url = await httpService.GetIFrameUrl(userID);
+                                                            browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                             return;
                                                         }
+                                                        await Task.Delay(100);
                                                     }
-                                                    await Task.Delay(1000);
+                                                    await Task.Delay(botSettings.Delays - 100);
                                                     bmp = await devTools.Screenshot();
-                                                    await Task.Delay(1000);
                                                     while (!await b.SelectFleet(bmp, botSettings.Fleets, SelectFleetType.Instance))
                                                     {
                                                         Logger.LogError("No fleet found!");
                                                         bmp = await devTools.Screenshot();
-                                                        await Task.Delay(100);
                                                         error++;
-                                                        if (error > 10)
+                                                        if (error > 3)
                                                         {
                                                             loop = false;
                                                             //something wrong
                                                             spaceStationLocated = false;
                                                             mainScreenLocated = false;
                                                             inStage = false;
-                                                            browser.Reload();
+                                                            var url = await httpService.GetIFrameUrl(userID);
+                                                            browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                             return;
                                                         }
-                                                        break;
+                                                        await Task.Delay(100);
                                                     }
-                                                    await Task.Delay(1000);
+                                                    await Task.Delay(botSettings.Delays - 100);
                                                     bmp = await devTools.Screenshot();
                                                     var p = bmp.FindImage("Images\\instanceStart.png", 0.7);
                                                     if (p != null)
@@ -270,7 +287,6 @@ namespace GO2FlashLauncher.Script
                                                     }
                                                     loop = false;
                                                     error = 0;
-                                                    stageCount++;
                                                     Logger.LogInfo("Waiting for stage end...");
                                                     inStage = true;
                                                     break;
@@ -292,9 +308,10 @@ namespace GO2FlashLauncher.Script
                                             spaceStationLocated = false;
                                             mainScreenLocated = false;
                                             inStage = false;
-                                            browser.Reload();
+                                            var url = await httpService.GetIFrameUrl(userID);
+                                            browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                             error = 0;
-                                            await Task.Delay(1000);
+                                            await Task.Delay(botSettings.Delays);
                                             break;
                                         }
                                     }
@@ -308,86 +325,125 @@ namespace GO2FlashLauncher.Script
                             }
                             else if (inStage)
                             {
-                                var mail = bmp.FindImage("Images\\mail.png", 0.6);
-                                if (mail.HasValue)
-                                {
-                                    Logger.LogInfo("Found Mail");
-                                    //collect mail
-                                    if (await m.CollectMails(bmp))
-                                    {
-                                        bmp = await devTools.Screenshot();
-                                    }
-                                }
-                                if (stageCount >= botSettings.InstanceHitCount && botSettings.InstanceHitCount > 0)
-                                {
-                                    //open box
-                                    if(await i.OpenInventory(bmp))
-                                    {
-                                        await Task.Delay(2000);
-                                        bmp = await devTools.Screenshot();
-                                        //open boxes
-                                        if (await i.OpenTreasury(bmp, stageCount))
-                                        {
-                                            stageCount = 0;
-                                        }
-                                        await Task.Delay(1000);
-                                        bmp = await devTools.Screenshot();
-                                        await b.CloseButtons(bmp);
-                                    }
-                                    else
-                                    {
-                                        await Task.Delay(1000);
-                                        bmp = await devTools.Screenshot();
-                                        await b.CloseButtons(bmp);
-                                    }
-                                }
                                 if (await b.BattleEnds(bmp))
                                 {
                                     Logger.LogInfo("Battle Ends");
                                     inStage = false;
+                                    stageCount++;
                                     spaceStationLocated = false;
                                     Logger.ClearLog();
                                 }
                                 else
                                 {
-                                    await Task.Delay(2000);
+                                    var crop = await bmp.Crop(new Point(0,0), new Size(500, 500));
+                                    crop.Save("debug.bmp");
+                                    var mail = crop.FindImage("Images\\mail.png", 0.6);
+                                    if (mail.HasValue)
+                                    {
+                                        Logger.LogInfo("Found Mail");
+                                        //collect mail
+                                        if (await m.CollectMails(bmp))
+                                        {
+                                            suspendCollect = false;
+                                            bmp = await devTools.Screenshot();
+                                        }
+                                    }
+                                    if (stageCount >= botSettings.InstanceHitCount && botSettings.InstanceHitCount > 0 && !suspendCollect)
+                                    {
+                                        //open box
+                                        if (await i.OpenInventory(bmp))
+                                        {
+                                            await Task.Delay(botSettings.Delays);
+                                            bmp = await devTools.Screenshot();
+                                            //open boxes
+                                            if (await i.OpenTreasury(bmp, stageCount))
+                                            {
+                                                stageCount = 0;
+                                            }
+                                            await Task.Delay(botSettings.Delays);
+                                            bmp = await devTools.Screenshot();
+                                            while(!await b.CloseButtons(bmp))
+                                            {
+                                                error++;
+                                                await Task.Delay(100);
+                                                bmp = await devTools.Screenshot();
+                                                if(error > 10)
+                                                {
+                                                    //???
+                                                    Logger.LogError("Something seriously wrong! Refreshing the game!");
+                                                    spaceStationLocated = false;
+                                                    mainScreenLocated = false;
+                                                    inStage = false;
+                                                    error = 0;
+                                                    var url = await httpService.GetIFrameUrl(userID);
+                                                    browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                                    await Task.Delay(botSettings.Delays);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            suspendCollect = true;
+                                            await Task.Delay(botSettings.Delays);
+                                            bmp = await devTools.Screenshot();
+                                            while (!await b.CloseButtons(bmp))
+                                            {
+                                                error++;
+                                                await Task.Delay(100);
+                                                bmp = await devTools.Screenshot();
+                                                if (error > 10)
+                                                {
+                                                    //???
+                                                    Logger.LogError("Something seriously wrong! Refreshing the game!");
+                                                    spaceStationLocated = false;
+                                                    mainScreenLocated = false;
+                                                    inStage = false;
+                                                    error = 0;
+                                                    var url = await httpService.GetIFrameUrl(userID);
+                                                    browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                                    await Task.Delay(botSettings.Delays);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                             //collecting EZRewards
                             if (mainScreenLocated)
                             {
-                                await Task.Delay(1000);
                                 if (await m.EZRewards(bmp))
                                 {
                                     Logger.LogInfo("Collected EZRewards");
-                                    await Task.Delay(1000);
+                                    await Task.Delay(800);
                                     //detect close
                                     bmp = await devTools.Screenshot();
                                     bmp = await bmp.Crop(new Point(0,0), new Size(bmp.Width, bmp.Height - 300));
-                                    await b.CloseButtons(bmp);
+                                    while (!await b.CloseButtons(bmp))
+                                    {
+                                        error++;
+                                        await Task.Delay(100);
+                                        bmp = await devTools.Screenshot();
+                                        if (error > 10)
+                                        {
+                                            //???
+                                            Logger.LogError("Something seriously wrong! Refreshing the game!");
+                                            spaceStationLocated = false;
+                                            mainScreenLocated = false;
+                                            inStage = false;
+                                            error = 0;
+                                            var url = await httpService.GetIFrameUrl(userID);
+                                            browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                            await Task.Delay(botSettings.Delays);
+                                            break;
+                                        }
+                                    }
                                     var detect = bmp.FindImageGrayscaled("Images\\MPOK.png", 0.8);
                                     if (detect != null)
                                     {
                                         await host.LeftClick(detect.Value, 120);
                                     }
-                                    await Task.Delay(1000);
-                                }
-                            }
-                            //error too much
-                            if (error > 20)
-                            {
-                                if (m.DetectDisconnect(bmp))
-                                {
-                                    Logger.LogError("Please refresh the browser! Server disconnected! Maybe is in server maintainance! ");
-                                    Logger.LogInfo("Bot Stopped");
-                                    return;
-                                }
-                                else
-                                {
-                                    //start over again
-                                    mainScreenLocated = false;
-                                    spaceStationLocated = false;
-                                    inStage = false;
                                 }
                             }
                             //lag detection
@@ -416,7 +472,8 @@ namespace GO2FlashLauncher.Script
                                 if (lag > 120)
                                 {
                                     Logger.LogError("Lag detected! Lag confirmed! Restarting...");
-                                    browser.Reload();
+                                    var url = await httpService.GetIFrameUrl(userID);
+                                    browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                     lag = 0;
                                     inStage = false;
                                     mainScreenLocated = false;
@@ -433,7 +490,7 @@ namespace GO2FlashLauncher.Script
                             }
                             Logger.LogError(ex.ToString());
                         }
-                        await Task.Delay(1000);
+                        await Task.Delay(botSettings.Delays);
                     }
                     while (true);
                 }

@@ -2,6 +2,7 @@
 using CefSharp.WinForms;
 using GO2FlashLauncher.Service;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -183,13 +184,15 @@ namespace GO2FlashLauncher.Script
         {
             try
             {
+                var watch = Stopwatch.StartNew();
                 var bmpdata = await devTools.Page.CaptureScreenshotAsync();
                 Bitmap bmp;
                 using (MemoryStream ms = new MemoryStream(bmpdata.Data))
                 {
                     bmp = new Bitmap(ms);
                 }
-                Logger.LogDebug("Image captured with " + bmp.Width + "x" + bmp.Height);
+                watch.Stop();
+                Logger.LogDebug("Image captured with " + bmp.Width + "x" + bmp.Height + " in " + watch.ElapsedMilliseconds + "ms");
                 return bmp;
             }
             catch
@@ -203,6 +206,7 @@ namespace GO2FlashLauncher.Script
         {
             return Task.Run(() =>
             {
+                var watch = Stopwatch.StartNew();
                 var rect = new Rectangle(start, size);
                 var sourceBitmapData = bmp.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppRgb);
 
@@ -215,7 +219,8 @@ namespace GO2FlashLauncher.Script
 
                 bmp.UnlockBits(sourceBitmapData);
                 destBitmap.UnlockBits(destBitmapData);
-
+                watch.Stop();
+                Logger.LogDebug("Image cropped with " + bmp.Width + "x" + bmp.Height + " in " + watch.ElapsedMilliseconds + "ms");
                 return destBitmap;
             });
         }
