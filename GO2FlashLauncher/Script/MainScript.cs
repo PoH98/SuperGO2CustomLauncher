@@ -132,7 +132,7 @@ namespace GO2FlashLauncher.Script
                                         await Task.Delay(100);
                                     }
                                     Logger.LogInfo("Mainscreen located");
-                                    resources = await m.DetectResource(bmp);
+                                    resources = await m.DetectResource(httpService, userID);
                                     Logger.LogInfo("Detected Metal: " + resources.Metal);
                                     Logger.LogInfo("Detected HE3: " + resources.HE3);
                                     Logger.LogInfo("Detected Gold: " + resources.Gold);
@@ -184,7 +184,7 @@ namespace GO2FlashLauncher.Script
                                 Logger.LogInfo("Going to space station");
                                 await Task.Delay(botSettings.Delays / 4 * 3);
                                 bmp = await devTools.Screenshot();
-                                resources = await m.DetectResource(bmp);
+                                resources = await m.DetectResource(httpService, userID);
                                 Logger.LogInfo("Detected Metal: " + resources.Metal);
                                 Logger.LogInfo("Detected HE3: " + resources.HE3);
                                 Logger.LogInfo("Detected Gold: " + resources.Gold);

@@ -5,6 +5,7 @@ using Emgu.CV;
 using Emgu.CV.OCR;
 using Emgu.CV.Structure;
 using GO2FlashLauncher.Model;
+using GO2FlashLauncher.Service;
 using System;
 using System.Drawing;
 using System.IO;
@@ -258,28 +259,16 @@ namespace GO2FlashLauncher.Script.GameLogic
             return false;
         }
 
-        public async Task<BaseResources> DetectResource(Bitmap bmp)
+        public async Task<BaseResources> DetectResource(GO2HttpService httpService, int userID)
         {
-            var metal = await bmp.Crop(new Point(bmp.Width - 210, 6), new Size(90, 15));
-            var he3 = await bmp.Crop(new Point(bmp.Width - 210, 25), new Size(90, 15));
-            var gold = await bmp.Crop(new Point(bmp.Width - 103, 6), new Size(90, 15));
-            var result = new BaseResources();
-            Image<Gray, byte> mi = metal.ToImage<Gray, byte>();
-            Image<Gray, byte> hi = he3.ToImage<Gray, byte>();
-            Image<Gray, byte> gl = gold.ToImage<Gray, byte>();
-            ocr.SetImage(mi);
-            ocr.Recognize();
-            long.TryParse(new String(ocr.GetUTF8Text().Where(Char.IsDigit).ToArray()), out long m);
-            ocr.SetImage(hi);
-            ocr.Recognize();
-            long.TryParse(new String(ocr.GetUTF8Text().Where(Char.IsDigit).ToArray()), out long h);
-            ocr.SetImage(gl);
-            ocr.Recognize();
-            long.TryParse(new String(ocr.GetUTF8Text().Where(Char.IsDigit).ToArray()), out long g);
-            result.Metal = m;
-            result.HE3 = h;
-            result.Gold = g;
-            return result;
+            var result = await httpService.GetPlanets();
+            var br = new BaseResources();
+            var selectedPlanet = result.Data.FirstOrDefault(x => x.UserId == userID);
+            br.HE3 = selectedPlanet.Resources.He3;
+            br.Metal = selectedPlanet.Resources.Metal;
+            br.Gold = selectedPlanet.Resources.Gold;
+            br.MP = selectedPlanet.Resources.MallPoints;
+            return br;
         }
     }
 }
