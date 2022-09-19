@@ -13,6 +13,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,6 +36,8 @@ namespace GO2FlashLauncher
         BaseResources resources;
         GO2HttpService GO2HttpService = new GO2HttpService();
         int userId;
+        string base64code;
+        FileSystemWatcher fileSystemWatcher;
         public MainForm()
         {
             InitializeComponent();
@@ -67,7 +70,7 @@ namespace GO2FlashLauncher
             var settings = new CefSettings();
             settings.CachePath = Path.GetFullPath("cache");
             settings.CefCommandLineArgs.Add("enable-system-flash", "1");
-            settings.CefCommandLineArgs.Add("ppapi-flash-path", Path.Combine(Directory.GetCurrentDirectory(), "libs\\pepflashplayer.dll"));
+            settings.CefCommandLineArgs.Add("ppapi-flash-path", Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).Directory.ToString(), "libs\\pepflashplayer.dll"));
             settings.CefCommandLineArgs.Add("ppapi-flash-version", "28.0.0.137");
             settings.CefCommandLineArgs.Add("disable-gpu", "1");
             settings.CefCommandLineArgs.Add("disable-gpu-compositing", "1");
@@ -79,6 +82,7 @@ namespace GO2FlashLauncher
             settings.CefCommandLineArgs.Add("disable-quic");
             settings.CefCommandLineArgs.Add("off-screen-rendering-enabled");
             settings.CefCommandLineArgs.Add("no-activate");
+            settings.BackgroundColor = ColorToUInt(Color.Black);
 #if !DEBUG
             metroButton3.Hide();
             if (File.Exists("debug.txt"))
@@ -87,7 +91,9 @@ namespace GO2FlashLauncher
             }
             settings.LogSeverity = LogSeverity.Fatal;
 #endif
-
+            metroTabControl1.BackColor = Color.Transparent;
+            metroTabControl2.BackColor = Color.Transparent;
+            metroTabControl3.BackColor = Color.Transparent;
             var alphaContext = new RequestContextSettings
             {
                 IgnoreCertificateErrors = true,
@@ -145,6 +151,7 @@ namespace GO2FlashLauncher
             numericUpDown2.Value = this.settings.InstanceHitCount;
             numericUpDown3.Value = this.settings.Delays;
             RenderFleets();
+            timer2.Start();
 #if !DEBUG
             metroTabControl1.Controls.Remove(metroTabPage3);
 #endif
@@ -244,7 +251,7 @@ namespace GO2FlashLauncher
         {
 
         }
-        private void ChromiumWebBrowser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
+        private async void ChromiumWebBrowser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
             var chrome = (ChromiumWebBrowser)sender;
             if (chrome.Address == "blank")
@@ -268,14 +275,6 @@ namespace GO2FlashLauncher
                         BrowserInitializedChanged(sender, e);
                     }
                     RunScript(chrome);
-                }
-                if (!File.Exists(Path.GetFullPath("cache\\background.settings")) && chrome.CanExecuteJavascriptInMainFrame)
-                {
-                    chrome.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'none';");
-                }
-                else if (chrome.CanExecuteJavascriptInMainFrame)
-                {
-                    chrome.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'url(data:image/png;base64," + ConvertImage(File.ReadAllText(Path.GetFullPath("cache\\background.settings"))) + ");");
                 }
             }
         }
@@ -320,7 +319,6 @@ namespace GO2FlashLauncher
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 File.WriteAllText(Path.GetFullPath("cache\\background.settings"), openFileDialog.FileName);
-                alpha.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'url(data:image/png;base64," + ConvertImage(openFileDialog.FileName) + ")'");
             }
         }
 
@@ -330,7 +328,7 @@ namespace GO2FlashLauncher
             {
                 return;
             }
-            var url = await GO2HttpService.GetIFrameUrl(settings.PlanetId);
+            var url = await GO2HttpService.GetIFrameUrl(userId);
             alpha.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
             if (cancellation != null)
                 cancellation.Cancel();
@@ -374,7 +372,12 @@ namespace GO2FlashLauncher
                 Directory.CreateDirectory("Profile\\" + profileName);
             }
             File.WriteAllText("Profile\\" + profileName + "\\config.json", JsonConvert.SerializeObject(settings));
+            if(cancellation != null)
+            {
+                cancellation.Cancel();
+            }
             Cef.Shutdown();
+            Application.Exit();
         }
 
         private void metroButton5_Click(object sender, EventArgs e)
@@ -441,6 +444,26 @@ namespace GO2FlashLauncher
                     goldPerHour.Text = ((script.Resources.Gold - resources.Gold) / script.BotRuntime.TotalHours).ToString("N0") + "/h";
                 }
             }
+            _ = Task.Run(async () =>
+            {
+                do
+                {
+                    if (!File.Exists(Path.GetFullPath("cache\\background.settings")) && alpha.CanExecuteJavascriptInMainFrame)
+                    {
+                        alpha.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'none';");
+                    }
+                    else if (alpha.CanExecuteJavascriptInMainFrame)
+                    {
+                        if (string.IsNullOrEmpty(base64code))
+                        {
+                            base64code = ConvertImage(File.ReadAllText(Path.GetFullPath("cache\\background.settings")));
+                        }
+                        alpha.ExecuteScriptAsync("document.body.style.backgroundImage = 'url(data:image/png;base64," + base64code + ")';");
+                    }
+                    await Task.Delay(2000);
+                }
+                while (!alpha.CanExecuteJavascriptInMainFrame);
+            });
         }
 
         private void metroButton6_Click(object sender, EventArgs e)
@@ -656,10 +679,56 @@ namespace GO2FlashLauncher
             RenderFleets();
         }
 
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            if(fileSystemWatcher == null)
+            {
+                fileSystemWatcher = new FileSystemWatcher(Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).Directory.ToString(), "cache\\"));
+                fileSystemWatcher.Filter = "background.settings";
+                fileSystemWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size;
+                fileSystemWatcher.EnableRaisingEvents = true;
+                fileSystemWatcher.Changed += FileSystemWatcher_Changed;
+            }
+            _ = Task.Run(async () =>
+            {
+                do
+                {
+                    if (!File.Exists(Path.GetFullPath("cache\\background.settings")) && alpha.CanExecuteJavascriptInMainFrame)
+                    {
+                        alpha.ExecuteScriptAsync("document.body.style.backgroundColor = 'black'; document.body.style.backgroundImage = 'none';");
+                    }
+                    else if (alpha.CanExecuteJavascriptInMainFrame)
+                    {
+                        if (string.IsNullOrEmpty(base64code))
+                        {
+                            var path = File.ReadAllText(Path.GetFullPath("cache\\background.settings"));
+                            base64code = ConvertImage(path);
+                        }
+                        alpha.ExecuteScriptAsync("document.body.style.backgroundImage = 'url(data:image/png;base64," + base64code + ")'; document.body.style.backgroundPosition = '0 -122px 0 -180px'; document.body.style.backgroundRepeat = 'no-repeat'; )");
+
+                    }
+                    await Task.Delay(2000);
+                }
+                while (!alpha.CanExecuteJavascriptInMainFrame);
+            });
+        }
+
+        private async void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            await Task.Delay(500);
+            var path = File.ReadAllText(Path.GetFullPath("cache\\background.settings"));
+            base64code = ConvertImage(path);
+        }
+
         private void Input_ValueChanged(object sender, EventArgs e)
         {
             settings.Fleets.First(x => x.Name == (sender as NumericUpDown).Name).Order = (int)Math.Round((sender as NumericUpDown).Value);
 
+        }
+
+        private uint ColorToUInt(Color color)
+        {
+            return (uint)((color.A << 24) | (color.R << 16) | (color.G << 8) | (color.B << 0));
         }
     }
 

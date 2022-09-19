@@ -184,14 +184,14 @@ namespace GO2FlashLauncher.Script
                                 Logger.LogInfo("Going to space station");
                                 await Task.Delay(botSettings.Delays / 4 * 3);
                                 bmp = await devTools.Screenshot();
-                                resources = await m.DetectResource(httpService, userID);
-                                Logger.LogInfo("Detected Metal: " + resources.Metal);
-                                Logger.LogInfo("Detected HE3: " + resources.HE3);
-                                Logger.LogInfo("Detected Gold: " + resources.Gold);
                                 var spaceStationLocation = await s.Locate(bmp);
                                 if (spaceStationLocation.HasValue)
                                 {
                                     Logger.LogInfo("Space station located");
+                                    resources = await m.DetectResource(httpService, userID);
+                                    Logger.LogInfo("Detected Metal: " + resources.Metal);
+                                    Logger.LogInfo("Detected HE3: " + resources.HE3);
+                                    Logger.LogInfo("Detected Gold: " + resources.Gold);
                                     spaceStationLocated = true;
                                     error = 0;
                                     await Task.Delay(botSettings.Delays / 4 * 3);
@@ -336,7 +336,6 @@ namespace GO2FlashLauncher.Script
                                 else
                                 {
                                     var crop = await bmp.Crop(new Point(0,0), new Size(500, 500));
-                                    crop.Save("debug.bmp");
                                     var mail = crop.FindImage("Images\\mail.png", 0.6);
                                     if (mail.HasValue)
                                     {

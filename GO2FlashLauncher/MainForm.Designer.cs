@@ -48,9 +48,9 @@
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroToggle1 = new MetroFramework.Controls.MetroToggle();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.metroButton3 = new MetroFramework.Controls.MetroButton();
             this.metroButton2 = new MetroFramework.Controls.MetroButton();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.metroTabPage3 = new MetroFramework.Controls.MetroTabPage();
             this.panel2 = new System.Windows.Forms.Panel();
             this.metroButton6 = new MetroFramework.Controls.MetroButton();
@@ -58,8 +58,8 @@
             this.metroTabPage5 = new MetroFramework.Controls.MetroTabPage();
             this.metroButton11 = new MetroFramework.Controls.MetroButton();
             this.metroButton9 = new MetroFramework.Controls.MetroButton();
-            this.panel3 = new System.Windows.Forms.Panel();
             this.metroButton10 = new MetroFramework.Controls.MetroButton();
+            this.panel3 = new System.Windows.Forms.Panel();
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
             this.metroTabControl2 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
@@ -80,6 +80,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.discordRPC = new System.Windows.Forms.Timer(this.components);
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.metroTabControl1.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -103,6 +104,7 @@
             this.metroTabControl1.Controls.Add(this.metroTabPage3);
             this.metroTabControl1.Controls.Add(this.metroTabPage5);
             this.metroTabControl1.Controls.Add(this.metroTabPage2);
+            this.metroTabControl1.HotTrack = true;
             this.metroTabControl1.Location = new System.Drawing.Point(4, 23);
             this.metroTabControl1.Multiline = true;
             this.metroTabControl1.Name = "metroTabControl1";
@@ -114,13 +116,14 @@
             // 
             // metroTabPage1
             // 
+            this.metroTabPage1.BackColor = System.Drawing.Color.Transparent;
             this.metroTabPage1.Controls.Add(this.groupBox1);
             this.metroTabPage1.Controls.Add(this.metroLabel1);
             this.metroTabPage1.Controls.Add(this.metroToggle1);
             this.metroTabPage1.Controls.Add(this.richTextBox1);
-            this.metroTabPage1.Controls.Add(this.panel1);
             this.metroTabPage1.Controls.Add(this.metroButton3);
             this.metroTabPage1.Controls.Add(this.metroButton2);
+            this.metroTabPage1.Controls.Add(this.panel1);
             this.metroTabPage1.HorizontalScrollbarBarColor = true;
             this.metroTabPage1.HorizontalScrollbarHighlightOnWheel = false;
             this.metroTabPage1.HorizontalScrollbarSize = 10;
@@ -130,6 +133,7 @@
             this.metroTabPage1.TabIndex = 0;
             this.metroTabPage1.Text = "Alpha";
             this.metroTabPage1.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroTabPage1.UseCustomBackColor = true;
             this.metroTabPage1.VerticalScrollbarBarColor = true;
             this.metroTabPage1.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage1.VerticalScrollbarSize = 10;
@@ -301,17 +305,6 @@
             this.richTextBox1.TabIndex = 6;
             this.richTextBox1.Text = "";
             // 
-            // panel1
-            // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.BackColor = System.Drawing.Color.Transparent;
-            this.panel1.Location = new System.Drawing.Point(3, 34);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1048, 565);
-            this.panel1.TabIndex = 5;
-            // 
             // metroButton3
             // 
             this.metroButton3.Location = new System.Drawing.Point(81, 5);
@@ -334,8 +327,20 @@
             this.metroButton2.UseSelectable = true;
             this.metroButton2.Click += new System.EventHandler(this.metroButton2_Click);
             // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.BackColor = System.Drawing.Color.Transparent;
+            this.panel1.Location = new System.Drawing.Point(3, 34);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1048, 565);
+            this.panel1.TabIndex = 5;
+            // 
             // metroTabPage3
             // 
+            this.metroTabPage3.BackColor = System.Drawing.Color.Transparent;
             this.metroTabPage3.Controls.Add(this.panel2);
             this.metroTabPage3.Controls.Add(this.metroButton6);
             this.metroTabPage3.Controls.Add(this.metroButton7);
@@ -348,6 +353,7 @@
             this.metroTabPage3.TabIndex = 2;
             this.metroTabPage3.Text = "Beta";
             this.metroTabPage3.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroTabPage3.UseCustomBackColor = true;
             this.metroTabPage3.VerticalScrollbarBarColor = true;
             this.metroTabPage3.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage3.VerticalScrollbarSize = 10;
@@ -387,10 +393,11 @@
             // 
             // metroTabPage5
             // 
+            this.metroTabPage5.BackColor = System.Drawing.Color.Transparent;
             this.metroTabPage5.Controls.Add(this.metroButton11);
             this.metroTabPage5.Controls.Add(this.metroButton9);
-            this.metroTabPage5.Controls.Add(this.panel3);
             this.metroTabPage5.Controls.Add(this.metroButton10);
+            this.metroTabPage5.Controls.Add(this.panel3);
             this.metroTabPage5.HorizontalScrollbarBarColor = true;
             this.metroTabPage5.HorizontalScrollbarHighlightOnWheel = false;
             this.metroTabPage5.HorizontalScrollbarSize = 10;
@@ -400,6 +407,7 @@
             this.metroTabPage5.TabIndex = 3;
             this.metroTabPage5.Text = "KRTools";
             this.metroTabPage5.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroTabPage5.UseCustomBackColor = true;
             this.metroTabPage5.VerticalScrollbarBarColor = true;
             this.metroTabPage5.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage5.VerticalScrollbarSize = 10;
@@ -426,17 +434,6 @@
             this.metroButton9.UseSelectable = true;
             this.metroButton9.Click += new System.EventHandler(this.metroButton9_Click);
             // 
-            // panel3
-            // 
-            this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel3.BackColor = System.Drawing.Color.Transparent;
-            this.panel3.Location = new System.Drawing.Point(3, 34);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1224, 577);
-            this.panel3.TabIndex = 11;
-            // 
             // metroButton10
             // 
             this.metroButton10.Location = new System.Drawing.Point(165, 5);
@@ -448,8 +445,20 @@
             this.metroButton10.UseSelectable = true;
             this.metroButton10.Click += new System.EventHandler(this.metroButton10_Click);
             // 
+            // panel3
+            // 
+            this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel3.BackColor = System.Drawing.Color.Transparent;
+            this.panel3.Location = new System.Drawing.Point(3, 34);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(1224, 577);
+            this.panel3.TabIndex = 11;
+            // 
             // metroTabPage2
             // 
+            this.metroTabPage2.BackColor = System.Drawing.Color.Transparent;
             this.metroTabPage2.Controls.Add(this.metroTabControl2);
             this.metroTabPage2.Controls.Add(this.metroButton5);
             this.metroTabPage2.Controls.Add(this.metroButton1);
@@ -462,23 +471,28 @@
             this.metroTabPage2.TabIndex = 1;
             this.metroTabPage2.Text = "Customize MODs";
             this.metroTabPage2.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroTabPage2.UseCustomBackColor = true;
             this.metroTabPage2.VerticalScrollbarBarColor = true;
             this.metroTabPage2.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage2.VerticalScrollbarSize = 10;
             // 
             // metroTabControl2
             // 
+            this.metroTabControl2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.metroTabControl2.Controls.Add(this.metroTabPage4);
             this.metroTabControl2.Location = new System.Drawing.Point(3, 48);
             this.metroTabControl2.Name = "metroTabControl2";
             this.metroTabControl2.SelectedIndex = 0;
-            this.metroTabControl2.Size = new System.Drawing.Size(1228, 557);
+            this.metroTabControl2.Size = new System.Drawing.Size(1228, 540);
             this.metroTabControl2.TabIndex = 9;
             this.metroTabControl2.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroTabControl2.UseSelectable = true;
             // 
             // metroTabPage4
             // 
+            this.metroTabPage4.BackColor = System.Drawing.Color.Transparent;
             this.metroTabPage4.Controls.Add(this.numericUpDown3);
             this.metroTabPage4.Controls.Add(this.metroLabel6);
             this.metroTabPage4.Controls.Add(this.numericUpDown2);
@@ -495,17 +509,18 @@
             this.metroTabPage4.HorizontalScrollbarSize = 10;
             this.metroTabPage4.Location = new System.Drawing.Point(4, 38);
             this.metroTabPage4.Name = "metroTabPage4";
-            this.metroTabPage4.Size = new System.Drawing.Size(1220, 515);
+            this.metroTabPage4.Size = new System.Drawing.Size(1220, 498);
             this.metroTabPage4.TabIndex = 0;
             this.metroTabPage4.Text = "Instance";
             this.metroTabPage4.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroTabPage4.UseCustomBackColor = true;
             this.metroTabPage4.VerticalScrollbarBarColor = true;
             this.metroTabPage4.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage4.VerticalScrollbarSize = 10;
             // 
             // numericUpDown3
             // 
-            this.numericUpDown3.Location = new System.Drawing.Point(784, 49);
+            this.numericUpDown3.Location = new System.Drawing.Point(785, 49);
             this.numericUpDown3.Maximum = new decimal(new int[] {
             2000,
             0,
@@ -530,16 +545,17 @@
             // metroLabel6
             // 
             this.metroLabel6.AutoSize = true;
-            this.metroLabel6.Location = new System.Drawing.Point(534, 49);
+            this.metroLabel6.Location = new System.Drawing.Point(535, 49);
             this.metroLabel6.Name = "metroLabel6";
             this.metroLabel6.Size = new System.Drawing.Size(144, 19);
             this.metroLabel6.TabIndex = 12;
             this.metroLabel6.Text = "Bot Default Delays (ms)";
             this.metroLabel6.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroLabel6.UseCustomBackColor = true;
             // 
             // numericUpDown2
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(784, 13);
+            this.numericUpDown2.Location = new System.Drawing.Point(785, 13);
             this.numericUpDown2.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -560,16 +576,17 @@
             // metroLabel5
             // 
             this.metroLabel5.AutoSize = true;
-            this.metroLabel5.Location = new System.Drawing.Point(534, 13);
+            this.metroLabel5.Location = new System.Drawing.Point(535, 13);
             this.metroLabel5.Name = "metroLabel5";
             this.metroLabel5.Size = new System.Drawing.Size(233, 19);
             this.metroLabel5.TabIndex = 10;
             this.metroLabel5.Text = "Open box when hit X times of instance";
             this.metroLabel5.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroLabel5.UseCustomBackColor = true;
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(388, 13);
+            this.numericUpDown1.Location = new System.Drawing.Point(389, 13);
             this.numericUpDown1.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -584,17 +601,18 @@
             // metroLabel4
             // 
             this.metroLabel4.AutoSize = true;
-            this.metroLabel4.Location = new System.Drawing.Point(233, 13);
+            this.metroLabel4.Location = new System.Drawing.Point(234, 13);
             this.metroLabel4.Name = "metroLabel4";
             this.metroLabel4.Size = new System.Drawing.Size(149, 19);
             this.metroLabel4.TabIndex = 8;
             this.metroLabel4.Text = "Halt Attack if HE3 below";
             this.metroLabel4.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroLabel4.UseCustomBackColor = true;
             // 
             // metroTabControl3
             // 
             this.metroTabControl3.Controls.Add(this.fleetPage1);
-            this.metroTabControl3.Location = new System.Drawing.Point(3, 71);
+            this.metroTabControl3.Location = new System.Drawing.Point(4, 71);
             this.metroTabControl3.Name = "metroTabControl3";
             this.metroTabControl3.SelectedIndex = 0;
             this.metroTabControl3.Size = new System.Drawing.Size(472, 419);
@@ -619,7 +637,7 @@
             // 
             // metroButton8
             // 
-            this.metroButton8.Location = new System.Drawing.Point(100, 45);
+            this.metroButton8.Location = new System.Drawing.Point(101, 45);
             this.metroButton8.Name = "metroButton8";
             this.metroButton8.Size = new System.Drawing.Size(75, 23);
             this.metroButton8.TabIndex = 6;
@@ -631,12 +649,13 @@
             // metroLabel3
             // 
             this.metroLabel3.AutoSize = true;
-            this.metroLabel3.Location = new System.Drawing.Point(1, 49);
+            this.metroLabel3.Location = new System.Drawing.Point(2, 49);
             this.metroLabel3.Name = "metroLabel3";
             this.metroLabel3.Size = new System.Drawing.Size(93, 19);
             this.metroLabel3.TabIndex = 5;
             this.metroLabel3.Text = "Fleet Selection";
             this.metroLabel3.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroLabel3.UseCustomBackColor = true;
             // 
             // instanceSelection
             // 
@@ -673,7 +692,7 @@
             "28",
             "29",
             "30"});
-            this.instanceSelection.Location = new System.Drawing.Point(95, 3);
+            this.instanceSelection.Location = new System.Drawing.Point(96, 3);
             this.instanceSelection.Name = "instanceSelection";
             this.instanceSelection.Size = new System.Drawing.Size(113, 29);
             this.instanceSelection.TabIndex = 3;
@@ -683,12 +702,13 @@
             // metroLabel2
             // 
             this.metroLabel2.AutoSize = true;
-            this.metroLabel2.Location = new System.Drawing.Point(1, 13);
+            this.metroLabel2.Location = new System.Drawing.Point(2, 13);
             this.metroLabel2.Name = "metroLabel2";
             this.metroLabel2.Size = new System.Drawing.Size(88, 19);
             this.metroLabel2.TabIndex = 2;
             this.metroLabel2.Text = "Instance Level";
             this.metroLabel2.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroLabel2.UseCustomBackColor = true;
             // 
             // metroButton5
             // 
@@ -715,6 +735,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.DarkGray;
             this.label1.Location = new System.Drawing.Point(11, 14);
@@ -733,11 +754,17 @@
             this.discordRPC.Interval = 1000;
             this.discordRPC.Tick += new System.EventHandler(this.discordRPC_Tick);
             // 
+            // timer2
+            // 
+            this.timer2.Interval = 1000;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1254, 661);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.metroTabControl1);
@@ -821,6 +848,7 @@
         private MetroFramework.Controls.MetroLabel metroLabel5;
         private System.Windows.Forms.NumericUpDown numericUpDown3;
         private MetroFramework.Controls.MetroLabel metroLabel6;
+        private System.Windows.Forms.Timer timer2;
     }
 }
 

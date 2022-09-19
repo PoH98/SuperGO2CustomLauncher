@@ -42,7 +42,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 return false;
             }
             await host.LeftClick(new Point(point.Value.X + bmp.Width - 200, point.Value.Y + bmp.Height - 500), rnd.Next(80, 100));
-            await Task.Delay(1000);
+            await Task.Delay(300);
             bmp = await devtools.Screenshot();
             crop = await bmp.Crop(new Point(bmp.Width - 300, bmp.Height - 500), new Size(300, 500));
             point = crop.FindImageGrayscaled("Images\\bag.png", 0.8);
@@ -63,7 +63,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 return false;
             }
             await host.LeftClick(new Point(point.Value.X + bmp.Width - 300, point.Value.Y + bmp.Height - 500), rnd.Next(80, 100));
-            await Task.Delay(2000);
+            await Task.Delay(1500);
             return true;
         }
 
