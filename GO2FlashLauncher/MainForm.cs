@@ -251,7 +251,7 @@ namespace GO2FlashLauncher
         {
 
         }
-        private async void ChromiumWebBrowser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
+        private void ChromiumWebBrowser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
             var chrome = (ChromiumWebBrowser)sender;
             if (chrome.Address == "blank")

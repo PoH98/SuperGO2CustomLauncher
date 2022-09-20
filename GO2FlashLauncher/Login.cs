@@ -16,7 +16,14 @@ namespace GO2FlashLauncher
             path = "Profile\\" + profileName + "\\config.json";
             if (File.Exists(path))
             {
-                settings = JsonConvert.DeserializeObject<BotSettings>(File.ReadAllText(path));
+                try
+                {
+                    settings = JsonConvert.DeserializeObject<BotSettings>(File.ReadAllText(path));
+                }
+                catch
+                {
+
+                }
             }
             InitializeComponent();
         }

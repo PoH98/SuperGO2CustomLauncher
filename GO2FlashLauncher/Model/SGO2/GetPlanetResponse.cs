@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace GO2FlashLauncher.Model.SGO2
 {
-    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
     public class Datum
     {
         [JsonProperty("userId")]
