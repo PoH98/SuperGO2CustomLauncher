@@ -132,7 +132,9 @@
     <Compile Include="Script\ImageCapture.cs" />
     <Compile Include="Script\ImageDectection.cs" />
     <Compile Include="Script\ImageNotFound.cs" />
-    <Compile Include="Script\MainScript.cs" />
+    <Compile Include="Script\InstanceScript.cs" />
+    <Compile Include="Script\AbstractScript.cs" />
+    <Compile Include="Script\WheelScript.cs" />
     <Compile Include="Service\ControlSnapshot.cs" />
     <Compile Include="Service\GO2HttpService.cs" />
     <Compile Include="Service\Logger.cs" />

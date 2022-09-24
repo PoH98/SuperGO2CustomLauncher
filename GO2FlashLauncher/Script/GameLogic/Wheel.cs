@@ -1,6 +1,7 @@
 ﻿using CefSharp;
 using CefSharp.DevTools;
 using CefSharp.WinForms;
+using GO2FlashLauncher.Model;
 using System;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -60,9 +61,26 @@ namespace GO2FlashLauncher.Script.GameLogic
             return false;
         }
 
-        public async Task<bool> Spin(Bitmap bmp)
+        public async Task<bool> Spin(Bitmap bmp, BaseResources resources)
         {
-            var point = bmp.FindImage("Images\\wheelbuyandspin.png", 0.7);
+            if(resources.Vouchers < 5)
+            {
+                //no more spins
+                return true;
+            }
+            var point = bmp.FindImage("Images\\spin.jpg", 0.7);
+            if(point == null)
+            {
+                point = bmp.FindImage("Images\\spin1.png", 0.7);
+            }
+            if(point == null)
+            {
+                return false;
+            }
+            await host.LeftClick(point.Value, rnd.Next(80, 100));
+            await Task.Delay(1000);
+            bmp = await devtools.Screenshot();
+            point = bmp.FindImage("Images\\wheelbuyandspin.png", 0.7);
             if(point == null)
             {
                 for(int x = 2; x < 5; x++)
@@ -77,7 +95,16 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             if(point != null)
             {
-                await host.LeftClick(new Point(50, 50), rnd.Next(80, 100));
+                //have to use vouchers
+                resources.Vouchers -= 5;
+                var voucher = bmp.FindImage("Images\\vouchers.png", 0.7);
+                if(voucher == null)
+                {
+                    return false;
+                }
+                await host.LeftClick(new Point(voucher.Value.X - 10, voucher.Value.Y + 2), rnd.Next(80,100));
+                await Task.Delay(500);
+                await host.LeftClick(point.Value, rnd.Next(80, 100));
                 int error = 0;
                 do
                 {
@@ -93,11 +120,16 @@ namespace GO2FlashLauncher.Script.GameLogic
                 } while (error < 20);
                 if(point != null)
                 {
-                    await host.LeftClick(point.Value, rnd.Next(80, 100));
+                    await Task.Delay(500);
+                    //scan for share
+                    bmp = await devtools.Screenshot();
+                    point = bmp.FindImage("Images\\closeshare.png", 0.7);
+                    await host.LeftClick(new Point(point.Value.X + 10, point.Value.Y), rnd.Next(80, 100));
+                    await Task.Delay(500);
                     return true;
                 }
             }
-            return false;
+            return true;
         }
 
         public async Task<bool> EndSpin(Bitmap bmp)

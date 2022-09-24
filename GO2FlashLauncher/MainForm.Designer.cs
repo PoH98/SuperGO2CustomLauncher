@@ -46,7 +46,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
-            this.metroToggle1 = new MetroFramework.Controls.MetroToggle();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.metroButton3 = new MetroFramework.Controls.MetroButton();
             this.metroButton2 = new MetroFramework.Controls.MetroButton();
@@ -81,6 +80,9 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.discordRPC = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.metroToggle1 = new MetroFramework.Controls.MetroToggle();
+            this.metroToggle2 = new MetroFramework.Controls.MetroToggle();
+            this.metroLabel7 = new MetroFramework.Controls.MetroLabel();
             this.metroTabControl1.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -108,7 +110,7 @@
             this.metroTabControl1.Location = new System.Drawing.Point(4, 23);
             this.metroTabControl1.Multiline = true;
             this.metroTabControl1.Name = "metroTabControl1";
-            this.metroTabControl1.SelectedIndex = 3;
+            this.metroTabControl1.SelectedIndex = 0;
             this.metroTabControl1.Size = new System.Drawing.Size(1246, 634);
             this.metroTabControl1.TabIndex = 0;
             this.metroTabControl1.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -117,6 +119,8 @@
             // metroTabPage1
             // 
             this.metroTabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.metroTabPage1.Controls.Add(this.metroLabel7);
+            this.metroTabPage1.Controls.Add(this.metroToggle2);
             this.metroTabPage1.Controls.Add(this.groupBox1);
             this.metroTabPage1.Controls.Add(this.metroLabel1);
             this.metroTabPage1.Controls.Add(this.metroToggle1);
@@ -279,19 +283,6 @@
             this.metroLabel1.TabIndex = 13;
             this.metroLabel1.Text = "Run Bot: ";
             this.metroLabel1.Theme = MetroFramework.MetroThemeStyle.Dark;
-            // 
-            // metroToggle1
-            // 
-            this.metroToggle1.AutoSize = true;
-            this.metroToggle1.Checked = true;
-            this.metroToggle1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.metroToggle1.Location = new System.Drawing.Point(220, 7);
-            this.metroToggle1.Name = "metroToggle1";
-            this.metroToggle1.Size = new System.Drawing.Size(80, 17);
-            this.metroToggle1.TabIndex = 12;
-            this.metroToggle1.Text = "On";
-            this.metroToggle1.UseSelectable = true;
-            this.metroToggle1.CheckedChanged += new System.EventHandler(this.metroToggle1_CheckedChanged);
             // 
             // richTextBox1
             // 
@@ -751,13 +742,47 @@
             // 
             // discordRPC
             // 
-            this.discordRPC.Interval = 1000;
+            this.discordRPC.Interval = 10000;
             this.discordRPC.Tick += new System.EventHandler(this.discordRPC_Tick);
             // 
             // timer2
             // 
             this.timer2.Interval = 1000;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
+            // metroToggle1
+            // 
+            this.metroToggle1.AutoSize = true;
+            this.metroToggle1.Checked = true;
+            this.metroToggle1.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.metroToggle1.Location = new System.Drawing.Point(220, 7);
+            this.metroToggle1.Name = "metroToggle1";
+            this.metroToggle1.Size = new System.Drawing.Size(80, 17);
+            this.metroToggle1.TabIndex = 12;
+            this.metroToggle1.Text = "On";
+            this.metroToggle1.UseSelectable = true;
+            this.metroToggle1.CheckedChanged += new System.EventHandler(this.metroToggle1_CheckedChanged);
+            // 
+            // metroToggle2
+            // 
+            this.metroToggle2.AutoSize = true;
+            this.metroToggle2.Location = new System.Drawing.Point(387, 7);
+            this.metroToggle2.Name = "metroToggle2";
+            this.metroToggle2.Size = new System.Drawing.Size(80, 17);
+            this.metroToggle2.TabIndex = 15;
+            this.metroToggle2.Text = "Off";
+            this.metroToggle2.UseSelectable = true;
+            this.metroToggle2.CheckedChanged += new System.EventHandler(this.metroToggle2_CheckedChanged);
+            // 
+            // metroLabel7
+            // 
+            this.metroLabel7.AutoSize = true;
+            this.metroLabel7.Location = new System.Drawing.Point(306, 5);
+            this.metroLabel7.Name = "metroLabel7";
+            this.metroLabel7.Size = new System.Drawing.Size(78, 19);
+            this.metroLabel7.TabIndex = 16;
+            this.metroLabel7.Text = "Spin Wheel:";
+            this.metroLabel7.Theme = MetroFramework.MetroThemeStyle.Dark;
             // 
             // MainForm
             // 
@@ -816,7 +841,6 @@
         private MetroFramework.Controls.MetroTabControl metroTabControl2;
         private MetroFramework.Controls.MetroTabPage metroTabPage4;
         private MetroFramework.Controls.MetroLabel metroLabel1;
-        private MetroFramework.Controls.MetroToggle metroToggle1;
         private MetroFramework.Controls.MetroLabel metroLabel2;
         private MetroFramework.Controls.MetroComboBox instanceSelection;
         private MetroFramework.Controls.MetroLabel metroLabel3;
@@ -849,6 +873,9 @@
         private System.Windows.Forms.NumericUpDown numericUpDown3;
         private MetroFramework.Controls.MetroLabel metroLabel6;
         private System.Windows.Forms.Timer timer2;
+        private MetroFramework.Controls.MetroLabel metroLabel7;
+        private MetroFramework.Controls.MetroToggle metroToggle2;
+        private MetroFramework.Controls.MetroToggle metroToggle1;
     }
 }
 

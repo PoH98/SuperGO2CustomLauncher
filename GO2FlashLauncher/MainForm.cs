@@ -28,8 +28,7 @@ namespace GO2FlashLauncher
         static extern bool AllocConsole();
         ChromiumWebBrowser alpha, beta, krtools;
         HttpClient hc = new HttpClient();
-        CancellationTokenSource cancellation;
-        MainScript script;
+        AbstractScript script;
         string profileName = "Bot1";
         BotSettings settings = new BotSettings();
         readonly RPC rpc = new RPC();
@@ -144,14 +143,16 @@ namespace GO2FlashLauncher
             beta.LoadingStateChanged += ChromiumWebBrowser_LoadingStateChanged;
             timer1_Tick(null, null);
             timer1.Start();
-            discordRPC_Tick(null, null);
             instanceSelection.SelectedIndex = this.settings.Instance - 1;
             metroToggle1.Checked = this.settings.RunBot;
+            metroToggle2.Checked = this.settings.RunWheel;
             numericUpDown1.Value = this.settings.HaltOn;
             numericUpDown2.Value = this.settings.InstanceHitCount;
             numericUpDown3.Value = this.settings.Delays;
             RenderFleets();
             timer2.Start();
+            discordRPC.Start();
+            rpc.SetPresence();
 #if !DEBUG
             metroTabControl1.Controls.Remove(metroTabPage3);
 #endif
@@ -274,12 +275,19 @@ namespace GO2FlashLauncher
                         settings.AuthKey = null;
                         BrowserInitializedChanged(sender, e);
                     }
-                    RunScript(chrome);
+                    if (settings.RunBot)
+                    {
+                        RunScript(chrome, new InstanceScript(settings));
+                    }
+                    else if (settings.RunWheel)
+                    {
+                        RunScript(chrome, new WheelScript(settings));
+                    }
                 }
             }
         }
 
-        private void RunScript(ChromiumWebBrowser chrome)
+        private async void RunScript(ChromiumWebBrowser chrome, AbstractScript s)
         {
             if (script != null)
             {
@@ -288,13 +296,8 @@ namespace GO2FlashLauncher
                     return;
                 }
             }
-            if (!metroToggle1.Checked)
-            {
-                return;
-            }
-            cancellation = new CancellationTokenSource();
-            script = new MainScript(settings);
-            _ = script.Run(cancellation.Token, chrome, userId, GO2HttpService).ConfigureAwait(false);
+            script = s;
+            await script.Run(chrome, userId, GO2HttpService).ConfigureAwait(false);
         }
 
         private string ConvertImage(string path)
@@ -328,10 +331,23 @@ namespace GO2FlashLauncher
             {
                 return;
             }
-            var url = await GO2HttpService.GetIFrameUrl(userId);
-            alpha.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
-            if (cancellation != null)
-                cancellation.Cancel();
+            try
+            {
+                var url = await GO2HttpService.GetIFrameUrl(userId);
+                alpha.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                if(script != null)
+                {
+                    if (script.Running)
+                    {
+                        script.Stop();
+                    }
+                }
+            }
+            catch
+            {
+                settings.AuthKey = null;
+                BrowserInitializedChanged(alpha, e);
+            }
         }
 
         private void metroButton3_Click(object sender, EventArgs e)
@@ -372,9 +388,12 @@ namespace GO2FlashLauncher
                 Directory.CreateDirectory("Profile\\" + profileName);
             }
             File.WriteAllText("Profile\\" + profileName + "\\config.json", JsonConvert.SerializeObject(settings));
-            if(cancellation != null)
+            if (script != null)
             {
-                cancellation.Cancel();
+                if (script.Running)
+                {
+                    script.Stop();
+                }
             }
             Cef.Shutdown();
             Application.Exit();
@@ -473,9 +492,17 @@ namespace GO2FlashLauncher
 
         private async void metroToggle1_CheckedChanged(object sender, EventArgs e)
         {
-            if (cancellation != null)
+            if (settings.RunWheel && metroToggle1.Checked)
             {
-                cancellation.Cancel();
+                MessageBox.Show("There is already running script here!");
+                return;
+            }
+            if (script != null)
+            {
+                if (script.Running)
+                {
+                    script.Stop();
+                }
             }
             settings.RunBot = metroToggle1.Checked;
             if (metroToggle1.Checked)
@@ -483,7 +510,7 @@ namespace GO2FlashLauncher
                 Logger.ClearLog();
                 await Task.Delay(1000);
                 Logger.LogWarning("Bot Started");
-                RunScript(alpha);
+                RunScript(alpha, new InstanceScript(settings));
             }
             else
             {
@@ -636,11 +663,6 @@ namespace GO2FlashLauncher
             }
         }
 
-        private void discordRPC_Tick(object sender, EventArgs e)
-        {
-            rpc.SetPresence();
-        }
-
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             settings.HaltOn = numericUpDown1.Value;
@@ -718,6 +740,40 @@ namespace GO2FlashLauncher
             await Task.Delay(500);
             var path = File.ReadAllText(Path.GetFullPath("cache\\background.settings"));
             base64code = ConvertImage(path);
+        }
+
+        private void discordRPC_Tick(object sender, EventArgs e)
+        {
+            rpc.SetPresence();
+        }
+
+        private async void metroToggle2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (settings.RunBot && metroToggle2.Checked)
+            {
+                MessageBox.Show("There is already running script here!");
+                return;
+            }
+            if (script != null)
+            {
+                if (script.Running)
+                {
+                    script.Stop();
+                }
+            }
+            settings.RunWheel = metroToggle2.Checked;
+            if (metroToggle2.Checked)
+            {
+                Logger.ClearLog();
+                await Task.Delay(1000);
+                Logger.LogWarning("Bot Started");
+                RunScript(alpha, new WheelScript(settings));
+            }
+            else
+            {
+                Logger.LogWarning("Bot Stopped");
+                resources = null;
+            }
         }
 
         private void Input_ValueChanged(object sender, EventArgs e)

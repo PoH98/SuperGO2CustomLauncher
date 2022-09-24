@@ -12,11 +12,11 @@ namespace GO2FlashLauncher.Service
         private readonly string ClientId = "701835165407903744";
         private readonly DiscordRpcClient rpc;
         private bool Inited = false;
-        private DateTime startTime;
+        private Timestamps startTime;
         public RPC()
         {
             rpc = new DiscordRpcClient(ClientId);
-            startTime = DateTime.Now;
+            startTime = Timestamps.Now;
         }
 
         public void SetPresence()
@@ -35,7 +35,7 @@ namespace GO2FlashLauncher.Service
                     {
                         LargeImageKey = "main-logo"
                     },
-                    Timestamps = Timestamps.Now,
+                    Timestamps = startTime,
                     Buttons = new Button[]
                     {
                         new Button()

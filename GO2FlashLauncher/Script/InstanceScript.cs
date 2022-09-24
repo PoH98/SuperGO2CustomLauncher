@@ -5,52 +5,17 @@ using GO2FlashLauncher.Script.GameLogic;
 using GO2FlashLauncher.Service;
 using System;
 using System.Drawing;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace GO2FlashLauncher.Script
 {
-    internal class MainScript
+    internal class InstanceScript : AbstractScript
     {
-        private bool IsRunning;
-        private readonly BotSettings botSettings;
-        private BaseResources resources = new BaseResources();
-        private DateTime BotStartTime;
-        public BaseResources Resources
+        public InstanceScript(BotSettings settings) : base(settings)
         {
-            get
-            {
-                return resources;
-            }
         }
-        public TimeSpan BotRuntime
-        {
-            get
-            {
-                return DateTime.Now - BotStartTime;
-            }
-        }
-        public MainScript(BotSettings settings)
-        {
-            this.botSettings = settings;
-        }
-        /// <summary>
-        /// Check if script is running
-        /// </summary>
-        public bool Running
-        {
-            get
-            {
-                return IsRunning;
-            }
-        }
-        /// <summary>
-        /// Main loop of script
-        /// </summary>
-        /// <param name="token"></param>
-        /// <param name="browser"></param>
-        /// <returns></returns>
-        public Task Run(CancellationToken token, ChromiumWebBrowser browser, int userID, GO2HttpService httpService)
+
+        public override Task Run(ChromiumWebBrowser browser, int userID, GO2HttpService httpService)
         {
             return Task.Run(async () =>
             {
@@ -84,14 +49,12 @@ namespace GO2FlashLauncher.Script
                     int error = 0;
                     int lag = 0;
                     Bitmap lastbmp = null;
-                    //Clear logs in rtb
-                    Logger.ClearLog();
                     do
                     {
                         try
                         {
                             //Script stoped
-                            token.ThrowIfCancellationRequested();
+                            Cancellation.ThrowIfCancellationRequested();
                             //error too much
                             if (error > 20)
                             {
@@ -201,7 +164,7 @@ namespace GO2FlashLauncher.Script
                                     bool loop = true;
                                     while (loop)
                                     {
-                                        token.ThrowIfCancellationRequested();
+                                        Cancellation.ThrowIfCancellationRequested();
                                         try
                                         {
                                             await Task.Delay(botSettings.Delays);
@@ -220,7 +183,7 @@ namespace GO2FlashLauncher.Script
                                                     {
                                                         bmp = await devTools.Screenshot();
                                                         await Task.Delay(100);
-                                                        token.ThrowIfCancellationRequested();
+                                                        Cancellation.ThrowIfCancellationRequested();
                                                     }
                                                     await Task.Delay(botSettings.Delays);
                                                     bmp = await devTools.Screenshot();
@@ -229,11 +192,19 @@ namespace GO2FlashLauncher.Script
                                                     {
                                                         //no HE3
                                                         Logger.LogWarning("Out of HE3! Halt attack now!");
-                                                        var url = await httpService.GetIFrameUrl(userID);
-                                                        browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                         inStage = false;
                                                         mainScreenLocated = false;
                                                         spaceStationLocated = false;
+                                                        try
+                                                        {
+                                                            var url = await httpService.GetIFrameUrl(userID);
+                                                            browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                                        }
+                                                        catch
+                                                        {
+                                                            //unable to refresh
+                                                            Logger.LogError("Unable to refresh window! something wrong!");
+                                                        }
                                                         Logger.LogInfo("Waiting for resources...");
                                                         noResources = DateTime.Now.AddHours(1);
                                                         break;
@@ -243,7 +214,7 @@ namespace GO2FlashLauncher.Script
                                                     while (!await b.IncreaseFleet(bmp))
                                                     {
                                                         bmp = await devTools.Screenshot();
-                                                        token.ThrowIfCancellationRequested();
+                                                        Cancellation.ThrowIfCancellationRequested();
                                                         error++;
                                                         if (error > 5)
                                                         {
@@ -277,6 +248,7 @@ namespace GO2FlashLauncher.Script
                                                             return;
                                                         }
                                                         await Task.Delay(100);
+                                                        Cancellation.ThrowIfCancellationRequested();
                                                     }
                                                     await Task.Delay(botSettings.Delays - 100);
                                                     bmp = await devTools.Screenshot();
@@ -320,6 +292,24 @@ namespace GO2FlashLauncher.Script
                                 {
                                     Logger.LogInfo("Locating Space station");
                                     error++;
+                                    if (error > 3)
+                                    {
+                                        await b.CloseButtons(bmp);
+                                        await Task.Delay(300);
+                                    }
+                                    if (error > 10)
+                                    {
+                                        //something really wrong lol
+                                        Logger.LogError("Something seriously wrong! Refreshing the game!");
+                                        spaceStationLocated = false;
+                                        mainScreenLocated = false;
+                                        inStage = false;
+                                        error = 0;
+                                        var url = await httpService.GetIFrameUrl(userID);
+                                        browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                        await Task.Delay(botSettings.Delays);
+                                        break;
+                                    }
                                     continue;
                                 }
                             }
@@ -335,7 +325,7 @@ namespace GO2FlashLauncher.Script
                                 }
                                 else
                                 {
-                                    var crop = await bmp.Crop(new Point(0,0), new Size(500, 500));
+                                    var crop = await bmp.Crop(new Point(0, 0), new Size(500, 500));
                                     var mail = crop.FindImage("Images\\mail.png", 0.6);
                                     if (mail.HasValue)
                                     {
@@ -359,14 +349,19 @@ namespace GO2FlashLauncher.Script
                                             {
                                                 stageCount = 0;
                                             }
+                                            else
+                                            {
+                                                suspendCollect = true;
+                                            }
                                             await Task.Delay(botSettings.Delays);
                                             bmp = await devTools.Screenshot();
-                                            while(!await b.CloseButtons(bmp))
+                                            while (!await b.CloseButtons(bmp))
                                             {
                                                 error++;
                                                 await Task.Delay(100);
                                                 bmp = await devTools.Screenshot();
-                                                if(error > 10)
+                                                Cancellation.ThrowIfCancellationRequested();
+                                                if (error > 10)
                                                 {
                                                     //???
                                                     Logger.LogError("Something seriously wrong! Refreshing the game!");
@@ -404,6 +399,7 @@ namespace GO2FlashLauncher.Script
                                                     await Task.Delay(botSettings.Delays);
                                                     break;
                                                 }
+                                                Cancellation.ThrowIfCancellationRequested();
                                             }
                                         }
                                     }
@@ -418,7 +414,7 @@ namespace GO2FlashLauncher.Script
                                     await Task.Delay(800);
                                     //detect close
                                     bmp = await devTools.Screenshot();
-                                    bmp = await bmp.Crop(new Point(0,0), new Size(bmp.Width, bmp.Height - 300));
+                                    bmp = await bmp.Crop(new Point(0, 0), new Size(bmp.Width, bmp.Height - 300));
                                     while (!await b.CloseButtons(bmp))
                                     {
                                         error++;
@@ -435,6 +431,7 @@ namespace GO2FlashLauncher.Script
                                             var url = await httpService.GetIFrameUrl(userID);
                                             browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                             await Task.Delay(botSettings.Delays);
+                                            Cancellation.ThrowIfCancellationRequested();
                                             break;
                                         }
                                     }

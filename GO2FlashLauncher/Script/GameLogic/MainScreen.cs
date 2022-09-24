@@ -268,6 +268,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             br.Metal = selectedPlanet.Resources.Metal;
             br.Gold = selectedPlanet.Resources.Gold;
             br.MP = selectedPlanet.Resources.MallPoints;
+            br.Vouchers = selectedPlanet.Resources.Vouchers;
             return br;
         }
     }
