@@ -161,9 +161,10 @@ namespace GO2FlashLauncher.Script
                                     error = 0;
                                     await Task.Delay(botSettings.Delays / 4 * 3);
                                     await host.LeftClick(spaceStationLocation.Value, 100);
-                                    await Task.Delay(200);
-                                    
+                                    await Task.Delay(200);                 
                                     bool loop = true;
+                                    InstanceEnterState state = InstanceEnterState.Error;
+                                    SelectFleetType instanceType = SelectFleetType.Instance;
                                     while (loop)
                                     {
                                         Cancellation.ThrowIfCancellationRequested();
@@ -171,8 +172,7 @@ namespace GO2FlashLauncher.Script
                                         {
                                             await Task.Delay(botSettings.Delays);
                                             bmp = await devTools.Screenshot();
-                                            InstanceEnterState state = InstanceEnterState.Error;
-                                            SelectFleetType instanceType = SelectFleetType.Instance;
+
                                             if (botSettings.RestrictFight)
                                             {
                                                 //new day, reset
@@ -184,16 +184,28 @@ namespace GO2FlashLauncher.Script
                                                 if(currentRestrictCount < 3)
                                                 {
                                                     //have chances
-                                                    //ocr here detects current restrict left count as we have 0 restrict entered
-                                                    if(currentRestrictCount == 0)
-                                                    {
-
-                                                    }
                                                     currentRestrictCount++;
                                                     //enter restrict instead
                                                     Logger.LogInfo("Entering Restrict");
-                                                    state = await s.EnterRestrict(bmp, botSettings.RestrictLevel);
-                                                    instanceType = SelectFleetType.Restrict;
+                                                    try
+                                                    {
+                                                        state = await s.EnterRestrict(bmp, botSettings.RestrictLevel);
+                                                        instanceType = SelectFleetType.Restrict;
+                                                    }
+                                                    catch(ArgumentException ex)
+                                                    {
+                                                        if(ex.Message == "Already out of chance")
+                                                        {
+                                                            currentRestrictCount = 3;
+                                                            Logger.LogInfo("Restrict already out of chances today, skipping...");
+                                                            state = await s.EnterInstance(bmp, botSettings.Instance);
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    Logger.LogInfo("Entering Instance");
+                                                    state = await s.EnterInstance(bmp, botSettings.Instance);
                                                 }
                                             }
                                             else

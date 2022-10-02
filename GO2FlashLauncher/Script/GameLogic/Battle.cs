@@ -16,6 +16,7 @@ namespace GO2FlashLauncher.Script.GameLogic
         private readonly IBrowserHost host;
         private readonly Random rnd = new Random();
         private readonly DevToolsClient devtools;
+        
         public Battle(ChromiumWebBrowser browser)
         {
             this.devtools = browser.GetBrowser().GetDevToolsClient();
@@ -42,7 +43,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             var currentPage = 0;
             bmp = await devtools.Screenshot();
-            foreach (Fleet f in fleets.Where(x => x.Order > 0).OrderBy(x => x.Order).Take(maxFleetNum))
+            foreach (Fleet f in fleets.Where(x => x.Order >= 0).OrderBy(x => x.Order).Take(maxFleetNum))
             {
                 var index = fleets.IndexOf(f);
                 var page = index / 9;

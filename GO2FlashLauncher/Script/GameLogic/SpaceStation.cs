@@ -1,6 +1,10 @@
 ﻿using CefSharp;
 using CefSharp.DevTools;
 using CefSharp.WinForms;
+using Emgu.CV;
+using Emgu.CV.OCR;
+using Emgu.CV.Structure;
+using GO2FlashLauncher.Service;
 using System;
 using System.Drawing;
 using System.IO;
@@ -13,10 +17,13 @@ namespace GO2FlashLauncher.Script.GameLogic
         private readonly IBrowserHost host;
         private readonly DevToolsClient devtools;
         private readonly Random rnd = new Random();
+        private readonly Tesseract ocr;
         public SpaceStation(ChromiumWebBrowser browser)
         {
             host = browser.GetBrowser().GetHost();
             this.devtools = browser.GetBrowser().GetDevToolsClient();
+            ocr = new Tesseract("libs", "eng", OcrEngineMode.TesseractLstmCombined);
+            ocr.SetVariable("tessedit_char_whitelist", "1234567890");
         }
 
         public async Task Enter(Bitmap bmp)
@@ -114,6 +121,20 @@ namespace GO2FlashLauncher.Script.GameLogic
                 await host.LeftClick(result.Value, rnd.Next(10, 50));
                 await Task.Delay(300);
                 bmp = await devtools.Screenshot();
+            }
+            //read OCR restrict count left
+            var ocrPoint = bmp.FindImage("Images\\restrictRemaining.png", 0.7);
+            if(ocrPoint != null)
+            {
+                var crop = await bmp.Crop(new Point(ocrPoint.Value.X + 61, ocrPoint.Value.Y), new Size(15, 20));
+                ocr.SetImage(crop.ToImage<Gray, byte>());
+                var str = ocr.GetUTF8Text();
+                int.TryParse(str, out int count);
+                if(count == 0)
+                {
+                    throw new ArgumentException("Already out of chance");
+                }
+                Logger.LogInfo("Restrict remaining chance: " + count);
             }
             //detect already in instance
             if (bmp.FindImage("Images\\instanceWindowMarker.png", 0.65) != null)

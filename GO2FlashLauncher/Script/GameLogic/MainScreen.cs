@@ -1,16 +1,13 @@
 ﻿using CefSharp;
 using CefSharp.DevTools;
 using CefSharp.WinForms;
-using Emgu.CV;
 using Emgu.CV.OCR;
-using Emgu.CV.Structure;
 using GO2FlashLauncher.Model;
 using GO2FlashLauncher.Service;
 using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace GO2FlashLauncher.Script.GameLogic
