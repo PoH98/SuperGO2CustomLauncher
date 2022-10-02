@@ -93,6 +93,51 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             return InstanceEnterState.Error;
         }
+
+        public async Task<InstanceEnterState> EnterRestrict(Bitmap bmp, int instanceLv)
+        {
+            var result = bmp.FindImage(Path.GetFullPath("Images\\instance.png"), 0.8);
+            if (result == null)
+            {
+                await Task.Delay(10);
+                result = bmp.FindImage(Path.GetFullPath("Images\\instance2.png"), 0.8);
+            }
+            if (result != null)
+            {
+                await host.LeftClick(result.Value, rnd.Next(10, 50));
+                await Task.Delay(800);
+                bmp = await devtools.Screenshot();
+            }
+            result = bmp.FindImage("Images\\restricted.png", 0.7);
+            if(result != null)
+            {
+                await host.LeftClick(result.Value, rnd.Next(10, 50));
+                await Task.Delay(300);
+                bmp = await devtools.Screenshot();
+            }
+            //detect already in instance
+            if (bmp.FindImage("Images\\instanceWindowMarker.png", 0.65) != null)
+            {
+                result = bmp.FindImage("Images\\r" + instanceLv + "r.png", 0.8);
+                if (result == null && File.Exists("Images\\r" + instanceLv + "r1.png"))
+                {
+                    result = bmp.FindImage("Images\\r" + instanceLv + "r1.png", 0.8);
+                }
+                if (result != null)
+                {
+                    await Task.Delay(500);
+                    await host.LeftClick(result.Value, rnd.Next(80, 100));
+                    await Task.Delay(500);
+                    return InstanceEnterState.IncreaseFleet;
+                }
+            }
+            else if (bmp.FindImage("Images\\instancestop.png", 0.8) != null)
+            {
+                //in stage
+                return InstanceEnterState.InStage;
+            }
+            return InstanceEnterState.Error;
+        }
     }
 
     public enum InstanceEnterState

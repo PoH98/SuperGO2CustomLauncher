@@ -14,6 +14,10 @@ namespace GO2FlashLauncher.Model
         public string AuthKey { get; set; }
         public int PlanetId { get; set; } = -1;
         public int Delays { get; set; } = 800;
+        public bool RestrictFight { get; set; } = false;
+        public bool TrialFight { get; set; } = false;
+        public int RestrictLevel { get; set; } = 1;
+        public int TrialMaxLv { get; set; } = 10;
     }
 
     internal class Fleet

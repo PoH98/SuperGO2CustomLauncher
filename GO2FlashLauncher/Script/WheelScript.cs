@@ -105,19 +105,36 @@ namespace GO2FlashLauncher.Script
                             else
                             {
                                 //entered wheel
-                                await w.Spin(bmp, resources);
+                                Cancellation.ThrowIfCancellationRequested();
+                                if (await w.Spin(bmp, resources))
+                                {
+                                    Logger.LogInfo("Detected Vouchers: " + resources.Vouchers);
+                                }
+                                else
+                                {
+                                    error++;
+                                    if(error > 10)
+                                    {
+                                        inWheel = false;
+                                        mainScreenLocated = false;
+                                    }
+                                }
                             }
                         }
-                        catch
+                        catch (Exception ex)
                         {
-
+                            if (ex is OperationCanceledException)
+                            {
+                                throw;
+                            }
+                            Logger.LogError(ex.ToString());
                         }
                     }
                     while (true);
                 }
-                catch
+                catch (OperationCanceledException)
                 {
-
+                    IsRunning = false;
                 }
             });
         }

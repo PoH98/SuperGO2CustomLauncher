@@ -149,6 +149,10 @@ namespace GO2FlashLauncher
             numericUpDown1.Value = this.settings.HaltOn;
             numericUpDown2.Value = this.settings.InstanceHitCount;
             numericUpDown3.Value = this.settings.Delays;
+            metroCheckBox1.Checked = this.settings.RestrictFight;
+            metroCheckBox2.Checked = this.settings.TrialFight;
+            metroComboBox1.SelectedIndex = this.settings.RestrictLevel -1 ;
+            metroComboBox1.SelectedIndex  = this.settings.RestrictLevel - 1;
             RenderFleets();
             timer2.Start();
             discordRPC.Start();
@@ -774,6 +778,26 @@ namespace GO2FlashLauncher
                 Logger.LogWarning("Bot Stopped");
                 resources = null;
             }
+        }
+
+        private void metroCheckBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.RestrictFight = metroCheckBox1.Checked;
+        }
+
+        private void metroCheckBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.TrialFight = metroCheckBox2.Checked;
+        }
+
+        private void metroComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            settings.RestrictLevel = metroComboBox1.SelectedIndex + 1;
+        }
+
+        private void metroComboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            settings.TrialMaxLv = metroComboBox2.SelectedIndex + 1;
         }
 
         private void Input_ValueChanged(object sender, EventArgs e)

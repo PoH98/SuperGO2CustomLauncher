@@ -21,7 +21,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             this.devtools = browser.GetBrowser().GetDevToolsClient();
             host = browser.GetBrowser().GetHost();
         }
-        public async Task<bool> SelectFleet(Bitmap bmp, List<Fleet> fleets, SelectFleetType fleetType)
+        public async Task<bool> SelectFleet(Bitmap bmp, List<Fleet> fleets, SelectFleetType fleetType, int instanceLv)
         {
             var crop = await bmp.Crop(new Point(200, 150), new Size(bmp.Width - 300, bmp.Height - 300));
             var detectedFleets = crop.FindImageArray("Images\\fleettransmittimemarker.png", 0.75);
@@ -32,14 +32,18 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             var firstFleet = detectedFleets.OrderBy(x => x.X).OrderBy(x => x.Y).First();
             var clickPoint = new Point(firstFleet.X + 250, firstFleet.Y + 150);
+            var maxFleetNum = 15;
+            if(fleetType == SelectFleetType.Restrict)
+            {
+                switch (instanceLv)
+                {
+
+                }
+            }
             var currentPage = 0;
             bmp = await devtools.Screenshot();
-            foreach (Fleet f in fleets.OrderBy(x => x.Order))
+            foreach (Fleet f in fleets.Where(x => x.Order > 0).OrderBy(x => x.Order).Take(maxFleetNum))
             {
-                if (f.Order < 0)
-                {
-                    continue;
-                }
                 var index = fleets.IndexOf(f);
                 var page = index / 9;
                 if (index >= 9)
@@ -110,7 +114,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 }
                 await Task.Delay(rnd.Next(50, 80));
             }
-            if (fleetType == SelectFleetType.Instance)
+            if (fleetType == SelectFleetType.Instance || fleetType == SelectFleetType.Restrict)
             {
                 bmp = await devtools.Screenshot();
                 var result = bmp.FindImageGrayscaled("Images\\OK.png", 0.7);
@@ -239,6 +243,7 @@ namespace GO2FlashLauncher.Script.GameLogic
 
     internal enum SelectFleetType
     {
-        Instance
+        Instance,
+        Restrict
     }
 }

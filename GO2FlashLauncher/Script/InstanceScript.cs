@@ -43,6 +43,8 @@ namespace GO2FlashLauncher.Script
                     bool collectedResources = false;
                     bool inStage = false;
                     bool suspendCollect = false;
+                    int currentTrial = 0;
+                    int currentRestrictCount = 0;
                     int stageCount = 0;
                     DateTime noResources = DateTime.MinValue;
                     DateTime lastCollectTime = DateTime.MinValue;
@@ -160,7 +162,7 @@ namespace GO2FlashLauncher.Script
                                     await Task.Delay(botSettings.Delays / 4 * 3);
                                     await host.LeftClick(spaceStationLocation.Value, 100);
                                     await Task.Delay(200);
-                                    Logger.LogInfo("Entering Instance");
+                                    
                                     bool loop = true;
                                     while (loop)
                                     {
@@ -169,7 +171,37 @@ namespace GO2FlashLauncher.Script
                                         {
                                             await Task.Delay(botSettings.Delays);
                                             bmp = await devTools.Screenshot();
-                                            switch (await s.EnterInstance(bmp, botSettings.Instance))
+                                            InstanceEnterState state = InstanceEnterState.Error;
+                                            SelectFleetType instanceType = SelectFleetType.Instance;
+                                            if (botSettings.RestrictFight)
+                                            {
+                                                //new day, reset
+                                                if(DateTime.Now.ToUniversalTime().Hour == 0 && DateTime.Now.Minute == 0)
+                                                {
+                                                    currentRestrictCount = 0;
+                                                }
+                                                //fight restrict first
+                                                if(currentRestrictCount < 3)
+                                                {
+                                                    //have chances
+                                                    //ocr here detects current restrict left count as we have 0 restrict entered
+                                                    if(currentRestrictCount == 0)
+                                                    {
+
+                                                    }
+                                                    currentRestrictCount++;
+                                                    //enter restrict instead
+                                                    Logger.LogInfo("Entering Restrict");
+                                                    state = await s.EnterRestrict(bmp, botSettings.RestrictLevel);
+                                                    instanceType = SelectFleetType.Restrict;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Logger.LogInfo("Entering Instance");
+                                                state = await s.EnterInstance(bmp, botSettings.Instance);
+                                            }
+                                            switch (state)
                                             {
                                                 case InstanceEnterState.Error:
                                                     error++;
@@ -225,13 +257,17 @@ namespace GO2FlashLauncher.Script
                                                             inStage = false;
                                                             var url = await httpService.GetIFrameUrl(userID);
                                                             browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
-                                                            return;
+                                                            break;
                                                         }
                                                         await Task.Delay(100);
                                                     }
+                                                    if(error > 5)
+                                                    {
+                                                        break;
+                                                    }
                                                     await Task.Delay(botSettings.Delays - 100);
                                                     bmp = await devTools.Screenshot();
-                                                    while (!await b.SelectFleet(bmp, botSettings.Fleets, SelectFleetType.Instance))
+                                                    while (!await b.SelectFleet(bmp, botSettings.Fleets, instanceType, instanceType == SelectFleetType.Restrict? botSettings.RestrictLevel: 0))
                                                     {
                                                         Logger.LogError("No fleet found!");
                                                         bmp = await devTools.Screenshot();
@@ -245,10 +281,14 @@ namespace GO2FlashLauncher.Script
                                                             inStage = false;
                                                             var url = await httpService.GetIFrameUrl(userID);
                                                             browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
-                                                            return;
+                                                            break;
                                                         }
                                                         await Task.Delay(100);
                                                         Cancellation.ThrowIfCancellationRequested();
+                                                    }
+                                                    if (error > 5)
+                                                    {
+                                                        break;
                                                     }
                                                     await Task.Delay(botSettings.Delays - 100);
                                                     bmp = await devTools.Screenshot();
@@ -284,7 +324,7 @@ namespace GO2FlashLauncher.Script
                                             browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                             error = 0;
                                             await Task.Delay(botSettings.Delays);
-                                            break;
+                                            continue;
                                         }
                                     }
                                 }
@@ -308,7 +348,6 @@ namespace GO2FlashLauncher.Script
                                         var url = await httpService.GetIFrameUrl(userID);
                                         browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                         await Task.Delay(botSettings.Delays);
-                                        break;
                                     }
                                     continue;
                                 }
