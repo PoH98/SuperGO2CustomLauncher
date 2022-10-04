@@ -158,6 +158,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                     return false;
                 }
                 await host.LeftClick(point.Value, rnd.Next(80, 100));
+                await Task.Delay(800);
             }
             //success
             return true;

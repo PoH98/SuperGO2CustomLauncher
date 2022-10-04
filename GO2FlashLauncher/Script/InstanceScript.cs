@@ -28,6 +28,7 @@ namespace GO2FlashLauncher.Script
                 BotStartTime = DateTime.Now;
                 var devTools = browser.GetBrowser().GetDevToolsClient();
                 var host = browser.GetBrowser().GetHost();
+                host.SetFocus(false);
                 try
                 {
                     //Init sub scripts
@@ -78,6 +79,17 @@ namespace GO2FlashLauncher.Script
                             }
                             //Screenshot browser
                             var bmp = await devTools.Screenshot();
+                            //check for friendrequest
+                            if(bmp.FindImage("Images\\friendrequesttext.png", 0.8).HasValue)
+                            {
+                                var friendClose = bmp.FindImage("Images\\friendrequestclose.png", 0.8);
+                                if (friendClose.HasValue)
+                                {
+                                    await host.LeftClick(friendClose.Value, 100);
+                                    await Task.Delay(botSettings.Delays);
+                                    bmp = await devTools.Screenshot();
+                                }
+                            }
                             if (!mainScreenLocated)
                             {
                                 //locate planet base view
@@ -185,14 +197,14 @@ namespace GO2FlashLauncher.Script
                                                 //fight restrict first
                                                 if(currentRestrictCount < 3)
                                                 {
-                                                    //have chances
-                                                    currentRestrictCount++;
                                                     //enter restrict instead
                                                     Logger.LogInfo("Entering Restrict");
                                                     try
                                                     {
                                                         state = await s.EnterRestrict(bmp, botSettings.RestrictLevel);
                                                         instanceType = SelectFleetType.Restrict;
+                                                        //have chances
+                                                        currentRestrictCount++;
                                                     }
                                                     catch(ArgumentException ex)
                                                     {

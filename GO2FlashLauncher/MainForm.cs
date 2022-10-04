@@ -71,10 +71,6 @@ namespace GO2FlashLauncher
             settings.CefCommandLineArgs.Add("enable-system-flash", "1");
             settings.CefCommandLineArgs.Add("ppapi-flash-path", Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).Directory.ToString(), "libs\\pepflashplayer.dll"));
             settings.CefCommandLineArgs.Add("ppapi-flash-version", "28.0.0.137");
-            settings.CefCommandLineArgs.Add("disable-gpu", "1");
-            settings.CefCommandLineArgs.Add("disable-gpu-compositing", "1");
-            settings.CefCommandLineArgs.Add("enable-begin-frame-scheduling", "1");
-            settings.CefCommandLineArgs.Add("disable-gpu-vsync", "1");
             settings.CefCommandLineArgs["plugin-policy"] = "allow";
             settings.CefCommandLineArgs.Add("allow-outdated-plugins");
             settings.CefCommandLineArgs.Add("use-angle", "gl");
@@ -82,6 +78,8 @@ namespace GO2FlashLauncher
             settings.CefCommandLineArgs.Add("off-screen-rendering-enabled");
             settings.CefCommandLineArgs.Add("no-activate");
             settings.BackgroundColor = ColorToUInt(Color.Black);
+            settings.SetOffScreenRenderingBestPerformanceArgs();
+            settings.DisableGpuAcceleration();
 #if !DEBUG
             metroButton3.Hide();
             if (File.Exists("debug.txt"))
@@ -120,6 +118,7 @@ namespace GO2FlashLauncher
             beta.BackColor = Color.Black;
             krtools = new ChromiumWebBrowser("https://krtools.deajae.co.uk/");
             alpha.RequestContext = new RequestContext(alphaContext);
+            alpha.FocusHandler = null;
             beta.RequestContext = new RequestContext(betaContext);
             alpha.BrowserSettings.Plugins = CefState.Enabled;
             beta.BrowserSettings.Plugins = CefState.Enabled;
