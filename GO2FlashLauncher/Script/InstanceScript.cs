@@ -48,6 +48,7 @@ namespace GO2FlashLauncher.Script
                     int stageCount = 0;
                     DateTime noResources = DateTime.MinValue;
                     DateTime lastCollectTime = DateTime.MinValue;
+                    DateTime lastRestrictDate = DateTime.Now;
                     int error = 0;
                     int lag = 0;
                     Bitmap lastbmp = null;
@@ -82,7 +83,7 @@ namespace GO2FlashLauncher.Script
                                 //locate planet base view
                                 if (await m.Locate(bmp))
                                 {
-                                    for (int x = 0; x < 3; x++)
+                                    for (int x = 0; x < 2; x++)
                                     {
                                         bmp = await devTools.Screenshot();
                                         if (x <= 1)
@@ -176,9 +177,10 @@ namespace GO2FlashLauncher.Script
                                             if (botSettings.RestrictFight)
                                             {
                                                 //new day, reset
-                                                if(DateTime.Now.ToUniversalTime().Hour == 0 && DateTime.Now.Minute == 0)
+                                                if(DateTime.Now.ToUniversalTime().Day != lastRestrictDate.ToUniversalTime().Day)
                                                 {
                                                     currentRestrictCount = 0;
+                                                    lastRestrictDate = DateTime.Now;
                                                 }
                                                 //fight restrict first
                                                 if(currentRestrictCount < 3)
@@ -198,7 +200,10 @@ namespace GO2FlashLauncher.Script
                                                         {
                                                             currentRestrictCount = 3;
                                                             Logger.LogInfo("Restrict already out of chances today, skipping...");
-                                                            state = await s.EnterInstance(bmp, botSettings.Instance);
+                                                            bmp = await devTools.Screenshot();
+                                                            await b.CloseButtons(bmp);
+                                                            await Task.Delay(botSettings.Delays);
+                                                            continue;
                                                         }
                                                     }
                                                 }
