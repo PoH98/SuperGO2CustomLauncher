@@ -63,8 +63,14 @@ namespace GO2FlashLauncher
             {
                 File.Delete("debug.log");
             }
-            
-            WindowState = FormWindowState.Maximized;
+            if(Screen.PrimaryScreen.Bounds.Width <= 1280 || Screen.PrimaryScreen.Bounds.Height <= 970)
+            {
+                MaximizeBox = false;
+            }
+            else
+            {
+                WindowState = FormWindowState.Maximized;
+            }
             metroTabControl1.SelectedIndex = 0;
             var settings = new CefSettings();
             settings.CachePath = Path.GetFullPath("cache");
@@ -417,9 +423,9 @@ namespace GO2FlashLauncher
             {
                 Width = 1260;
             }
-            if (Height < 1060)
+            if (Height < 970)
             {
-                Height = 1060;
+                Height = 970;
             }
             if (alpha == null)
             {
