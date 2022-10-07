@@ -13,6 +13,7 @@ namespace GO2FlashLauncher.Script
         protected readonly BotSettings botSettings;
         protected BaseResources resources = new BaseResources();
         protected DateTime BotStartTime;
+        public bool IsReloading { get; set; }
         private CancellationTokenSource CancellationToken = new CancellationTokenSource();
         public BaseResources Resources
         {

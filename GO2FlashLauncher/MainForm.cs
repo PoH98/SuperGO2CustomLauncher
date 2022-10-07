@@ -2,6 +2,7 @@
 using CefSharp.Handler;
 using CefSharp.WinForms;
 using GO2FlashLauncher.Model;
+using GO2FlashLauncher.Model.SGO2;
 using GO2FlashLauncher.Models;
 using GO2FlashLauncher.Script;
 using GO2FlashLauncher.Service;
@@ -169,6 +170,10 @@ namespace GO2FlashLauncher
 
         private async void BrowserInitializedChanged(object sender, EventArgs e)
         {
+            if(script != null)
+            {
+                script.IsReloading = true;
+            }
             if (string.IsNullOrEmpty(settings.AuthKey))
             {
                 if (string.IsNullOrEmpty(settings.CredentialHash))
@@ -194,28 +199,40 @@ namespace GO2FlashLauncher
                     Logger.LogInfo("Logging " + profile.Email + " in....Please be patient!");
                     var credential = await GO2HttpService.Login(profile.Email, profile.Password);
                     var planet = await GO2HttpService.GetPlanets();
-                    PlanetSelection planetSelection;
-                    do
+                    Datum selectedPlanet;
+                    if (settings.PlanetId > -1)
                     {
-                        planetSelection = new PlanetSelection(planet);
+                        selectedPlanet = planet.Data.FirstOrDefault(x => x.UserId == settings.PlanetId);
                     }
-                    while (planetSelection.ShowDialog() != DialogResult.OK);
+                    else
+                    {
+                        PlanetSelection planetSelection;
+                        do
+                        {
+                            planetSelection = new PlanetSelection(planet);
+                        }
+                        while (planetSelection.ShowDialog() != DialogResult.OK);
+                        selectedPlanet = planet.Data[planetSelection.SelectedProfile];
+                        if (planetSelection.RememberMe)
+                        {
+                            settings.PlanetId = selectedPlanet.UserId;
+                        }
+                    }
                     //get selected planet
-                    var selectedPlanet = planet.Data[planetSelection.SelectedProfile];
                     var url = await GO2HttpService.GetIFrameUrl(selectedPlanet.UserId);
                     alpha.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                     Logger.LogInfo("Logging " + profile.Email + " success!");
                     settings.AuthKey = credential.Data.Token;
-                    if (planetSelection.RememberMe)
-                    {
-                        settings.PlanetId = url.Data.UserId;
-                    }
                     userId = url.Data.UserId;
+                    if (script != null)
+                    {
+                        script.IsReloading = false;
+                    }
                 }
                 catch (Exception ex)
                 {
-                    settings.AuthKey = null;
-                    Logger.LogError("Login failed! Retrying...\nError Info: \n" + ex.ToString());
+                    Logger.LogError("Login failed! Retrying after 3 sec...");
+                    await Task.Delay(3000);
                     BrowserInitializedChanged(sender, e);
                 }
             }
@@ -241,17 +258,27 @@ namespace GO2FlashLauncher
                         }
                         userId = url.Data.UserId;
                         (sender as ChromiumWebBrowser).Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                        if (script != null)
+                        {
+                            script.IsReloading = false;
+                        }
                     }
                     else
                     {
                         userId = settings.PlanetId;
                         var url = await GO2HttpService.GetIFrameUrl(settings.PlanetId);
                         (sender as ChromiumWebBrowser).Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                        if (script != null)
+                        {
+                            script.IsReloading = false;
+                        }
                     }
                 }
                 catch
                 {
                     settings.AuthKey = null;
+                    Logger.LogError("Login failed! Retrying after 3 sec...");
+                    await Task.Delay(3000);
                     BrowserInitializedChanged(sender, e);
                 }
             }

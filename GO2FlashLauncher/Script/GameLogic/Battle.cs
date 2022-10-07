@@ -64,6 +64,46 @@ namespace GO2FlashLauncher.Script.GameLogic
                         break;
                 }
             }
+            else
+            {
+                switch (instanceLv)
+                {
+                    case 1:
+                        maxFleetNum = 3;
+                        break;
+                    case 2:
+                    case 3:
+                        maxFleetNum = 4;
+                        break;
+                    case 4:
+                    case 5:
+                        maxFleetNum = 5;
+                        break;
+                    case 6:
+                        maxFleetNum = 6;
+                        break;
+                    case 7:
+                    case 8:
+                    case 9:
+                        maxFleetNum = 8;
+                        break;
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                        maxFleetNum = 10;
+                        break;
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                        maxFleetNum= 12;
+                        break;
+                }
+            }
             var currentPage = 0;
             bmp = await devtools.Screenshot();
             foreach (Fleet f in fleets.Where(x => x.Order >= 0).OrderBy(x => x.Order).Take(maxFleetNum))

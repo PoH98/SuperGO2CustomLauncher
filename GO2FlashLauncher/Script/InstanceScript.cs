@@ -65,9 +65,15 @@ namespace GO2FlashLauncher.Script
                                 var lagging = await devTools.Screenshot();
                                 if (m.DetectDisconnect(lagging))
                                 {
-                                    Logger.LogError("Please refresh the browser! Server disconnected! Maybe is in server maintainance! ");
-                                    Logger.LogInfo("Bot Stopped");
-                                    return;
+                                    Logger.LogWarning("Disconnected, reconnect after 1 minute...");
+                                    await Task.Delay(new TimeSpan(0, 1, 0));
+                                    var url = await httpService.GetIFrameUrl(userID);
+                                    browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                    mainScreenLocated = false;
+                                    spaceStationLocated = false;
+                                    inStage = false;
+                                    await Task.Delay(3000);
+                                    continue;
                                 }
                                 else
                                 {
@@ -296,7 +302,7 @@ namespace GO2FlashLauncher.Script
                                                     }
                                                     await Task.Delay(botSettings.Delays - 100);
                                                     bmp = await devTools.Screenshot();
-                                                    while (!await b.SelectFleet(bmp, botSettings.Fleets, instanceType, instanceType == SelectFleetType.Restrict? botSettings.RestrictLevel: 0))
+                                                    while (!await b.SelectFleet(bmp, botSettings.Fleets, instanceType, instanceType == SelectFleetType.Restrict? botSettings.RestrictLevel: botSettings.Instance))
                                                     {
                                                         Logger.LogError("No fleet found!");
                                                         bmp = await devTools.Screenshot();
