@@ -38,6 +38,7 @@ namespace GO2FlashLauncher
         int userId;
         string base64code;
         FileSystemWatcher fileSystemWatcher;
+        int restartTimes;
         public MainForm()
         {
             InitializeComponent();
@@ -229,10 +230,11 @@ namespace GO2FlashLauncher
                         script.IsReloading = false;
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
-                    Logger.LogError("Login failed! Retrying after 3 sec...");
-                    await Task.Delay(3000);
+                    restartTimes++;
+                    Logger.LogError("Login failed! Retrying after " + (restartTimes * restartTimes) + " sec...");
+                    await Task.Delay(restartTimes * restartTimes * 1000);
                     BrowserInitializedChanged(sender, e);
                 }
             }
@@ -276,9 +278,10 @@ namespace GO2FlashLauncher
                 }
                 catch
                 {
+                    restartTimes++;
                     settings.AuthKey = null;
-                    Logger.LogError("Login failed! Retrying after 3 sec...");
-                    await Task.Delay(3000);
+                    Logger.LogError("Login failed! Retrying after " + (restartTimes * restartTimes) + " sec...");
+                    await Task.Delay(restartTimes * restartTimes * 1000);
                     BrowserInitializedChanged(sender, e);
                 }
             }

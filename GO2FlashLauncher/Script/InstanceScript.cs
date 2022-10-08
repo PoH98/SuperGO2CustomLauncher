@@ -44,7 +44,6 @@ namespace GO2FlashLauncher.Script
                     bool collectedResources = false;
                     bool inStage = false;
                     bool suspendCollect = false;
-                    int currentTrial = 0;
                     int currentRestrictCount = 0;
                     int stageCount = 0;
                     DateTime noResources = DateTime.MinValue;
@@ -59,8 +58,13 @@ namespace GO2FlashLauncher.Script
                         {
                             //Script stoped
                             Cancellation.ThrowIfCancellationRequested();
+                            if (IsReloading)
+                            {
+                                await Task.Delay(200);
+                                continue;
+                            }
                             //error too much
-                            if (error > 20)
+                            if (error > 5)
                             {
                                 var lagging = await devTools.Screenshot();
                                 if (m.DetectDisconnect(lagging))
@@ -75,7 +79,7 @@ namespace GO2FlashLauncher.Script
                                     await Task.Delay(3000);
                                     continue;
                                 }
-                                else
+                                else if(error > 20)
                                 {
                                     //start over again
                                     mainScreenLocated = false;
