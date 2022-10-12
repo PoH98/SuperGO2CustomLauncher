@@ -91,6 +91,14 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.discordRPC = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.metroTabPage6 = new MetroFramework.Controls.MetroTabPage();
+            this.spin = new MetroFramework.Controls.MetroCheckBox();
+            this.metroLabel12 = new MetroFramework.Controls.MetroLabel();
+            this.metroCheckBox3 = new MetroFramework.Controls.MetroCheckBox();
+            this.metroLabel13 = new MetroFramework.Controls.MetroLabel();
+            this.metroLabel14 = new MetroFramework.Controls.MetroLabel();
+            this.metroLabel15 = new MetroFramework.Controls.MetroLabel();
+            this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
             this.metroTabControl1.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -103,6 +111,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.metroTabControl3.SuspendLayout();
+            this.metroTabPage6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
             this.SuspendLayout();
             // 
             // metroTabControl1
@@ -155,9 +165,9 @@
             this.metroLabel7.AutoSize = true;
             this.metroLabel7.Location = new System.Drawing.Point(306, 5);
             this.metroLabel7.Name = "metroLabel7";
-            this.metroLabel7.Size = new System.Drawing.Size(78, 19);
+            this.metroLabel7.Size = new System.Drawing.Size(74, 19);
             this.metroLabel7.TabIndex = 16;
-            this.metroLabel7.Text = "Spin Wheel:";
+            this.metroLabel7.Text = "Spin Script:";
             this.metroLabel7.Theme = MetroFramework.MetroThemeStyle.Dark;
             // 
             // metroToggle2
@@ -308,9 +318,9 @@
             this.metroLabel1.AutoSize = true;
             this.metroLabel1.Location = new System.Drawing.Point(162, 5);
             this.metroLabel1.Name = "metroLabel1";
-            this.metroLabel1.Size = new System.Drawing.Size(62, 19);
+            this.metroLabel1.Size = new System.Drawing.Size(95, 19);
             this.metroLabel1.TabIndex = 13;
-            this.metroLabel1.Text = "Run Bot: ";
+            this.metroLabel1.Text = "Instance Script:";
             this.metroLabel1.Theme = MetroFramework.MetroThemeStyle.Dark;
             // 
             // metroToggle1
@@ -515,6 +525,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.metroTabControl2.Controls.Add(this.metroTabPage4);
+            this.metroTabControl2.Controls.Add(this.metroTabPage6);
             this.metroTabControl2.Location = new System.Drawing.Point(3, 48);
             this.metroTabControl2.Name = "metroTabControl2";
             this.metroTabControl2.SelectedIndex = 0;
@@ -912,6 +923,100 @@
             this.timer2.Interval = 1000;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
+            // metroTabPage6
+            // 
+            this.metroTabPage6.Controls.Add(this.numericUpDown4);
+            this.metroTabPage6.Controls.Add(this.metroLabel15);
+            this.metroTabPage6.Controls.Add(this.metroLabel14);
+            this.metroTabPage6.Controls.Add(this.metroCheckBox3);
+            this.metroTabPage6.Controls.Add(this.metroLabel13);
+            this.metroTabPage6.Controls.Add(this.spin);
+            this.metroTabPage6.Controls.Add(this.metroLabel12);
+            this.metroTabPage6.HorizontalScrollbarBarColor = true;
+            this.metroTabPage6.HorizontalScrollbarHighlightOnWheel = false;
+            this.metroTabPage6.HorizontalScrollbarSize = 10;
+            this.metroTabPage6.Location = new System.Drawing.Point(4, 38);
+            this.metroTabPage6.Name = "metroTabPage6";
+            this.metroTabPage6.Size = new System.Drawing.Size(1220, 498);
+            this.metroTabPage6.TabIndex = 1;
+            this.metroTabPage6.Text = "Wheel";
+            this.metroTabPage6.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroTabPage6.VerticalScrollbarBarColor = true;
+            this.metroTabPage6.VerticalScrollbarHighlightOnWheel = false;
+            this.metroTabPage6.VerticalScrollbarSize = 10;
+            // 
+            // spin
+            // 
+            this.spin.AutoSize = true;
+            this.spin.Location = new System.Drawing.Point(160, 42);
+            this.spin.Name = "spin";
+            this.spin.Size = new System.Drawing.Size(26, 15);
+            this.spin.TabIndex = 23;
+            this.spin.Text = " ";
+            this.spin.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.spin.UseSelectable = true;
+            // 
+            // metroLabel12
+            // 
+            this.metroLabel12.AutoSize = true;
+            this.metroLabel12.Location = new System.Drawing.Point(5, 38);
+            this.metroLabel12.Name = "metroLabel12";
+            this.metroLabel12.Size = new System.Drawing.Size(98, 19);
+            this.metroLabel12.TabIndex = 22;
+            this.metroLabel12.Text = "Spin in instance";
+            this.metroLabel12.Theme = MetroFramework.MetroThemeStyle.Dark;
+            // 
+            // metroCheckBox3
+            // 
+            this.metroCheckBox3.AutoSize = true;
+            this.metroCheckBox3.Location = new System.Drawing.Point(160, 72);
+            this.metroCheckBox3.Name = "metroCheckBox3";
+            this.metroCheckBox3.Size = new System.Drawing.Size(26, 15);
+            this.metroCheckBox3.TabIndex = 25;
+            this.metroCheckBox3.Text = " ";
+            this.metroCheckBox3.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroCheckBox3.UseSelectable = true;
+            // 
+            // metroLabel13
+            // 
+            this.metroLabel13.AutoSize = true;
+            this.metroLabel13.Location = new System.Drawing.Point(5, 68);
+            this.metroLabel13.Name = "metroLabel13";
+            this.metroLabel13.Size = new System.Drawing.Size(111, 19);
+            this.metroLabel13.TabIndex = 24;
+            this.metroLabel13.Text = "Spin with voucher";
+            this.metroLabel13.Theme = MetroFramework.MetroThemeStyle.Dark;
+            // 
+            // metroLabel14
+            // 
+            this.metroLabel14.AutoSize = true;
+            this.metroLabel14.ForeColor = System.Drawing.Color.Yellow;
+            this.metroLabel14.Location = new System.Drawing.Point(3, 10);
+            this.metroLabel14.Name = "metroLabel14";
+            this.metroLabel14.Size = new System.Drawing.Size(487, 19);
+            this.metroLabel14.TabIndex = 26;
+            this.metroLabel14.Text = "Warning: These settings will only works on Instance Script. Spin script will not " +
+    "works";
+            this.metroLabel14.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroLabel14.UseCustomForeColor = true;
+            // 
+            // metroLabel15
+            // 
+            this.metroLabel15.AutoSize = true;
+            this.metroLabel15.Location = new System.Drawing.Point(5, 99);
+            this.metroLabel15.Name = "metroLabel15";
+            this.metroLabel15.Size = new System.Drawing.Size(138, 19);
+            this.metroLabel15.TabIndex = 27;
+            this.metroLabel15.Text = "Minimum left Voucher";
+            this.metroLabel15.Theme = MetroFramework.MetroThemeStyle.Dark;
+            // 
+            // numericUpDown4
+            // 
+            this.numericUpDown4.Location = new System.Drawing.Point(160, 98);
+            this.numericUpDown4.Name = "numericUpDown4";
+            this.numericUpDown4.Size = new System.Drawing.Size(55, 20);
+            this.numericUpDown4.TabIndex = 28;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -944,6 +1049,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.metroTabControl3.ResumeLayout(false);
+            this.metroTabPage6.ResumeLayout(false);
+            this.metroTabPage6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1012,6 +1120,14 @@
         private MetroFramework.Controls.MetroCheckBox metroCheckBox2;
         private MetroFramework.Controls.MetroLabel metroLabel11;
         private MetroFramework.Controls.MetroComboBox metroComboBox2;
+        private MetroFramework.Controls.MetroTabPage metroTabPage6;
+        private MetroFramework.Controls.MetroCheckBox spin;
+        private MetroFramework.Controls.MetroLabel metroLabel12;
+        private MetroFramework.Controls.MetroCheckBox metroCheckBox3;
+        private MetroFramework.Controls.MetroLabel metroLabel13;
+        private MetroFramework.Controls.MetroLabel metroLabel14;
+        private MetroFramework.Controls.MetroLabel metroLabel15;
+        private System.Windows.Forms.NumericUpDown numericUpDown4;
     }
 }
 

@@ -37,7 +37,7 @@ namespace GO2FlashLauncher.Script
                     Battle b = new Battle(browser);
                     Inventory i = new Inventory(browser);
                     LagDetection l = new LagDetection();
-
+                    Wheel w = new Wheel(browser);
                     //Init status
                     bool mainScreenLocated = false;
                     bool spaceStationLocated = false;
