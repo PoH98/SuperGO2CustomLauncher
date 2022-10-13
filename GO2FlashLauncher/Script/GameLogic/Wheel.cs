@@ -61,7 +61,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             return false;
         }
 
-        public async Task<bool> Spin(Bitmap bmp, BaseResources resources)
+        public async Task<bool> Spin(Bitmap bmp, BaseResources resources, bool spinWithVoucher = true)
         {
             if(resources.Vouchers < 5)
             {
@@ -93,7 +93,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                     }
                 }
             }
-            if(point != null)
+            if(point != null && spinWithVoucher)
             {
                 //have to use vouchers
                 resources.Vouchers -= 5;
@@ -105,6 +105,10 @@ namespace GO2FlashLauncher.Script.GameLogic
                 await host.LeftClick(new Point(voucher.Value.X - 10, voucher.Value.Y + 2), rnd.Next(80,100));
                 await Task.Delay(500);
                 await host.LeftClick(point.Value, rnd.Next(80, 100)); 
+            }
+            if (!spinWithVoucher && point != null)
+            {
+                return false;
             }
             int error = 0;
             do

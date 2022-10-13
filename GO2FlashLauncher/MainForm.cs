@@ -160,6 +160,9 @@ namespace GO2FlashLauncher
             metroCheckBox2.Checked = this.settings.TrialFight;
             metroComboBox1.SelectedIndex = this.settings.RestrictLevel -1 ;
             metroComboBox1.SelectedIndex  = this.settings.RestrictLevel - 1;
+            spin.Checked = this.settings.SpinWheel;
+            metroCheckBox3.Checked = this.settings.SpinWithVouchers;
+            numericUpDown4.Value = this.settings.MinVouchers;
             RenderFleets();
             timer2.Start();
             discordRPC.Start();
@@ -833,6 +836,26 @@ namespace GO2FlashLauncher
         private void metroComboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             settings.TrialMaxLv = metroComboBox2.SelectedIndex + 1;
+        }
+
+        private void spin_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.SpinWheel = spin.Checked;
+        }
+
+        private void metroCheckBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.SpinWithVouchers = metroCheckBox3.Checked;
+        }
+
+        private void numericUpDown4_ValueChanged(object sender, EventArgs e)
+        {
+            settings.MinVouchers = (int)numericUpDown4.Value;
+        }
+
+        private void numericUpDown4_KeyDown(object sender, KeyEventArgs e)
+        {
+            settings.MinVouchers = (int)numericUpDown4.Value;
         }
 
         private void Input_ValueChanged(object sender, EventArgs e)

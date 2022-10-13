@@ -18,6 +18,9 @@ namespace GO2FlashLauncher.Model
         public bool TrialFight { get; set; } = false;
         public int RestrictLevel { get; set; } = 1;
         public int TrialMaxLv { get; set; } = 10;
+        public bool SpinWheel { get; set; } = false;
+        public int MinVouchers { get; set; } = 5;
+        public bool SpinWithVouchers { get; set; } = true;
     }
 
     internal class Fleet

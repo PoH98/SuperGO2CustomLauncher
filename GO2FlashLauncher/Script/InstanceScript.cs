@@ -44,6 +44,8 @@ namespace GO2FlashLauncher.Script
                     bool collectedResources = false;
                     bool inStage = false;
                     bool suspendCollect = false;
+                    bool inSpin = false;
+                    bool spinable = true;
                     int currentRestrictCount = 0;
                     int stageCount = 0;
                     DateTime noResources = DateTime.MinValue;
@@ -407,7 +409,16 @@ namespace GO2FlashLauncher.Script
                                     var mail = crop.FindImage("Images\\mail.png", 0.6);
                                     if (mail.HasValue)
                                     {
-                                        Logger.LogInfo("Found Mail");
+                                        if (inSpin)
+                                        {
+                                            Logger.LogInfo("Found mail, exiting spin...");
+                                            await w.EndSpin(bmp);
+                                            inSpin = false;
+                                        }
+                                        else
+                                        {
+                                            Logger.LogInfo("Found Mail");
+                                        }
                                         //collect mail
                                         if (await m.CollectMails(bmp))
                                         {
@@ -481,6 +492,46 @@ namespace GO2FlashLauncher.Script
                                             }
                                         }
                                     }
+                                }
+                                if (botSettings.SpinWheel)
+                                {
+                                    if (spinable)
+                                    {
+                                        if (!inSpin)
+                                        {
+                                            Logger.LogInfo("Lets spin wheel while waiting instance");
+                                            await w.GetIn(bmp);
+                                            inSpin = true;
+                                        }
+                                        else
+                                        {
+                                            if (resources.Vouchers < botSettings.MinVouchers)
+                                            {
+                                                Logger.LogWarning("Not enough vouchers for spinning, exiting");
+                                                await w.EndSpin(bmp);
+                                                inSpin = false;
+                                                spinable = false;
+                                            }
+                                            else
+                                            {
+                                                await w.Spin(bmp, resources, botSettings.SpinWithVouchers);
+                                                Logger.LogInfo("Predicted " + resources.Vouchers + " left!");
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //detect vouchers
+                                        if (resources.Vouchers > botSettings.MinVouchers)
+                                        {
+                                            Logger.LogInfo("Vouchers are now enough for spinning!");
+                                            spinable = true;
+                                        }
+                                    }
+                                }
+                                else if (inSpin)
+                                {
+                                    await w.EndSpin(bmp);
                                 }
                             }
                             //collecting EZRewards
