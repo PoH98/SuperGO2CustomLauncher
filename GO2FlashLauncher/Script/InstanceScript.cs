@@ -398,6 +398,17 @@ namespace GO2FlashLauncher.Script
                                 if (await b.BattleEnds(bmp))
                                 {
                                     Logger.LogInfo("Battle Ends");
+                                    if (inSpin)
+                                    {
+                                        for(int x = 0; x < 3; x++)
+                                        {
+                                            bmp = await devTools.Screenshot();
+                                            await b.CloseButtons(bmp);
+                                            await Task.Delay(botSettings.Delays);
+                                        }
+                                        bmp = await devTools.Screenshot();
+                                        await w.EndSpin(bmp);
+                                    }
                                     inStage = false;
                                     stageCount++;
                                     spaceStationLocated = false;

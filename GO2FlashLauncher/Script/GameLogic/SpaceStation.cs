@@ -112,7 +112,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             if (result != null)
             {
                 await host.LeftClick(result.Value, rnd.Next(10, 50));
-                await Task.Delay(800);
+                await Task.Delay(1000);
                 bmp = await devtools.Screenshot();
             }
             result = bmp.FindImage("Images\\restricted.png", 0.7);

@@ -118,30 +118,38 @@ namespace GO2FlashLauncher.Script.GameLogic
                 {
                     if (currentPage > page)
                     {
-                        var prev = bmp.FindImage("Images\\selectshipsprevpage.png", 0.7);
+                        var prev = bmp.FindImage("Images\\selectshipsprevpage.png", 0.6);
                         if (prev == null)
                         {
                             await Task.Delay(100);
-                            prev = bmp.FindImage("Images\\selectshipsprevpage2.png", 0.7);
+                            prev = bmp.FindImage("Images\\selectshipsprevpage2.png", 0.6);
                         }
                         if (prev != null)
                         {
-                            await host.LeftClick(prev.Value, rnd.Next(39, 50));
+                            await host.LeftClick(prev.Value, rnd.Next(40, 80));
                             await Task.Delay(300);
+                        }
+                        else
+                        {
+                            throw new ImageNotFound("SelectShipsPrevPage");
                         }
                     }
                     else if (currentPage < page)
                     {
-                        var next = bmp.FindImage("Images\\selectshipsnextpage.png", 0.7);
+                        var next = bmp.FindImage("Images\\selectshipsnextpage.png", 0.6);
                         if (next == null)
                         {
                             await Task.Delay(100);
-                            next = bmp.FindImage("Images\\selectshipsnextpage2.png", 0.7);
+                            next = bmp.FindImage("Images\\selectshipsnextpage2.png", 0.6);
                         }
                         if (next != null)
                         {
-                            await host.LeftClick(next.Value, rnd.Next(39, 50));
+                            await host.LeftClick(next.Value, rnd.Next(40, 80));
                             await Task.Delay(300);
+                        }
+                        else
+                        {
+                            throw new ImageNotFound("SelectShipsNextPage");
                         }
                     }
                 }
