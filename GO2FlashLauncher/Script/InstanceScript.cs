@@ -92,7 +92,7 @@ namespace GO2FlashLauncher.Script
                             //Screenshot browser
                             var bmp = await devTools.Screenshot();
                             //check for friendrequest
-                            if(bmp.FindImage("Images\\friendrequesttext.png", 0.8).HasValue)
+                            if(bmp.FindImageGrayscaled("Images\\friendrequesttext.png", 0.7).HasValue)
                             {
                                 var friendClose = bmp.FindImage("Images\\friendrequestclose.png", 0.8);
                                 if (friendClose.HasValue)

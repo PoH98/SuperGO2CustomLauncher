@@ -40,7 +40,7 @@ namespace GO2FlashLauncher.Script
                         {
                             Cancellation.ThrowIfCancellationRequested();
                             //error too much
-                            if (error > 20)
+                            if (error > 5)
                             {
                                 var lagging = await devTools.Screenshot();
                                 if (m.DetectDisconnect(lagging))
@@ -57,6 +57,16 @@ namespace GO2FlashLauncher.Script
                                 }
                             }
                             var bmp = await devTools.Screenshot();
+                            if (bmp.FindImageGrayscaled("Images\\friendrequesttext.png", 0.7).HasValue)
+                            {
+                                var friendClose = bmp.FindImage("Images\\friendrequestclose.png", 0.8);
+                                if (friendClose.HasValue)
+                                {
+                                    await host.LeftClick(friendClose.Value, 100);
+                                    await Task.Delay(botSettings.Delays);
+                                    bmp = await devTools.Screenshot();
+                                }
+                            }
                             if (!mainScreenLocated)
                             {
                                 //locate planet base view
