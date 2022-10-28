@@ -34,75 +34,79 @@ namespace GO2FlashLauncher.Script.GameLogic
             var firstFleet = detectedFleets.OrderBy(x => x.X).OrderBy(x => x.Y).First();
             var clickPoint = new Point(firstFleet.X + 250, firstFleet.Y + 150);
             var maxFleetNum = 15;
-            if(fleetType == SelectFleetType.Restrict)
+            switch (fleetType)
             {
-                switch (instanceLv)
-                {
-                    case 1:
-                        maxFleetNum = 10;
-                        break;
-                    case 2:
-                        maxFleetNum = 12;
-                        break;
-                    case 3:
-                        maxFleetNum = 15;
-                        break;
-                    case 4:
-                        maxFleetNum = 18;
-                        break;
-                    case 5:
-                    case 6:
-                    case 7:
-                        maxFleetNum = 20;
-                        break;
-                    case 8:
-                        maxFleetNum = 21;
-                        break;
-                    case 9:
-                    case 10:
-                        maxFleetNum = 25;
-                        break;
-                }
-            }
-            else
-            {
-                switch (instanceLv)
-                {
-                    case 1:
-                        maxFleetNum = 3;
-                        break;
-                    case 2:
-                    case 3:
-                        maxFleetNum = 4;
-                        break;
-                    case 4:
-                    case 5:
-                        maxFleetNum = 5;
-                        break;
-                    case 6:
-                        maxFleetNum = 6;
-                        break;
-                    case 7:
-                    case 8:
-                    case 9:
-                        maxFleetNum = 8;
-                        break;
-                    case 10:
-                    case 11:
-                    case 12:
-                    case 13:
-                    case 14:
-                        maxFleetNum = 10;
-                        break;
-                    case 15:
-                    case 16:
-                    case 17:
-                    case 18:
-                    case 19:
-                    case 20:
-                        maxFleetNum= 12;
-                        break;
-                }
+                case SelectFleetType.Restrict:
+                    switch (instanceLv)
+                    {
+                        case 1:
+                            maxFleetNum = 10;
+                            break;
+                        case 2:
+                            maxFleetNum = 12;
+                            break;
+                        case 3:
+                            maxFleetNum = 15;
+                            break;
+                        case 4:
+                            maxFleetNum = 18;
+                            break;
+                        case 5:
+                        case 6:
+                        case 7:
+                            maxFleetNum = 20;
+                            break;
+                        case 8:
+                            maxFleetNum = 21;
+                            break;
+                        case 9:
+                        case 10:
+                            maxFleetNum = 25;
+                            break;
+                    }
+                    break;
+                case SelectFleetType.Instance:
+                    switch (instanceLv)
+                    {
+                        case 1:
+                            maxFleetNum = 3;
+                            break;
+                        case 2:
+                        case 3:
+                            maxFleetNum = 4;
+                            break;
+                        case 4:
+                        case 5:
+                            maxFleetNum = 5;
+                            break;
+                        case 6:
+                            maxFleetNum = 6;
+                            break;
+                        case 7:
+                        case 8:
+                        case 9:
+                            maxFleetNum = 8;
+                            break;
+                        case 10:
+                        case 11:
+                        case 12:
+                        case 13:
+                        case 14:
+                            maxFleetNum = 10;
+                            break;
+                        case 15:
+                        case 16:
+                        case 17:
+                        case 18:
+                        case 19:
+                        case 20:
+                            maxFleetNum = 12;
+                            break;
+                    }
+                    break;
+                case SelectFleetType.Trial:
+                    maxFleetNum = 4;
+                    break;
             }
             var currentPage = 0;
             bmp = await devtools.Screenshot();
@@ -186,7 +190,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 }
                 await Task.Delay(rnd.Next(20, 50));
             }
-            if (fleetType == SelectFleetType.Instance || fleetType == SelectFleetType.Restrict)
+            if (fleetType == SelectFleetType.Instance || fleetType == SelectFleetType.Restrict || fleetType == SelectFleetType.Trial)
             {
                 bmp = await devtools.Screenshot();
                 var result = bmp.FindImageGrayscaled("Images\\OK.png", 0.7);
@@ -316,6 +320,7 @@ namespace GO2FlashLauncher.Script.GameLogic
     internal enum SelectFleetType
     {
         Instance,
-        Restrict
+        Restrict,
+        Trial
     }
 }

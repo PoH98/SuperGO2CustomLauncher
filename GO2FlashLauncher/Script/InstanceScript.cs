@@ -47,10 +47,16 @@ namespace GO2FlashLauncher.Script
                     bool inSpin = false;
                     bool spinable = true;
                     int currentRestrictCount = 0;
+                    bool runningRestrict = false, runningTrial = false;
                     int stageCount = 0;
+                    int currentTrialLv = 1;
+                    long currentInstanceCount = 0;
+                    bool trialStucked = false;
                     DateTime noResources = DateTime.MinValue;
                     DateTime lastCollectTime = DateTime.MinValue;
                     DateTime lastRestrictDate = DateTime.Now;
+                    DateTime lastTrialDate = DateTime.Now;
+                    DateTime lastRefresh = DateTime.Now;
                     int error = 0;
                     int lag = 0;
                     Bitmap lastbmp = null;
@@ -65,20 +71,33 @@ namespace GO2FlashLauncher.Script
                                 await Task.Delay(200);
                                 continue;
                             }
+                            if ((DateTime.Now - lastRefresh).TotalHours > 12)
+                            {
+                                Logger.LogInfo("Refreshing game to avoid slow game");
+                                var url = await httpService.GetIFrameUrl(userID);
+                                browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                mainScreenLocated = false;
+                                spaceStationLocated = false;
+                                inStage = false;
+                                await Task.Delay(3000);
+                                lastRefresh = DateTime.Now;
+                                continue;
+                            }
                             //error too much
                             if (error > 5)
                             {
                                 var lagging = await devTools.Screenshot();
                                 if (m.DetectDisconnect(lagging))
                                 {
-                                    Logger.LogWarning("Disconnected, reconnect after 1 minute...");
-                                    await Task.Delay(new TimeSpan(0, 1, 0));
+                                    Logger.LogWarning("Disconnected, reconnect after 30 sec...");
+                                    await Task.Delay(new TimeSpan(0, 0, 30));
                                     var url = await httpService.GetIFrameUrl(userID);
                                     browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                     mainScreenLocated = false;
                                     spaceStationLocated = false;
                                     inStage = false;
                                     await Task.Delay(3000);
+                                    lastRefresh = DateTime.Now;
                                     continue;
                                 }
                                 else if(error > 20)
@@ -197,7 +216,49 @@ namespace GO2FlashLauncher.Script
                                         {
                                             await Task.Delay(botSettings.Delays);
                                             bmp = await devTools.Screenshot();
-
+                                            if (botSettings.TrialFight)
+                                            {
+                                                //new day, reset
+                                                if (DateTime.Now.ToUniversalTime().Day != lastRestrictDate.ToUniversalTime().Day)
+                                                {
+                                                    currentTrialLv = 1;
+                                                    lastTrialDate = DateTime.Now;
+                                                    trialStucked = false;
+                                                }
+                                                if(currentTrialLv <= botSettings.TrialMaxLv && currentTrialLv < 10 && !trialStucked)
+                                                {
+                                                    Logger.LogInfo("Entering Trial");
+                                                    var r = await s.EnterTrial(bmp);
+                                                    if (currentTrialLv == r.Item2)
+                                                    {
+                                                        //seems like last time failed
+                                                        trialStucked = true;
+                                                        Logger.LogWarning("Seems like you can't win this Trial " + r.Item2 + ", skipping...");
+                                                        bmp = await devTools.Screenshot();
+                                                        await b.CloseButtons(bmp);
+                                                        await Task.Delay(botSettings.Delays);
+                                                        break;
+                                                    }
+                                                    if (r.Item2 > botSettings.TrialMaxLv)
+                                                    {
+                                                        currentTrialLv = r.Item2;
+                                                        Logger.LogWarning("Trial " + r.Item2 + " is not attackable, skipping...");
+                                                        bmp = await devTools.Screenshot();
+                                                        await b.CloseButtons(bmp);
+                                                        await Task.Delay(botSettings.Delays);
+                                                        break;
+                                                    }
+                                                    state = r.Item1;
+                                                    currentTrialLv = r.Item2;
+                                                    instanceType = SelectFleetType.Trial;
+                                                    runningTrial = true;
+                                                    Logger.LogInfo("Current Trial Level: " + currentTrialLv);
+                                                }
+                                                else
+                                                {
+                                                    runningTrial = false;
+                                                }
+                                            }
                                             if (botSettings.RestrictFight)
                                             {
                                                 //new day, reset
@@ -217,6 +278,7 @@ namespace GO2FlashLauncher.Script
                                                         instanceType = SelectFleetType.Restrict;
                                                         //have chances
                                                         currentRestrictCount++;
+                                                        runningRestrict = true;
                                                     }
                                                     catch(ArgumentException ex)
                                                     {
@@ -227,20 +289,22 @@ namespace GO2FlashLauncher.Script
                                                             bmp = await devTools.Screenshot();
                                                             await b.CloseButtons(bmp);
                                                             await Task.Delay(botSettings.Delays);
-                                                            continue;
+                                                            runningRestrict = false;
+                                                            break;
                                                         }
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    Logger.LogInfo("Entering Instance");
-                                                    state = await s.EnterInstance(bmp, botSettings.Instance);
+                                                    runningRestrict = false;
                                                 }
                                             }
-                                            else
+                                            if (!runningRestrict && !runningTrial)
                                             {
                                                 Logger.LogInfo("Entering Instance");
                                                 state = await s.EnterInstance(bmp, botSettings.Instance);
+                                                currentInstanceCount++;
+                                                Logger.LogInfo("Current is " + currentInstanceCount + " run!");
                                             }
                                             switch (state)
                                             {
@@ -272,6 +336,7 @@ namespace GO2FlashLauncher.Script
                                                         {
                                                             var url = await httpService.GetIFrameUrl(userID);
                                                             browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                                            lastRefresh = DateTime.Now;
                                                         }
                                                         catch
                                                         {
@@ -298,6 +363,7 @@ namespace GO2FlashLauncher.Script
                                                             inStage = false;
                                                             var url = await httpService.GetIFrameUrl(userID);
                                                             browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                                            lastRefresh = DateTime.Now;
                                                             break;
                                                         }
                                                         await Task.Delay(100);
@@ -322,6 +388,7 @@ namespace GO2FlashLauncher.Script
                                                             inStage = false;
                                                             var url = await httpService.GetIFrameUrl(userID);
                                                             browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                                            lastRefresh = DateTime.Now;
                                                             break;
                                                         }
                                                         await Task.Delay(100);
@@ -365,6 +432,7 @@ namespace GO2FlashLauncher.Script
                                             browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                             error = 0;
                                             await Task.Delay(botSettings.Delays);
+                                            lastRefresh = DateTime.Now;
                                             continue;
                                         }
                                     }
@@ -389,6 +457,7 @@ namespace GO2FlashLauncher.Script
                                         var url = await httpService.GetIFrameUrl(userID);
                                         browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                         await Task.Delay(botSettings.Delays);
+                                        lastRefresh = DateTime.Now;
                                     }
                                     continue;
                                 }
@@ -472,6 +541,7 @@ namespace GO2FlashLauncher.Script
                                                     var url = await httpService.GetIFrameUrl(userID);
                                                     browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                     await Task.Delay(botSettings.Delays);
+                                                    lastRefresh = DateTime.Now;
                                                     break;
                                                 }
                                             }
@@ -497,6 +567,7 @@ namespace GO2FlashLauncher.Script
                                                     var url = await httpService.GetIFrameUrl(userID);
                                                     browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                     await Task.Delay(botSettings.Delays);
+                                                    lastRefresh = DateTime.Now;
                                                     break;
                                                 }
                                                 Cancellation.ThrowIfCancellationRequested();
@@ -572,6 +643,7 @@ namespace GO2FlashLauncher.Script
                                             browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                             await Task.Delay(botSettings.Delays);
                                             Cancellation.ThrowIfCancellationRequested();
+                                            lastRefresh = DateTime.Now;
                                             break;
                                         }
                                     }
@@ -614,6 +686,7 @@ namespace GO2FlashLauncher.Script
                                     inStage = false;
                                     mainScreenLocated = false;
                                     spaceStationLocated = false;
+                                    lastRefresh = DateTime.Now;
                                 }
                             }
                             lastbmp = bmp;

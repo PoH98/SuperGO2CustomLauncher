@@ -74,6 +74,7 @@ namespace GO2FlashLauncher
                 WindowState = FormWindowState.Maximized;
             }
             metroTabControl1.SelectedIndex = 0;
+            metroTabControl2.SelectedIndex = 0;
             var settings = new CefSettings();
             settings.CachePath = Path.GetFullPath("cache");
             settings.CefCommandLineArgs.Add("enable-system-flash", "1");
@@ -159,10 +160,10 @@ namespace GO2FlashLauncher
             metroCheckBox1.Checked = this.settings.RestrictFight;
             metroCheckBox2.Checked = this.settings.TrialFight;
             metroComboBox1.SelectedIndex = this.settings.RestrictLevel -1 ;
-            metroComboBox1.SelectedIndex  = this.settings.RestrictLevel - 1;
             spin.Checked = this.settings.SpinWheel;
             metroCheckBox3.Checked = this.settings.SpinWithVouchers;
             numericUpDown4.Value = this.settings.MinVouchers;
+            metroComboBox2.SelectedIndex = this.settings.TrialMaxLv - 1;
             RenderFleets();
             timer2.Start();
             discordRPC.Start();

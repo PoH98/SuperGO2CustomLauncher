@@ -115,30 +115,30 @@ namespace GO2FlashLauncher.Script.GameLogic
                 await Task.Delay(1000);
                 bmp = await devtools.Screenshot();
             }
-            result = bmp.FindImage("Images\\restricted.png", 0.7);
-            if(result != null)
-            {
-                await host.LeftClick(result.Value, rnd.Next(10, 50));
-                await Task.Delay(300);
-                bmp = await devtools.Screenshot();
-            }
-            //read OCR restrict count left
-            var ocrPoint = bmp.FindImage("Images\\restrictRemaining.png", 0.7);
-            if(ocrPoint != null)
-            {
-                var crop = await bmp.Crop(new Point(ocrPoint.Value.X + 61, ocrPoint.Value.Y), new Size(15, 20));
-                ocr.SetImage(crop.ToImage<Gray, byte>());
-                var str = ocr.GetUTF8Text();
-                int.TryParse(str, out int count);
-                if(count == 0)
-                {
-                    throw new ArgumentException("Already out of chance");
-                }
-                Logger.LogInfo("Restrict remaining chance: " + count);
-            }
             //detect already in instance
             if (bmp.FindImage("Images\\instanceWindowMarker.png", 0.65) != null)
             {
+                result = bmp.FindImage("Images\\restricted.png", 0.7);
+                if (result != null)
+                {
+                    await host.LeftClick(result.Value, rnd.Next(10, 50));
+                    await Task.Delay(300);
+                    bmp = await devtools.Screenshot();
+                }
+                //read OCR restrict count left
+                var ocrPoint = bmp.FindImage("Images\\restrictRemaining.png", 0.7);
+                if (ocrPoint != null)
+                {
+                    var crop = await bmp.Crop(new Point(ocrPoint.Value.X + 61, ocrPoint.Value.Y), new Size(15, 20));
+                    ocr.SetImage(crop.ToImage<Gray, byte>());
+                    var str = ocr.GetUTF8Text();
+                    int.TryParse(str, out int count);
+                    if (count == 0)
+                    {
+                        throw new ArgumentException("Already out of chance");
+                    }
+                    Logger.LogInfo("Restrict remaining chance: " + count);
+                }
                 result = bmp.FindImage("Images\\r" + instanceLv + "r.png", 0.8);
                 if (result == null && File.Exists("Images\\r" + instanceLv + "r1.png"))
                 {
@@ -158,6 +158,56 @@ namespace GO2FlashLauncher.Script.GameLogic
                 return InstanceEnterState.InStage;
             }
             return InstanceEnterState.Error;
+        }
+
+        public async Task<(InstanceEnterState, int)> EnterTrial(Bitmap bmp)
+        {
+            var result = bmp.FindImage(Path.GetFullPath("Images\\instance.png"), 0.8);
+            if (result == null)
+            {
+                await Task.Delay(10);
+                result = bmp.FindImage(Path.GetFullPath("Images\\instance2.png"), 0.8);
+            }
+            if (result != null)
+            {
+                await host.LeftClick(result.Value, rnd.Next(10, 50));
+                await Task.Delay(1000);
+                bmp = await devtools.Screenshot();
+            }
+            //detect already in instance
+            if (bmp.FindImage("Images\\instanceWindowMarker.png", 0.65) != null)
+            {
+                result = bmp.FindImage("Images\\trial.png", 0.7);
+                if (result != null)
+                {
+                    await host.LeftClick(result.Value, rnd.Next(10, 50));
+                    await Task.Delay(300);
+                    bmp = await devtools.Screenshot();
+                    for(int i = 2; i < 10; i++)
+                    {
+                        result = bmp.FindImage("Images\\ti" + i + "ti.png", 0.8);
+                        if(result != null)
+                        {
+                            return (InstanceEnterState.IncreaseFleet, i);
+                        }
+                    }
+                    for (int i = 10; i > 1; i--)
+                    {
+                        result = bmp.FindImage("Images\\t" + i + "t.png", 0.8);
+                        if (result != null)
+                        {
+                            return (InstanceEnterState.IncreaseFleet, i + 1);
+                        }
+                    }
+                    return (InstanceEnterState.IncreaseFleet, 1);
+                }
+            }
+            else if (bmp.FindImage("Images\\instancestop.png", 0.8) != null)
+            {
+                //in stage
+                return (InstanceEnterState.InStage, -1);
+            }
+            return (InstanceEnterState.Error, -1);
         }
     }
 
