@@ -19,6 +19,14 @@ namespace GO2FlashLauncher.Service
             {
                 Directory.CreateDirectory(logPath);
             }
+            foreach (var file in Directory.GetFiles(logPath))
+            {
+                FileInfo fileInfo = new FileInfo(file);
+                if((DateTime.Now - fileInfo.CreationTime).TotalDays >= 7)
+                {
+                    fileInfo.Delete();
+                }
+            }
             logPath += "\\" + DateTime.Now.ToString("yyyy_MM_dd") + ".log";
             if (!File.Exists(logPath))
             {
@@ -91,13 +99,13 @@ namespace GO2FlashLauncher.Service
 
         public static void LogDebug(string debug)
         {
-            var text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][DBG]: " + debug;
-            var data = Encoding.UTF8.GetBytes(text);
-            logStream.WriteAsync(data, 0, data.Length);
             if (logger == null || !File.Exists("debug.txt"))
             {
                 return;
             }
+            var text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][DBG]: " + debug;
+            var data = Encoding.UTF8.GetBytes(text);
+            logStream.WriteAsync(data, 0, data.Length);
             logger.Invoke((MethodInvoker)delegate
             {
                 logger.SelectionStart = logger.TextLength;

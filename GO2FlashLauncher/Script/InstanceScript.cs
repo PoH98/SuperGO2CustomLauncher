@@ -49,7 +49,7 @@ namespace GO2FlashLauncher.Script
                     int currentRestrictCount = 0;
                     bool runningRestrict = false, runningTrial = false;
                     int stageCount = 0;
-                    int currentTrialLv = 1;
+                    int currentTrialLv = -1;
                     long currentInstanceCount = 0;
                     bool trialStucked = false;
                     DateTime noResources = DateTime.MinValue;
@@ -229,7 +229,8 @@ namespace GO2FlashLauncher.Script
                                                 {
                                                     Logger.LogInfo("Entering Trial");
                                                     var r = await s.EnterTrial(bmp);
-                                                    if (currentTrialLv == r.Item2)
+                                                    state = r.Item1;
+                                                    if (currentTrialLv == r.Item2 && state == InstanceEnterState.IncreaseFleet)
                                                     {
                                                         //seems like last time failed
                                                         trialStucked = true;
@@ -237,29 +238,35 @@ namespace GO2FlashLauncher.Script
                                                         bmp = await devTools.Screenshot();
                                                         await b.CloseButtons(bmp);
                                                         await Task.Delay(botSettings.Delays);
+                                                        inStage = false;
+                                                        spaceStationLocated = false;
                                                         break;
                                                     }
-                                                    if (r.Item2 > botSettings.TrialMaxLv)
+                                                    if (r.Item2 > botSettings.TrialMaxLv && state == InstanceEnterState.IncreaseFleet)
                                                     {
                                                         currentTrialLv = r.Item2;
                                                         Logger.LogWarning("Trial " + r.Item2 + " is not attackable, skipping...");
                                                         bmp = await devTools.Screenshot();
                                                         await b.CloseButtons(bmp);
                                                         await Task.Delay(botSettings.Delays);
+                                                        inStage = false;
+                                                        spaceStationLocated = false;
                                                         break;
                                                     }
-                                                    state = r.Item1;
-                                                    currentTrialLv = r.Item2;
-                                                    instanceType = SelectFleetType.Trial;
-                                                    runningTrial = true;
-                                                    Logger.LogInfo("Current Trial Level: " + currentTrialLv);
+                                                    if(state == InstanceEnterState.IncreaseFleet)
+                                                    {
+                                                        currentTrialLv = r.Item2;
+                                                        instanceType = SelectFleetType.Trial;
+                                                        runningTrial = true;
+                                                        Logger.LogInfo("Current Trial Level: " + currentTrialLv);
+                                                    }
                                                 }
                                                 else
                                                 {
                                                     runningTrial = false;
                                                 }
                                             }
-                                            if (botSettings.RestrictFight)
+                                            if (botSettings.RestrictFight && !runningTrial)
                                             {
                                                 //new day, reset
                                                 if(DateTime.Now.ToUniversalTime().Day != lastRestrictDate.ToUniversalTime().Day)
@@ -290,6 +297,8 @@ namespace GO2FlashLauncher.Script
                                                             await b.CloseButtons(bmp);
                                                             await Task.Delay(botSettings.Delays);
                                                             runningRestrict = false;
+                                                            inStage = false;
+                                                            spaceStationLocated = false;
                                                             break;
                                                         }
                                                     }

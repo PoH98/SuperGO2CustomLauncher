@@ -185,18 +185,18 @@ namespace GO2FlashLauncher.Script.GameLogic
                     bmp = await devtools.Screenshot();
                     for(int i = 2; i < 10; i++)
                     {
-                        result = bmp.FindImage("Images\\ti" + i + "ti.png", 0.8);
+                        result = bmp.FindImage("Images\\ti" + i + "ti.png", 0.85);
                         if(result != null)
                         {
                             return (InstanceEnterState.IncreaseFleet, i);
                         }
                     }
-                    for (int i = 10; i > 1; i--)
+                    for (int i = 1; i <= 10; i++)
                     {
-                        result = bmp.FindImage("Images\\t" + i + "t.png", 0.8);
-                        if (result != null)
+                        result = bmp.FindImage("Images\\t" + i + "t.png", 0.85);
+                        if (result == null)
                         {
-                            return (InstanceEnterState.IncreaseFleet, i + 1);
+                            return (InstanceEnterState.IncreaseFleet, i - 1);
                         }
                     }
                     return (InstanceEnterState.IncreaseFleet, 1);
