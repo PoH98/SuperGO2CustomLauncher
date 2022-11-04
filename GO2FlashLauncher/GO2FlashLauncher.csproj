@@ -2131,16 +2131,16 @@
       <Version>87.1.132</Version>
     </PackageReference>
     <PackageReference Include="DiscordRichPresence">
-      <Version>1.0.175</Version>
+      <Version>1.1.1.14</Version>
     </PackageReference>
     <PackageReference Include="Emgu.CV">
-      <Version>4.5.5.4823</Version>
+      <Version>4.6.0.5131</Version>
     </PackageReference>
     <PackageReference Include="Emgu.CV.Bitmap">
-      <Version>4.5.5.4823</Version>
+      <Version>4.6.0.5131</Version>
     </PackageReference>
     <PackageReference Include="Emgu.CV.runtime.windows">
-      <Version>4.5.5.4823</Version>
+      <Version>4.6.0.5131</Version>
     </PackageReference>
     <PackageReference Include="System.Drawing.Common">
       <Version>6.0.0</Version>
