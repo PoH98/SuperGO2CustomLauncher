@@ -106,6 +106,22 @@ namespace GO2FlashLauncher.Script.GameLogic
                 await Task.Delay(500);
                 await host.LeftClick(point.Value, rnd.Next(80, 100)); 
             }
+            else
+            {
+                var skip = bmp.FindImage("Images\\spinskip.png", 0.7);
+                if(skip == null)
+                {
+                    skip = bmp.FindImage("Images\\spinskip2.png", 0.7);
+                }
+                if(skip == null)
+                {
+                    skip = bmp.FindImage("Images\\spinskip3.png", 0.7);
+                }
+                if(skip != null)
+                {
+                    await host.LeftClick(point.Value, rnd.Next(80, 100));
+                }
+            }
             if (!spinWithVoucher && point != null)
             {
                 return false;

@@ -605,7 +605,15 @@ namespace GO2FlashLauncher.Script
                                             }
                                             else
                                             {
-                                                await w.Spin(bmp, resources, botSettings.SpinWithVouchers);
+                                                if(!await w.Spin(bmp, resources, botSettings.SpinWithVouchers))
+                                                {
+                                                    //stop spin, something wrong
+                                                    Logger.LogWarning("Spin seems failed! Not going to spin!");
+                                                    await Task.Delay(50);
+                                                    bmp = await devTools.Screenshot();
+                                                    await w.EndSpin(bmp);
+                                                    inSpin = false;
+                                                }
                                                 Logger.LogInfo("Predicted " + resources.Vouchers + " left!");
                                             }
                                         }
