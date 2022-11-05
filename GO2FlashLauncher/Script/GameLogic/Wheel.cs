@@ -78,7 +78,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 return SpinResult.Failed;
             }
             await host.LeftClick(point.Value, rnd.Next(80, 100));
-            await Task.Delay(1000);
+            await Task.Delay(500);
             bmp = await devtools.Screenshot();
             point = bmp.FindImage("Images\\wheelbuyandspin.png", 0.7);
             if(point == null)
@@ -104,7 +104,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                     return result;
                 }
                 await host.LeftClick(new Point(voucher.Value.X - 10, voucher.Value.Y + 2), rnd.Next(80,100));
-                await Task.Delay(500);
+                await Task.Delay(100);
                 await host.LeftClick(point.Value, rnd.Next(80, 100));
                 result = SpinResult.Vouchers;
             }

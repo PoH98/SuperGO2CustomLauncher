@@ -116,11 +116,12 @@ namespace GO2FlashLauncher.Script
                             {
                                 //entered wheel
                                 Cancellation.ThrowIfCancellationRequested();
-                                if (await w.Spin(bmp, resources))
+                                var spinResult = await w.Spin(bmp, resources);
+                                if (spinResult != SpinResult.Failed)
                                 {
                                     Logger.LogInfo("Detected Vouchers: " + resources.Vouchers);
                                 }
-                                else
+                                else if(spinResult == SpinResult.Failed)
                                 {
                                     error++;
                                     if(error > 10)
@@ -128,6 +129,11 @@ namespace GO2FlashLauncher.Script
                                         inWheel = false;
                                         mainScreenLocated = false;
                                     }
+                                }
+                                else if(spinResult == SpinResult.NotEnoughVouchers)
+                                {
+                                    Logger.LogError("No more vouchers, stop spinning...");
+                                    return;
                                 }
                             }
                         }

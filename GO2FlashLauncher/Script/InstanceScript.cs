@@ -653,6 +653,11 @@ namespace GO2FlashLauncher.Script
                                             Logger.LogInfo("Lets retry spin after error!");
                                             spinable = true;
                                         }
+                                        else if(spinResult == SpinResult.Vouchers && botSettings.SpinWithVouchers)
+                                        {
+                                            Logger.LogInfo("Spin with vouchers enabled! Lets spin now!");
+                                            spinable = true;
+                                        }
                                     }
                                 }
                                 else if (inSpin)
