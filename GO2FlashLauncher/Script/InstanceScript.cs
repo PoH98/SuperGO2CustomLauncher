@@ -52,6 +52,7 @@ namespace GO2FlashLauncher.Script
                     int currentTrialLv = -1;
                     long currentInstanceCount = 0;
                     bool trialStucked = false;
+                    SpinResult spinResult = SpinResult.Failed;
                     DateTime noResources = DateTime.MinValue;
                     DateTime lastCollectTime = DateTime.MinValue;
                     DateTime lastRestrictDate = DateTime.Now;
@@ -605,7 +606,8 @@ namespace GO2FlashLauncher.Script
                                             }
                                             else
                                             {
-                                                if(!await w.Spin(bmp, resources, botSettings.SpinWithVouchers))
+                                                spinResult = await w.Spin(bmp, resources, botSettings.SpinWithVouchers);
+                                                if (spinResult == SpinResult.Failed)
                                                 {
                                                     //stop spin, something wrong
                                                     Logger.LogWarning("Spin seems failed! Not going to spin!");
@@ -613,17 +615,42 @@ namespace GO2FlashLauncher.Script
                                                     bmp = await devTools.Screenshot();
                                                     await w.EndSpin(bmp);
                                                     inSpin = false;
+                                                    spinable = false;
                                                 }
-                                                Logger.LogInfo("Predicted " + resources.Vouchers + " left!");
+                                                else if(spinResult == SpinResult.Vouchers)
+                                                {
+                                                    if (botSettings.SpinWithVouchers)
+                                                    {
+                                                        Logger.LogInfo("Predicted " + resources.Vouchers + " left!");
+                                                    }
+                                                    else
+                                                    {
+                                                        Logger.LogWarning("Voucher Spins! Auto canceling!");
+                                                        await Task.Delay(50);
+                                                        bmp = await devTools.Screenshot();
+                                                        await w.EndSpin(bmp);
+                                                        inSpin = false;
+                                                        spinable = false;
+                                                    }
+                                                }
+                                                else if(spinResult == SpinResult.Success)
+                                                {
+                                                    Logger.LogInfo("Free Spin!");
+                                                }
                                             }
                                         }
                                     }
                                     else
                                     {
                                         //detect vouchers
-                                        if (resources.Vouchers > botSettings.MinVouchers)
+                                        if (resources.Vouchers > botSettings.MinVouchers && spinResult == SpinResult.NotEnoughVouchers)
                                         {
                                             Logger.LogInfo("Vouchers are now enough for spinning!");
+                                            spinable = true;
+                                        }
+                                        else if(spinResult == SpinResult.Failed)
+                                        {
+                                            Logger.LogInfo("Lets retry spin after error!");
                                             spinable = true;
                                         }
                                     }
