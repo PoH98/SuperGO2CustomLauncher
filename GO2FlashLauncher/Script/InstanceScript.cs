@@ -603,6 +603,7 @@ namespace GO2FlashLauncher.Script
                                                 await w.EndSpin(bmp);
                                                 inSpin = false;
                                                 spinable = false;
+                                                spinResult = SpinResult.NotEnoughVouchers;
                                             }
                                             else
                                             {
