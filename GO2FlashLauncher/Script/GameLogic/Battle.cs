@@ -110,7 +110,34 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             var currentPage = 0;
             bmp = await devtools.Screenshot();
-            foreach (Fleet f in fleets.Where(x => x.Order >= 0).OrderBy(x => x.Order).Take(maxFleetNum))
+            var selectedFleets = fleets.Where((x) =>
+            {
+                switch (fleetType)
+                {
+                    case SelectFleetType.Instance:
+                        return x.Order >= 0;
+                    case SelectFleetType.Trial:
+                        return x.TrialOrder >= 0;
+                    case SelectFleetType.Restrict:
+                        return x.RestrictOrder >= 0;
+                    default:
+                        return x.ConstellationOrder >= 0;
+                }
+            }).OrderBy((x) =>
+            {
+                switch (fleetType)
+                {
+                    case SelectFleetType.Instance:
+                        return x.Order;
+                    case SelectFleetType.Trial:
+                        return x.TrialOrder;
+                    case SelectFleetType.Restrict:
+                        return x.RestrictOrder;
+                    default:
+                        return x.ConstellationOrder;
+                }
+            }).Take(maxFleetNum);
+            foreach (Fleet f in selectedFleets)
             {
                 var index = fleets.IndexOf(f);
                 var page = index / 9;
@@ -321,6 +348,7 @@ namespace GO2FlashLauncher.Script.GameLogic
     {
         Instance,
         Restrict,
-        Trial
+        Trial,
+        Constellation
     }
 }

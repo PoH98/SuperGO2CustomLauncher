@@ -1,4 +1,5 @@
 ﻿using CefSharp;
+using CefSharp.DevTools.CSS;
 using CefSharp.Handler;
 using CefSharp.WinForms;
 using GO2FlashLauncher.Model;
@@ -16,9 +17,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace GO2FlashLauncher
 {
@@ -99,7 +102,7 @@ namespace GO2FlashLauncher
 #endif
             metroTabControl1.BackColor = Color.Transparent;
             metroTabControl2.BackColor = Color.Transparent;
-            metroTabControl3.BackColor = Color.Transparent;
+            normalInstance.BackColor = Color.Transparent;
             var alphaContext = new RequestContextSettings
             {
                 IgnoreCertificateErrors = true,
@@ -165,6 +168,11 @@ namespace GO2FlashLauncher
             numericUpDown4.Value = this.settings.MinVouchers;
             metroComboBox2.SelectedIndex = this.settings.TrialMaxLv - 1;
             RenderFleets();
+            metroTabControl4.SelectedIndex = 0;
+            normalInstance.SelectedIndex = 0;
+            restrictInstance.SelectedIndex = 0;
+            trial.SelectedIndex = 0;
+            constellation.SelectedIndex = 0;
             timer2.Start();
             discordRPC.Start();
             rpc.SetPresence();
@@ -584,8 +592,89 @@ namespace GO2FlashLauncher
 
         private void RenderFleets()
         {
-            metroTabControl3.Width = (170 * 3) + 30;
-            metroTabControl3.Controls.Clear();
+            normalInstance.Width = restrictInstance.Width = trial.Width = constellation.Width = (170 * 3) + 30;
+            normalInstance.Controls.Clear();
+            restrictInstance.Controls.Clear();
+            trial.Controls.Clear();
+            constellation.Controls.Clear();
+            GenerateFleetTabs(0, normalInstance);
+            GenerateFleetTabs(1, restrictInstance);
+            GenerateFleetTabs(2, trial);
+            GenerateFleetTabs(3, constellation);
+            normalInstance.Controls.Add(GenerateLeftFleetTabs(0));
+            restrictInstance.Controls.Add(GenerateLeftFleetTabs(1));
+            trial.Controls.Add(GenerateLeftFleetTabs(2));
+            constellation.Controls.Add(GenerateLeftFleetTabs(3));
+        }
+
+        public Control GenerateLeftFleetTabs(int type)
+        {
+            var tabCount = settings.Fleets.Count / 9;
+            var t = new MetroTabPage    
+            {
+                Name = "FleetTab" + tabCount,
+                Text = "Fleet Page " + tabCount,
+                Theme = MetroThemeStyle.Dark
+            };
+            var p = new FlowLayoutPanel()
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.Transparent
+            };
+            for (int y = (settings.Fleets.Count - settings.Fleets.Count % 9); y < settings.Fleets.Count; y++)
+            {
+                var group = new GroupBox
+                {
+                    Text = settings.Fleets[y].Name,
+                    Height = 45,
+                    Width = 170,
+                    ForeColor = Color.White
+                };
+                var input = new NumericUpDown
+                {
+                    Name = settings.Fleets[y].Name + "_" + type,
+                    Top = 15,
+                    Left = 15,
+                    Width = 120,
+                    Minimum = -1
+                };
+                switch(type)
+                {
+                    case 0:
+                        input.Value = settings.Fleets[y].Order;
+                        break;
+                    case 1:
+                        input.Value = settings.Fleets[y].RestrictOrder;
+                        break;
+                    case 2:
+                        input.Value = settings.Fleets[y].TrialOrder;
+                        break;
+                    case 3:
+                        input.Value = settings.Fleets[y].ConstellationOrder;
+                        break;
+                }
+                var removeFleet = new MetroButton
+                {
+                    Name = "btnRem_" + settings.Fleets[y].Name,
+                    Text = "🗙",
+                    Top = 15,
+                    Left = 140,
+                    Height = 20,
+                    Width = 20,
+                    Theme = MetroThemeStyle.Dark
+                };
+                removeFleet.Click += RemoveFleet_Click;
+                input.ValueChanged += Input_ValueChanged;
+                group.Controls.Add(input);
+                group.Controls.Add(removeFleet);
+                p.Controls.Add(group);
+            }
+            t.Controls.Add(p);
+            return t;
+        }
+
+        public void GenerateFleetTabs(int type, Control tabControl)
+        {
             int tabs = settings.Fleets.Count / 9;
             int x = 0;
             for (x = 0; x < tabs; x++)
@@ -612,12 +701,27 @@ namespace GO2FlashLauncher
                     };
                     var input = new NumericUpDown
                     {
-                        Name = settings.Fleets[y].Name,
-                        Value = settings.Fleets[y].Order,
+                        Name = settings.Fleets[y].Name + "_" + type,
                         Top = 15,
                         Left = 15,
-                        Width = 120
+                        Width = 120,
+                        Minimum = -1
                     };
+                    switch (type)
+                    {
+                        case 0:
+                            input.Value = settings.Fleets[y].Order;
+                            break;
+                        case 1:
+                            input.Value = settings.Fleets[y].RestrictOrder;
+                            break;
+                        case 2:
+                            input.Value = settings.Fleets[y].TrialOrder;
+                            break;
+                        case 3:
+                            input.Value = settings.Fleets[y].ConstellationOrder;
+                            break;
+                    }
                     var removeFleet = new MetroButton
                     {
                         Name = "btnRem_" + settings.Fleets[y].Name,
@@ -635,54 +739,8 @@ namespace GO2FlashLauncher
                     panel.Controls.Add(group);
                 }
                 tab.Controls.Add(panel);
-                metroTabControl3.Controls.Add(tab);
+                tabControl.Controls.Add(tab);
             }
-            var t = new MetroTabPage
-            {
-                Name = "FleetTab" + x,
-                Text = "Fleet Page " + x,
-                Theme = MetroThemeStyle.Dark
-            };
-            var p = new FlowLayoutPanel()
-            {
-                Dock = DockStyle.Fill,
-                BackColor = Color.Transparent
-            };
-            for (int y = x * 9; y < settings.Fleets.Count; y++)
-            {
-                var group = new GroupBox
-                {
-                    Text = settings.Fleets[y].Name,
-                    Height = 45,
-                    Width = 170,
-                    ForeColor = Color.White
-                };
-                var input = new NumericUpDown
-                {
-                    Name = settings.Fleets[y].Name,
-                    Value = settings.Fleets[y].Order,
-                    Top = 15,
-                    Left = 15,
-                    Width = 120
-                };
-                var removeFleet = new MetroButton
-                {
-                    Name = "btnRem_" + settings.Fleets[y].Name,
-                    Text = "🗙",
-                    Top = 15,
-                    Left = 140,
-                    Height = 20,
-                    Width = 20,
-                    Theme = MetroThemeStyle.Dark
-                };
-                removeFleet.Click += RemoveFleet_Click;
-                input.ValueChanged += Input_ValueChanged;
-                group.Controls.Add(input);
-                group.Controls.Add(removeFleet);
-                p.Controls.Add(group);
-            }
-            t.Controls.Add(p);
-            metroTabControl3.Controls.Add(t);
         }
 
         private void metroButton10_Click(object sender, EventArgs e)
@@ -861,7 +919,23 @@ namespace GO2FlashLauncher
 
         private void Input_ValueChanged(object sender, EventArgs e)
         {
-            settings.Fleets.First(x => x.Name == (sender as NumericUpDown).Name).Order = (int)Math.Round((sender as NumericUpDown).Value);
+            var name = string.Join("_", (sender as NumericUpDown).Name.Split('_').Take((sender as NumericUpDown).Name.Split('_').Length - 1));
+            var type = Convert.ToInt32((sender as NumericUpDown).Name.Split('_').Last());
+            switch (type)
+            {
+                case 0:
+                    settings.Fleets.First(x => x.Name == name).Order = (int)Math.Round((sender as NumericUpDown).Value);
+                    break;
+                case 1:
+                    settings.Fleets.First(x => x.Name == name).RestrictOrder = (int)Math.Round((sender as NumericUpDown).Value);
+                    break;
+                case 2:
+                    settings.Fleets.First(x => x.Name == name).TrialOrder = (int)Math.Round((sender as NumericUpDown).Value);
+                    break;
+                case 3:
+                    settings.Fleets.First(x => x.Name == name).ConstellationOrder = (int)Math.Round((sender as NumericUpDown).Value);
+                    break;
+            }
 
         }
 

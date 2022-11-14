@@ -65,6 +65,19 @@
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
             this.metroTabControl2 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
+            this.metroTabControl4 = new MetroFramework.Controls.MetroTabControl();
+            this.metroTabPage7 = new MetroFramework.Controls.MetroTabPage();
+            this.normalInstance = new MetroFramework.Controls.MetroTabControl();
+            this.fleetPage1 = new MetroFramework.Controls.MetroTabPage();
+            this.metroTabPage8 = new MetroFramework.Controls.MetroTabPage();
+            this.restrictInstance = new MetroFramework.Controls.MetroTabControl();
+            this.metroTabPage10 = new MetroFramework.Controls.MetroTabPage();
+            this.metroTabPage19 = new MetroFramework.Controls.MetroTabPage();
+            this.trial = new MetroFramework.Controls.MetroTabControl();
+            this.metroTabPage11 = new MetroFramework.Controls.MetroTabPage();
+            this.metroTabPage9 = new MetroFramework.Controls.MetroTabPage();
+            this.constellation = new MetroFramework.Controls.MetroTabControl();
+            this.metroTabPage12 = new MetroFramework.Controls.MetroTabPage();
             this.metroCheckBox2 = new MetroFramework.Controls.MetroCheckBox();
             this.metroLabel11 = new MetroFramework.Controls.MetroLabel();
             this.metroComboBox2 = new MetroFramework.Controls.MetroComboBox();
@@ -79,8 +92,6 @@
             this.metroLabel5 = new MetroFramework.Controls.MetroLabel();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.metroLabel4 = new MetroFramework.Controls.MetroLabel();
-            this.metroTabControl3 = new MetroFramework.Controls.MetroTabControl();
-            this.fleetPage1 = new MetroFramework.Controls.MetroTabPage();
             this.metroButton8 = new MetroFramework.Controls.MetroButton();
             this.metroLabel3 = new MetroFramework.Controls.MetroLabel();
             this.instanceSelection = new MetroFramework.Controls.MetroComboBox();
@@ -107,10 +118,18 @@
             this.metroTabPage2.SuspendLayout();
             this.metroTabControl2.SuspendLayout();
             this.metroTabPage4.SuspendLayout();
+            this.metroTabControl4.SuspendLayout();
+            this.metroTabPage7.SuspendLayout();
+            this.normalInstance.SuspendLayout();
+            this.metroTabPage8.SuspendLayout();
+            this.restrictInstance.SuspendLayout();
+            this.metroTabPage19.SuspendLayout();
+            this.trial.SuspendLayout();
+            this.metroTabPage9.SuspendLayout();
+            this.constellation.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            this.metroTabControl3.SuspendLayout();
             this.metroTabPage6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
             this.SuspendLayout();
@@ -344,6 +363,7 @@
             this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.richTextBox1.Location = new System.Drawing.Point(1057, 34);
             this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
             this.richTextBox1.Size = new System.Drawing.Size(178, 439);
             this.richTextBox1.TabIndex = 6;
             this.richTextBox1.Text = "";
@@ -528,7 +548,7 @@
             this.metroTabControl2.Controls.Add(this.metroTabPage6);
             this.metroTabControl2.Location = new System.Drawing.Point(3, 48);
             this.metroTabControl2.Name = "metroTabControl2";
-            this.metroTabControl2.SelectedIndex = 1;
+            this.metroTabControl2.SelectedIndex = 0;
             this.metroTabControl2.Size = new System.Drawing.Size(1228, 540);
             this.metroTabControl2.TabIndex = 9;
             this.metroTabControl2.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -537,6 +557,7 @@
             // metroTabPage4
             // 
             this.metroTabPage4.BackColor = System.Drawing.Color.Transparent;
+            this.metroTabPage4.Controls.Add(this.metroTabControl4);
             this.metroTabPage4.Controls.Add(this.metroCheckBox2);
             this.metroTabPage4.Controls.Add(this.metroLabel11);
             this.metroTabPage4.Controls.Add(this.metroComboBox2);
@@ -551,7 +572,6 @@
             this.metroTabPage4.Controls.Add(this.metroLabel5);
             this.metroTabPage4.Controls.Add(this.numericUpDown1);
             this.metroTabPage4.Controls.Add(this.metroLabel4);
-            this.metroTabPage4.Controls.Add(this.metroTabControl3);
             this.metroTabPage4.Controls.Add(this.metroButton8);
             this.metroTabPage4.Controls.Add(this.metroLabel3);
             this.metroTabPage4.Controls.Add(this.instanceSelection);
@@ -569,6 +589,189 @@
             this.metroTabPage4.VerticalScrollbarBarColor = true;
             this.metroTabPage4.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage4.VerticalScrollbarSize = 10;
+            // 
+            // metroTabControl4
+            // 
+            this.metroTabControl4.Controls.Add(this.metroTabPage7);
+            this.metroTabControl4.Controls.Add(this.metroTabPage8);
+            this.metroTabControl4.Controls.Add(this.metroTabPage19);
+            this.metroTabControl4.Controls.Add(this.metroTabPage9);
+            this.metroTabControl4.Location = new System.Drawing.Point(4, 137);
+            this.metroTabControl4.Name = "metroTabControl4";
+            this.metroTabControl4.SelectedIndex = 3;
+            this.metroTabControl4.Size = new System.Drawing.Size(1213, 356);
+            this.metroTabControl4.TabIndex = 22;
+            this.metroTabControl4.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroTabControl4.UseSelectable = true;
+            // 
+            // metroTabPage7
+            // 
+            this.metroTabPage7.Controls.Add(this.normalInstance);
+            this.metroTabPage7.HorizontalScrollbarBarColor = true;
+            this.metroTabPage7.HorizontalScrollbarHighlightOnWheel = false;
+            this.metroTabPage7.HorizontalScrollbarSize = 10;
+            this.metroTabPage7.Location = new System.Drawing.Point(4, 38);
+            this.metroTabPage7.Name = "metroTabPage7";
+            this.metroTabPage7.Size = new System.Drawing.Size(1205, 314);
+            this.metroTabPage7.TabIndex = 0;
+            this.metroTabPage7.Text = "Normal Instance";
+            this.metroTabPage7.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroTabPage7.VerticalScrollbarBarColor = true;
+            this.metroTabPage7.VerticalScrollbarHighlightOnWheel = false;
+            this.metroTabPage7.VerticalScrollbarSize = 10;
+            // 
+            // normalInstance
+            // 
+            this.normalInstance.Controls.Add(this.fleetPage1);
+            this.normalInstance.Location = new System.Drawing.Point(3, 12);
+            this.normalInstance.Name = "normalInstance";
+            this.normalInstance.SelectedIndex = 0;
+            this.normalInstance.Size = new System.Drawing.Size(472, 287);
+            this.normalInstance.TabIndex = 7;
+            this.normalInstance.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.normalInstance.UseSelectable = true;
+            // 
+            // fleetPage1
+            // 
+            this.fleetPage1.HorizontalScrollbarBarColor = true;
+            this.fleetPage1.HorizontalScrollbarHighlightOnWheel = false;
+            this.fleetPage1.HorizontalScrollbarSize = 10;
+            this.fleetPage1.Location = new System.Drawing.Point(4, 38);
+            this.fleetPage1.Name = "fleetPage1";
+            this.fleetPage1.Size = new System.Drawing.Size(464, 245);
+            this.fleetPage1.TabIndex = 0;
+            this.fleetPage1.Text = "Fleet Page 1";
+            this.fleetPage1.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.fleetPage1.VerticalScrollbarBarColor = true;
+            this.fleetPage1.VerticalScrollbarHighlightOnWheel = false;
+            this.fleetPage1.VerticalScrollbarSize = 10;
+            // 
+            // metroTabPage8
+            // 
+            this.metroTabPage8.BackColor = System.Drawing.Color.Black;
+            this.metroTabPage8.Controls.Add(this.restrictInstance);
+            this.metroTabPage8.HorizontalScrollbarBarColor = true;
+            this.metroTabPage8.HorizontalScrollbarHighlightOnWheel = false;
+            this.metroTabPage8.HorizontalScrollbarSize = 10;
+            this.metroTabPage8.Location = new System.Drawing.Point(4, 38);
+            this.metroTabPage8.Name = "metroTabPage8";
+            this.metroTabPage8.Size = new System.Drawing.Size(1205, 314);
+            this.metroTabPage8.TabIndex = 1;
+            this.metroTabPage8.Text = "Restrict Instance";
+            this.metroTabPage8.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroTabPage8.VerticalScrollbarBarColor = true;
+            this.metroTabPage8.VerticalScrollbarHighlightOnWheel = false;
+            this.metroTabPage8.VerticalScrollbarSize = 10;
+            // 
+            // restrictInstance
+            // 
+            this.restrictInstance.Controls.Add(this.metroTabPage10);
+            this.restrictInstance.Location = new System.Drawing.Point(3, 12);
+            this.restrictInstance.Name = "restrictInstance";
+            this.restrictInstance.SelectedIndex = 0;
+            this.restrictInstance.Size = new System.Drawing.Size(472, 287);
+            this.restrictInstance.TabIndex = 8;
+            this.restrictInstance.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.restrictInstance.UseSelectable = true;
+            // 
+            // metroTabPage10
+            // 
+            this.metroTabPage10.HorizontalScrollbarBarColor = true;
+            this.metroTabPage10.HorizontalScrollbarHighlightOnWheel = false;
+            this.metroTabPage10.HorizontalScrollbarSize = 10;
+            this.metroTabPage10.Location = new System.Drawing.Point(4, 38);
+            this.metroTabPage10.Name = "metroTabPage10";
+            this.metroTabPage10.Size = new System.Drawing.Size(464, 245);
+            this.metroTabPage10.TabIndex = 0;
+            this.metroTabPage10.Text = "Fleet Page 1";
+            this.metroTabPage10.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroTabPage10.VerticalScrollbarBarColor = true;
+            this.metroTabPage10.VerticalScrollbarHighlightOnWheel = false;
+            this.metroTabPage10.VerticalScrollbarSize = 10;
+            // 
+            // metroTabPage19
+            // 
+            this.metroTabPage19.Controls.Add(this.trial);
+            this.metroTabPage19.HorizontalScrollbarBarColor = true;
+            this.metroTabPage19.HorizontalScrollbarHighlightOnWheel = false;
+            this.metroTabPage19.HorizontalScrollbarSize = 10;
+            this.metroTabPage19.Location = new System.Drawing.Point(4, 38);
+            this.metroTabPage19.Name = "metroTabPage19";
+            this.metroTabPage19.Size = new System.Drawing.Size(1205, 314);
+            this.metroTabPage19.TabIndex = 2;
+            this.metroTabPage19.Text = "Trial";
+            this.metroTabPage19.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroTabPage19.VerticalScrollbarBarColor = true;
+            this.metroTabPage19.VerticalScrollbarHighlightOnWheel = false;
+            this.metroTabPage19.VerticalScrollbarSize = 10;
+            // 
+            // trial
+            // 
+            this.trial.Controls.Add(this.metroTabPage11);
+            this.trial.Location = new System.Drawing.Point(3, 12);
+            this.trial.Name = "trial";
+            this.trial.SelectedIndex = 0;
+            this.trial.Size = new System.Drawing.Size(472, 287);
+            this.trial.TabIndex = 8;
+            this.trial.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.trial.UseSelectable = true;
+            // 
+            // metroTabPage11
+            // 
+            this.metroTabPage11.HorizontalScrollbarBarColor = true;
+            this.metroTabPage11.HorizontalScrollbarHighlightOnWheel = false;
+            this.metroTabPage11.HorizontalScrollbarSize = 10;
+            this.metroTabPage11.Location = new System.Drawing.Point(4, 38);
+            this.metroTabPage11.Name = "metroTabPage11";
+            this.metroTabPage11.Size = new System.Drawing.Size(464, 245);
+            this.metroTabPage11.TabIndex = 0;
+            this.metroTabPage11.Text = "Fleet Page 1";
+            this.metroTabPage11.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroTabPage11.VerticalScrollbarBarColor = true;
+            this.metroTabPage11.VerticalScrollbarHighlightOnWheel = false;
+            this.metroTabPage11.VerticalScrollbarSize = 10;
+            // 
+            // metroTabPage9
+            // 
+            this.metroTabPage9.Controls.Add(this.constellation);
+            this.metroTabPage9.HorizontalScrollbarBarColor = true;
+            this.metroTabPage9.HorizontalScrollbarHighlightOnWheel = false;
+            this.metroTabPage9.HorizontalScrollbarSize = 10;
+            this.metroTabPage9.Location = new System.Drawing.Point(4, 38);
+            this.metroTabPage9.Name = "metroTabPage9";
+            this.metroTabPage9.Size = new System.Drawing.Size(1205, 314);
+            this.metroTabPage9.TabIndex = 3;
+            this.metroTabPage9.Text = "Constellation";
+            this.metroTabPage9.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroTabPage9.VerticalScrollbarBarColor = true;
+            this.metroTabPage9.VerticalScrollbarHighlightOnWheel = false;
+            this.metroTabPage9.VerticalScrollbarSize = 10;
+            // 
+            // constellation
+            // 
+            this.constellation.Controls.Add(this.metroTabPage12);
+            this.constellation.Location = new System.Drawing.Point(3, 12);
+            this.constellation.Name = "constellation";
+            this.constellation.SelectedIndex = 0;
+            this.constellation.Size = new System.Drawing.Size(472, 287);
+            this.constellation.TabIndex = 8;
+            this.constellation.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.constellation.UseSelectable = true;
+            // 
+            // metroTabPage12
+            // 
+            this.metroTabPage12.HorizontalScrollbarBarColor = true;
+            this.metroTabPage12.HorizontalScrollbarHighlightOnWheel = false;
+            this.metroTabPage12.HorizontalScrollbarSize = 10;
+            this.metroTabPage12.Location = new System.Drawing.Point(4, 38);
+            this.metroTabPage12.Name = "metroTabPage12";
+            this.metroTabPage12.Size = new System.Drawing.Size(464, 245);
+            this.metroTabPage12.TabIndex = 0;
+            this.metroTabPage12.Text = "Fleet Page 1";
+            this.metroTabPage12.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroTabPage12.VerticalScrollbarBarColor = true;
+            this.metroTabPage12.VerticalScrollbarHighlightOnWheel = false;
+            this.metroTabPage12.VerticalScrollbarSize = 10;
             // 
             // metroCheckBox2
             // 
@@ -772,32 +975,6 @@
             this.metroLabel4.Text = "Halt Attack if HE3 below";
             this.metroLabel4.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroLabel4.UseCustomBackColor = true;
-            // 
-            // metroTabControl3
-            // 
-            this.metroTabControl3.Controls.Add(this.fleetPage1);
-            this.metroTabControl3.Location = new System.Drawing.Point(4, 134);
-            this.metroTabControl3.Name = "metroTabControl3";
-            this.metroTabControl3.SelectedIndex = 0;
-            this.metroTabControl3.Size = new System.Drawing.Size(472, 356);
-            this.metroTabControl3.TabIndex = 7;
-            this.metroTabControl3.Theme = MetroFramework.MetroThemeStyle.Dark;
-            this.metroTabControl3.UseSelectable = true;
-            // 
-            // fleetPage1
-            // 
-            this.fleetPage1.HorizontalScrollbarBarColor = true;
-            this.fleetPage1.HorizontalScrollbarHighlightOnWheel = false;
-            this.fleetPage1.HorizontalScrollbarSize = 10;
-            this.fleetPage1.Location = new System.Drawing.Point(4, 38);
-            this.fleetPage1.Name = "fleetPage1";
-            this.fleetPage1.Size = new System.Drawing.Size(464, 314);
-            this.fleetPage1.TabIndex = 0;
-            this.fleetPage1.Text = "Fleet Page 1";
-            this.fleetPage1.Theme = MetroFramework.MetroThemeStyle.Dark;
-            this.fleetPage1.VerticalScrollbarBarColor = true;
-            this.fleetPage1.VerticalScrollbarHighlightOnWheel = false;
-            this.fleetPage1.VerticalScrollbarSize = 10;
             // 
             // metroButton8
             // 
@@ -1054,10 +1231,18 @@
             this.metroTabControl2.ResumeLayout(false);
             this.metroTabPage4.ResumeLayout(false);
             this.metroTabPage4.PerformLayout();
+            this.metroTabControl4.ResumeLayout(false);
+            this.metroTabPage7.ResumeLayout(false);
+            this.normalInstance.ResumeLayout(false);
+            this.metroTabPage8.ResumeLayout(false);
+            this.restrictInstance.ResumeLayout(false);
+            this.metroTabPage19.ResumeLayout(false);
+            this.trial.ResumeLayout(false);
+            this.metroTabPage9.ResumeLayout(false);
+            this.constellation.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            this.metroTabControl3.ResumeLayout(false);
             this.metroTabPage6.ResumeLayout(false);
             this.metroTabPage6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
@@ -1090,7 +1275,7 @@
         private MetroFramework.Controls.MetroComboBox instanceSelection;
         private MetroFramework.Controls.MetroLabel metroLabel3;
         private MetroFramework.Controls.MetroButton metroButton8;
-        private MetroFramework.Controls.MetroTabControl metroTabControl3;
+        private MetroFramework.Controls.MetroTabControl normalInstance;
         private MetroFramework.Controls.MetroTabPage fleetPage1;
         private MetroFramework.Controls.MetroTabPage metroTabPage5;
         private System.Windows.Forms.Panel panel3;
@@ -1137,6 +1322,17 @@
         private MetroFramework.Controls.MetroLabel metroLabel14;
         private MetroFramework.Controls.MetroLabel metroLabel15;
         private System.Windows.Forms.NumericUpDown numericUpDown4;
+        private MetroFramework.Controls.MetroTabControl metroTabControl4;
+        private MetroFramework.Controls.MetroTabPage metroTabPage7;
+        private MetroFramework.Controls.MetroTabPage metroTabPage8;
+        private MetroFramework.Controls.MetroTabControl restrictInstance;
+        private MetroFramework.Controls.MetroTabPage metroTabPage10;
+        private MetroFramework.Controls.MetroTabPage metroTabPage19;
+        private MetroFramework.Controls.MetroTabControl trial;
+        private MetroFramework.Controls.MetroTabPage metroTabPage11;
+        private MetroFramework.Controls.MetroTabPage metroTabPage9;
+        private MetroFramework.Controls.MetroTabControl constellation;
+        private MetroFramework.Controls.MetroTabPage metroTabPage12;
     }
 }
 

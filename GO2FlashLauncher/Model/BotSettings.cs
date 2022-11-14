@@ -27,5 +27,8 @@ namespace GO2FlashLauncher.Model
     {
         public string Name { get; set; }
         public int Order { get; set; }
+        public int RestrictOrder { get; set; }
+        public int TrialOrder { get; set; }
+        public int ConstellationOrder { get; set; }
     }
 }

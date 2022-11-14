@@ -183,19 +183,15 @@ namespace GO2FlashLauncher.Script.GameLogic
                     await host.LeftClick(result.Value, rnd.Next(10, 50));
                     await Task.Delay(300);
                     bmp = await devtools.Screenshot();
-                    for(int i = 2; i < 10; i++)
-                    {
-                        result = bmp.FindImage("Images\\ti" + i + "ti.png", 0.85);
-                        if(result != null)
-                        {
-                            return (InstanceEnterState.IncreaseFleet, i);
-                        }
-                    }
                     for (int i = 1; i <= 10; i++)
                     {
-                        result = bmp.FindImage("Images\\t" + i + "t.png", 0.85);
+                        result = bmp.FindImage("Images\\t" + i + "t.png", 0.8);
                         if (result == null)
                         {
+                            if(i - 1 == 0)
+                            {
+                                return (InstanceEnterState.InstanceCompleted, 0);
+                            }
                             return (InstanceEnterState.IncreaseFleet, i - 1);
                         }
                     }
@@ -209,12 +205,71 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             return (InstanceEnterState.Error, -1);
         }
+
+        public async Task<InstanceEnterState> EnterConstellations(Bitmap bmp, Constellations constellations, int stage)
+        {
+            var result = bmp.FindImage(Path.GetFullPath("Images\\instance.png"), 0.8);
+            if (result == null)
+            {
+                await Task.Delay(10);
+                result = bmp.FindImage(Path.GetFullPath("Images\\instance2.png"), 0.8);
+            }
+            if (result != null)
+            {
+                await host.LeftClick(result.Value, rnd.Next(10, 50));
+                await Task.Delay(1000);
+                bmp = await devtools.Screenshot();
+            }
+            //detect already in instance
+            if (bmp.FindImage("Images\\instanceWindowMarker.png", 0.65) != null)
+            {
+                result = bmp.FindImage("Images\\Constellations.png", 0.7);
+                if(result == null)
+                {
+                    result = bmp.FindImage("Images\\Constellations2.png", 0.7);
+                }
+                if (result == null)
+                {
+                    result = bmp.FindImage("Images\\Constellations3.png", 0.7);
+                }
+                if (result != null)
+                {
+                    await host.LeftClick(result.Value, rnd.Next(10, 50));
+                    await Task.Delay(200);
+                    bmp = await devtools.Screenshot();
+                    result = bmp.FindImage("Images\\Const"+constellations.ToString() + ".png", 0.8);
+                    if(result != null)
+                    {
+                        await host.LeftClick(result.Value, rnd.Next(10, 50));
+                        await Task.Delay(200);
+                        bmp = await devtools.Screenshot();
+                    }
+                }
+            }
+            return InstanceEnterState.Error;
+        }
     }
 
     public enum InstanceEnterState
     {
         Error,
         InStage,
-        IncreaseFleet
+        IncreaseFleet,
+        InstanceCompleted
+    }
+
+    public enum Constellations
+    {
+        Aquarius,
+        Aries,
+        Cancer,
+        Capricorn,
+        Leo,
+        Libra,
+        Pisces,
+        Sagitarius,
+        Scorpio,
+        Taurus,
+        Virgo
     }
 }

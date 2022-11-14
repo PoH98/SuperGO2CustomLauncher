@@ -261,6 +261,15 @@ namespace GO2FlashLauncher.Script
                                                         runningTrial = true;
                                                         Logger.LogInfo("Current Trial Level: " + currentTrialLv);
                                                     }
+                                                    if(state == InstanceEnterState.InstanceCompleted)
+                                                    {
+                                                        Logger.LogInfo("Trial completed!");
+                                                        await b.CloseButtons(bmp);
+                                                        await Task.Delay(botSettings.Delays);
+                                                        inStage = false;
+                                                        spaceStationLocated = false;
+                                                        trialStucked = true;
+                                                    }
                                                 }
                                                 else
                                                 {
