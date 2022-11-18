@@ -47,10 +47,11 @@ namespace GO2FlashLauncher.Script
                     bool inSpin = false;
                     bool spinable = true;
                     int currentRestrictCount = 0;
-                    bool runningRestrict = false, runningTrial = false;
+                    bool runningRestrict = false, runningTrial = false, runningConstellation = false;
                     int stageCount = 0;
                     int currentTrialLv = -1;
                     long currentInstanceCount = 0;
+                    long currentConstellationCount = 0;
                     bool trialStucked = false;
                     SpinResult spinResult = SpinResult.Failed;
                     DateTime noResources = DateTime.MinValue;
@@ -58,6 +59,7 @@ namespace GO2FlashLauncher.Script
                     DateTime lastRestrictDate = DateTime.Now;
                     DateTime lastTrialDate = DateTime.Now;
                     DateTime lastRefresh = DateTime.Now;
+                    DateTime lastConstDate = DateTime.Now;
                     int error = 0;
                     int lag = 0;
                     Bitmap lastbmp = null;
@@ -206,7 +208,7 @@ namespace GO2FlashLauncher.Script
                                     error = 0;
                                     await Task.Delay(botSettings.Delays / 4 * 3);
                                     await host.LeftClick(spaceStationLocation.Value, 100);
-                                    await Task.Delay(200);                 
+                                    await Task.Delay(200);
                                     bool loop = true;
                                     InstanceEnterState state = InstanceEnterState.Error;
                                     SelectFleetType instanceType = SelectFleetType.Instance;
@@ -318,13 +320,50 @@ namespace GO2FlashLauncher.Script
                                                     runningRestrict = false;
                                                 }
                                             }
-                                            if (!runningRestrict && !runningTrial)
+                                            if(botSettings.ConstellationFight && !runningRestrict && !runningTrial)
+                                            {
+                                                if (DateTime.Now.ToUniversalTime().Day != lastConstDate.ToUniversalTime().Day)
+                                                {
+                                                    currentConstellationCount = 0;
+                                                    lastConstDate = DateTime.Now;
+                                                }
+                                                if(currentConstellationCount < botSettings.ConstellationCount)
+                                                {
+                                                    Logger.LogInfo("Entering Constellations");
+                                                    try
+                                                    {
+                                                        state = await s.EnterConstellations(bmp, (Constellations)botSettings.ConstellationStage, botSettings.ConstellationLevel);
+                                                        instanceType = SelectFleetType.Constellation;
+                                                        currentConstellationCount++;
+                                                        runningConstellation = true;
+                                                    }
+                                                    catch(ArgumentException ex)
+                                                    {
+                                                        if(ex.Message == "")
+                                                        {
+                                                            Logger.LogInfo("Out of items to enter Constellations, skipping...");
+                                                            bmp = await devTools.Screenshot();
+                                                            await b.CloseButtons(bmp);
+                                                            await Task.Delay(botSettings.Delays);
+                                                            runningConstellation = false;
+                                                            inStage = false;
+                                                            spaceStationLocated = false;
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    runningConstellation = false;
+                                                }
+                                            }
+                                            if (!runningRestrict && !runningTrial && !runningConstellation)
                                             {
                                                 Logger.LogInfo("Entering Instance");
                                                 state = await s.EnterInstance(bmp, botSettings.Instance);
                                                 currentInstanceCount++;
                                                 Logger.LogInfo("Current is " + currentInstanceCount + " run!");
                                             }
+                                            
                                             switch (state)
                                             {
                                                 case InstanceEnterState.Error:
@@ -393,7 +432,20 @@ namespace GO2FlashLauncher.Script
                                                     }
                                                     await Task.Delay(botSettings.Delays - 100);
                                                     bmp = await devTools.Screenshot();
-                                                    while (!await b.SelectFleet(bmp, botSettings.Fleets, instanceType, instanceType == SelectFleetType.Restrict? botSettings.RestrictLevel: botSettings.Instance))
+                                                    var instanceLv = 1;
+                                                    switch (instanceType)
+                                                    {
+                                                        case SelectFleetType.Instance:
+                                                            instanceLv = botSettings.Instance;
+                                                            break;
+                                                        case SelectFleetType.Restrict:
+                                                            instanceLv = botSettings.RestrictLevel;
+                                                            break;
+                                                        case SelectFleetType.Constellation:
+                                                            instanceLv = botSettings.ConstellationLevel; 
+                                                            break;
+                                                    }
+                                                    while (!await b.SelectFleet(bmp, botSettings.Fleets, instanceType, instanceLv, (Constellations)botSettings.ConstellationStage))
                                                     {
                                                         Logger.LogError("No fleet found!");
                                                         bmp = await devTools.Screenshot();
@@ -525,7 +577,7 @@ namespace GO2FlashLauncher.Script
                                             bmp = await devTools.Screenshot();
                                         }
                                     }
-                                    if (stageCount >= botSettings.InstanceHitCount && botSettings.InstanceHitCount > 0 && !suspendCollect)
+                                    if (stageCount >= botSettings.InstanceHitCount && botSettings.InstanceHitCount > 0 && !suspendCollect && !runningRestrict && !runningTrial && !runningConstellation)
                                     {
                                         //open box
                                         if (await i.OpenInventory(bmp))

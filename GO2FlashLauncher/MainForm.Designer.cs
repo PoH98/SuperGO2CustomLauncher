@@ -65,6 +65,12 @@
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
             this.metroTabControl2 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage4 = new MetroFramework.Controls.MetroTabPage();
+            this.constellationLevel = new MetroFramework.Controls.MetroComboBox();
+            this.metroLabel18 = new MetroFramework.Controls.MetroLabel();
+            this.constellationFight = new MetroFramework.Controls.MetroCheckBox();
+            this.metroLabel16 = new MetroFramework.Controls.MetroLabel();
+            this.constellationStage = new MetroFramework.Controls.MetroComboBox();
+            this.metroLabel17 = new MetroFramework.Controls.MetroLabel();
             this.metroTabControl4 = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage7 = new MetroFramework.Controls.MetroTabPage();
             this.normalInstance = new MetroFramework.Controls.MetroTabControl();
@@ -110,6 +116,8 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.discordRPC = new System.Windows.Forms.Timer(this.components);
             this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.metroLabel19 = new MetroFramework.Controls.MetroLabel();
+            this.numericUpDown5 = new System.Windows.Forms.NumericUpDown();
             this.metroTabControl1.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -132,6 +140,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.metroTabPage6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
             this.SuspendLayout();
             // 
             // metroTabControl1
@@ -557,6 +566,14 @@
             // metroTabPage4
             // 
             this.metroTabPage4.BackColor = System.Drawing.Color.Transparent;
+            this.metroTabPage4.Controls.Add(this.numericUpDown5);
+            this.metroTabPage4.Controls.Add(this.metroLabel19);
+            this.metroTabPage4.Controls.Add(this.constellationLevel);
+            this.metroTabPage4.Controls.Add(this.metroLabel18);
+            this.metroTabPage4.Controls.Add(this.constellationFight);
+            this.metroTabPage4.Controls.Add(this.metroLabel16);
+            this.metroTabPage4.Controls.Add(this.constellationStage);
+            this.metroTabPage4.Controls.Add(this.metroLabel17);
             this.metroTabPage4.Controls.Add(this.metroTabControl4);
             this.metroTabPage4.Controls.Add(this.metroCheckBox2);
             this.metroTabPage4.Controls.Add(this.metroLabel11);
@@ -590,16 +607,88 @@
             this.metroTabPage4.VerticalScrollbarHighlightOnWheel = false;
             this.metroTabPage4.VerticalScrollbarSize = 10;
             // 
+            // constellationLevel
+            // 
+            this.constellationLevel.FormattingEnabled = true;
+            this.constellationLevel.ItemHeight = 23;
+            this.constellationLevel.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4"});
+            this.constellationLevel.Location = new System.Drawing.Point(389, 108);
+            this.constellationLevel.Name = "constellationLevel";
+            this.constellationLevel.Size = new System.Drawing.Size(120, 29);
+            this.constellationLevel.TabIndex = 28;
+            this.constellationLevel.UseSelectable = true;
+            this.constellationLevel.SelectedIndexChanged += new System.EventHandler(this.constellationLevel_SelectedIndexChanged);
+            // 
+            // metroLabel18
+            // 
+            this.metroLabel18.AutoSize = true;
+            this.metroLabel18.Location = new System.Drawing.Point(234, 114);
+            this.metroLabel18.Name = "metroLabel18";
+            this.metroLabel18.Size = new System.Drawing.Size(117, 19);
+            this.metroLabel18.TabIndex = 27;
+            this.metroLabel18.Text = "Constellation Level";
+            this.metroLabel18.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroLabel18.UseCustomBackColor = true;
+            // 
+            // constellationFight
+            // 
+            this.constellationFight.AutoSize = true;
+            this.constellationFight.Location = new System.Drawing.Point(707, 118);
+            this.constellationFight.Name = "constellationFight";
+            this.constellationFight.Size = new System.Drawing.Size(26, 15);
+            this.constellationFight.TabIndex = 26;
+            this.constellationFight.Text = " ";
+            this.constellationFight.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.constellationFight.UseSelectable = true;
+            this.constellationFight.CheckedChanged += new System.EventHandler(this.constellationFight_CheckedChanged);
+            // 
+            // metroLabel16
+            // 
+            this.metroLabel16.AutoSize = true;
+            this.metroLabel16.Location = new System.Drawing.Point(535, 114);
+            this.metroLabel16.Name = "metroLabel16";
+            this.metroLabel16.Size = new System.Drawing.Size(117, 19);
+            this.metroLabel16.TabIndex = 25;
+            this.metroLabel16.Text = "Constellation Fight";
+            this.metroLabel16.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroLabel16.UseCustomBackColor = true;
+            // 
+            // constellationStage
+            // 
+            this.constellationStage.FormattingEnabled = true;
+            this.constellationStage.ItemHeight = 23;
+            this.constellationStage.Location = new System.Drawing.Point(104, 109);
+            this.constellationStage.Name = "constellationStage";
+            this.constellationStage.Size = new System.Drawing.Size(113, 29);
+            this.constellationStage.TabIndex = 24;
+            this.constellationStage.UseSelectable = true;
+            this.constellationStage.SelectedIndexChanged += new System.EventHandler(this.constellationStage_SelectedIndexChanged);
+            // 
+            // metroLabel17
+            // 
+            this.metroLabel17.AutoSize = true;
+            this.metroLabel17.Location = new System.Drawing.Point(2, 114);
+            this.metroLabel17.Name = "metroLabel17";
+            this.metroLabel17.Size = new System.Drawing.Size(84, 19);
+            this.metroLabel17.TabIndex = 23;
+            this.metroLabel17.Text = "Constellation";
+            this.metroLabel17.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroLabel17.UseCustomBackColor = true;
+            // 
             // metroTabControl4
             // 
             this.metroTabControl4.Controls.Add(this.metroTabPage7);
             this.metroTabControl4.Controls.Add(this.metroTabPage8);
             this.metroTabControl4.Controls.Add(this.metroTabPage19);
             this.metroTabControl4.Controls.Add(this.metroTabPage9);
-            this.metroTabControl4.Location = new System.Drawing.Point(4, 137);
+            this.metroTabControl4.Location = new System.Drawing.Point(4, 189);
             this.metroTabControl4.Name = "metroTabControl4";
             this.metroTabControl4.SelectedIndex = 3;
-            this.metroTabControl4.Size = new System.Drawing.Size(1213, 356);
+            this.metroTabControl4.Size = new System.Drawing.Size(1213, 304);
             this.metroTabControl4.TabIndex = 22;
             this.metroTabControl4.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroTabControl4.UseSelectable = true;
@@ -612,7 +701,7 @@
             this.metroTabPage7.HorizontalScrollbarSize = 10;
             this.metroTabPage7.Location = new System.Drawing.Point(4, 38);
             this.metroTabPage7.Name = "metroTabPage7";
-            this.metroTabPage7.Size = new System.Drawing.Size(1205, 314);
+            this.metroTabPage7.Size = new System.Drawing.Size(1205, 262);
             this.metroTabPage7.TabIndex = 0;
             this.metroTabPage7.Text = "Normal Instance";
             this.metroTabPage7.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -655,7 +744,7 @@
             this.metroTabPage8.HorizontalScrollbarSize = 10;
             this.metroTabPage8.Location = new System.Drawing.Point(4, 38);
             this.metroTabPage8.Name = "metroTabPage8";
-            this.metroTabPage8.Size = new System.Drawing.Size(1205, 314);
+            this.metroTabPage8.Size = new System.Drawing.Size(1205, 262);
             this.metroTabPage8.TabIndex = 1;
             this.metroTabPage8.Text = "Restrict Instance";
             this.metroTabPage8.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -697,7 +786,7 @@
             this.metroTabPage19.HorizontalScrollbarSize = 10;
             this.metroTabPage19.Location = new System.Drawing.Point(4, 38);
             this.metroTabPage19.Name = "metroTabPage19";
-            this.metroTabPage19.Size = new System.Drawing.Size(1205, 314);
+            this.metroTabPage19.Size = new System.Drawing.Size(1205, 262);
             this.metroTabPage19.TabIndex = 2;
             this.metroTabPage19.Text = "Trial";
             this.metroTabPage19.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -739,7 +828,7 @@
             this.metroTabPage9.HorizontalScrollbarSize = 10;
             this.metroTabPage9.Location = new System.Drawing.Point(4, 38);
             this.metroTabPage9.Name = "metroTabPage9";
-            this.metroTabPage9.Size = new System.Drawing.Size(1205, 314);
+            this.metroTabPage9.Size = new System.Drawing.Size(1205, 262);
             this.metroTabPage9.TabIndex = 3;
             this.metroTabPage9.Text = "Constellation";
             this.metroTabPage9.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -811,7 +900,7 @@
             "8",
             "9",
             "10"});
-            this.metroComboBox2.Location = new System.Drawing.Point(96, 73);
+            this.metroComboBox2.Location = new System.Drawing.Point(104, 74);
             this.metroComboBox2.Name = "metroComboBox2";
             this.metroComboBox2.Size = new System.Drawing.Size(113, 29);
             this.metroComboBox2.TabIndex = 19;
@@ -867,7 +956,7 @@
             "8",
             "9",
             "10"});
-            this.metroComboBox1.Location = new System.Drawing.Point(96, 38);
+            this.metroComboBox1.Location = new System.Drawing.Point(104, 39);
             this.metroComboBox1.Name = "metroComboBox1";
             this.metroComboBox1.Size = new System.Drawing.Size(113, 29);
             this.metroComboBox1.TabIndex = 15;
@@ -978,7 +1067,7 @@
             // 
             // metroButton8
             // 
-            this.metroButton8.Location = new System.Drawing.Point(103, 108);
+            this.metroButton8.Location = new System.Drawing.Point(104, 163);
             this.metroButton8.Name = "metroButton8";
             this.metroButton8.Size = new System.Drawing.Size(75, 23);
             this.metroButton8.TabIndex = 6;
@@ -990,7 +1079,7 @@
             // metroLabel3
             // 
             this.metroLabel3.AutoSize = true;
-            this.metroLabel3.Location = new System.Drawing.Point(4, 112);
+            this.metroLabel3.Location = new System.Drawing.Point(5, 167);
             this.metroLabel3.Name = "metroLabel3";
             this.metroLabel3.Size = new System.Drawing.Size(93, 19);
             this.metroLabel3.TabIndex = 5;
@@ -1033,7 +1122,7 @@
             "28",
             "29",
             "30"});
-            this.instanceSelection.Location = new System.Drawing.Point(96, 3);
+            this.instanceSelection.Location = new System.Drawing.Point(104, 4);
             this.instanceSelection.Name = "instanceSelection";
             this.instanceSelection.Size = new System.Drawing.Size(113, 29);
             this.instanceSelection.TabIndex = 3;
@@ -1203,6 +1292,24 @@
             this.timer2.Interval = 1000;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
+            // metroLabel19
+            // 
+            this.metroLabel19.AutoSize = true;
+            this.metroLabel19.Location = new System.Drawing.Point(535, 150);
+            this.metroLabel19.Name = "metroLabel19";
+            this.metroLabel19.Size = new System.Drawing.Size(156, 19);
+            this.metroLabel19.TabIndex = 29;
+            this.metroLabel19.Text = "Constellation Fight Count";
+            this.metroLabel19.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroLabel19.UseCustomBackColor = true;
+            // 
+            // numericUpDown5
+            // 
+            this.numericUpDown5.Location = new System.Drawing.Point(707, 149);
+            this.numericUpDown5.Name = "numericUpDown5";
+            this.numericUpDown5.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDown5.TabIndex = 30;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1246,6 +1353,7 @@
             this.metroTabPage6.ResumeLayout(false);
             this.metroTabPage6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1333,6 +1441,14 @@
         private MetroFramework.Controls.MetroTabPage metroTabPage9;
         private MetroFramework.Controls.MetroTabControl constellation;
         private MetroFramework.Controls.MetroTabPage metroTabPage12;
+        private MetroFramework.Controls.MetroCheckBox constellationFight;
+        private MetroFramework.Controls.MetroLabel metroLabel16;
+        private MetroFramework.Controls.MetroComboBox constellationStage;
+        private MetroFramework.Controls.MetroLabel metroLabel17;
+        private MetroFramework.Controls.MetroComboBox constellationLevel;
+        private MetroFramework.Controls.MetroLabel metroLabel18;
+        private System.Windows.Forms.NumericUpDown numericUpDown5;
+        private MetroFramework.Controls.MetroLabel metroLabel19;
     }
 }
 

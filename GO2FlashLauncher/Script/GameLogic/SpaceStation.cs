@@ -4,6 +4,7 @@ using CefSharp.WinForms;
 using Emgu.CV;
 using Emgu.CV.OCR;
 using Emgu.CV.Structure;
+using GO2FlashLauncher.Script.GameLogic.Constellation;
 using GO2FlashLauncher.Service;
 using System;
 using System.Drawing;
@@ -18,6 +19,8 @@ namespace GO2FlashLauncher.Script.GameLogic
         private readonly DevToolsClient devtools;
         private readonly Random rnd = new Random();
         private readonly Tesseract ocr;
+        private int NextTrialStage = 1;
+        private readonly ConstellationCreator constellationCreator = new ConstellationCreator();
         public SpaceStation(ChromiumWebBrowser browser)
         {
             host = browser.GetBrowser().GetHost();
@@ -183,19 +186,16 @@ namespace GO2FlashLauncher.Script.GameLogic
                     await host.LeftClick(result.Value, rnd.Next(10, 50));
                     await Task.Delay(300);
                     bmp = await devtools.Screenshot();
-                    for (int i = 1; i <= 10; i++)
+                    for (int i = NextTrialStage; i <= 10; i++)
                     {
-                        result = bmp.FindImage("Images\\t" + i + "t.png", 0.8);
-                        if (result == null)
+                        result = bmp.FindImage("Images\\ti" + i + "ti.png", 0.9);
+                        if (result != null)
                         {
-                            if(i - 1 == 0)
-                            {
-                                return (InstanceEnterState.InstanceCompleted, 0);
-                            }
-                            return (InstanceEnterState.IncreaseFleet, i - 1);
+                            NextTrialStage = i + 1;
+                            return (InstanceEnterState.IncreaseFleet, i);
                         }
                     }
-                    return (InstanceEnterState.IncreaseFleet, 1);
+                    return (InstanceEnterState.InstanceCompleted, 10);
                 }
             }
             else if (bmp.FindImage("Images\\instancestop.png", 0.8) != null)
@@ -242,7 +242,18 @@ namespace GO2FlashLauncher.Script.GameLogic
                     {
                         await host.LeftClick(result.Value, rnd.Next(10, 50));
                         await Task.Delay(200);
-                        bmp = await devtools.Screenshot();
+                        try
+                        {
+                            var constel = constellationCreator.Create(constellations, devtools, host);
+                            await constel.EnterStage(stage);
+                            return InstanceEnterState.IncreaseFleet;
+                        }
+                        catch(NotImplementedException)
+                        {
+                            Logger.LogError("This constellation is not implemented yet! Please be patient!");
+                            return InstanceEnterState.Error;
+                        }
+
                     }
                 }
             }

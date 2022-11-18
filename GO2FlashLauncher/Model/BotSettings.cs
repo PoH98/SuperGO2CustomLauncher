@@ -21,6 +21,10 @@ namespace GO2FlashLauncher.Model
         public bool SpinWheel { get; set; } = false;
         public int MinVouchers { get; set; } = 5;
         public bool SpinWithVouchers { get; set; } = true;
+        public bool ConstellationFight { get; set; } = false;
+        public int ConstellationLevel { get; set; } = 0;
+        public int ConstellationStage { get; set; } = 0;
+        public long ConstellationCount { get; set; } = 3;
     }
 
     internal class Fleet

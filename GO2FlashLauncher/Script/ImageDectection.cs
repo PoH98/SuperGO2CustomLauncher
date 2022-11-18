@@ -29,6 +29,7 @@ namespace GO2FlashLauncher.Script
                 }
             }
             watch.Stop();
+            find.Dispose();
             Logger.LogDebug("Image detection failed in " + watch.ElapsedMilliseconds + "ms");
             return null;
         }
@@ -70,6 +71,7 @@ namespace GO2FlashLauncher.Script
                     }
                 }
             }
+            find.Dispose();
             watch.Stop();
             Logger.LogDebug("Image detected with "+points.Count+" points in " + watch.ElapsedMilliseconds + "ms");
             return points.ToArray();
@@ -92,6 +94,7 @@ namespace GO2FlashLauncher.Script
                     return maxLocations[0];
                 }
             }
+            find.Dispose();
             watch.Stop();
             Logger.LogDebug("Image detection failed in " + watch.ElapsedMilliseconds + "ms");
             return null;

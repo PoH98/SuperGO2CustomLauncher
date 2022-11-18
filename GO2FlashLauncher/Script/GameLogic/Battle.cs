@@ -22,7 +22,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             this.devtools = browser.GetBrowser().GetDevToolsClient();
             host = browser.GetBrowser().GetHost();
         }
-        public async Task<bool> SelectFleet(Bitmap bmp, List<Fleet> fleets, SelectFleetType fleetType, int instanceLv)
+        public async Task<bool> SelectFleet(Bitmap bmp, List<Fleet> fleets, SelectFleetType fleetType, int instanceLv, Constellations constellations)
         {
             var crop = await bmp.Crop(new Point(200, 150), new Size(bmp.Width - 300, bmp.Height - 300));
             var detectedFleets = crop.FindImageArray("Images\\fleettransmittimemarker.png", 0.75);
@@ -106,6 +106,59 @@ namespace GO2FlashLauncher.Script.GameLogic
                     break;
                 case SelectFleetType.Trial:
                     maxFleetNum = 4;
+                    break;
+                case SelectFleetType.Constellation:
+                    switch (constellations)
+                    {
+                        case Constellations.Aquarius:
+                            switch (instanceLv)
+                            {
+                                case 1:
+                                case 2:
+                                    maxFleetNum = 6;
+                                    break;
+                                case 3:
+                                    maxFleetNum = 1;
+                                    break;
+                                case 4:
+                                    maxFleetNum = 8;
+                                    break;
+                            }
+                            break;
+                        case Constellations.Aries:
+                            switch (instanceLv)
+                            {
+                                case 1:
+                                case 2:
+                                    maxFleetNum = 8;
+                                    break;
+                                case 3:
+                                    maxFleetNum = 10;
+                                    break;
+                                case 4:
+                                    maxFleetNum = 12;
+                                    break;
+                            }
+                            break;
+                        case Constellations.Cancer:
+                            switch (instanceLv)
+                            {
+                                case 1:
+                                case 2:
+                                    maxFleetNum = 8;
+                                    break;
+                                case 3:
+                                    maxFleetNum = 10;
+                                    break;
+                                case 4:
+                                    maxFleetNum = 12;
+                                    break;
+                            }
+                            break;
+                        case Constellations.Capricorn:
+                            maxFleetNum = 6;
+                            break;
+                    }
                     break;
             }
             var currentPage = 0;
@@ -217,7 +270,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 }
                 await Task.Delay(rnd.Next(20, 50));
             }
-            if (fleetType == SelectFleetType.Instance || fleetType == SelectFleetType.Restrict || fleetType == SelectFleetType.Trial)
+            if (fleetType == SelectFleetType.Instance || fleetType == SelectFleetType.Restrict || fleetType == SelectFleetType.Trial || fleetType == SelectFleetType.Constellation)
             {
                 bmp = await devtools.Screenshot();
                 var result = bmp.FindImageGrayscaled("Images\\OK.png", 0.7);

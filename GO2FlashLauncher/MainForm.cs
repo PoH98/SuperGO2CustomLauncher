@@ -6,6 +6,7 @@ using GO2FlashLauncher.Model;
 using GO2FlashLauncher.Model.SGO2;
 using GO2FlashLauncher.Models;
 using GO2FlashLauncher.Script;
+using GO2FlashLauncher.Script.GameLogic;
 using GO2FlashLauncher.Service;
 using MetroFramework;
 using MetroFramework.Controls;
@@ -126,6 +127,10 @@ namespace GO2FlashLauncher
 
             beta = new ChromiumWebBrowser("blank");
             alpha = new ChromiumWebBrowser("blank");
+            foreach(var constellations in Enum.GetNames(typeof(Constellations)))
+            {
+                constellationStage.Items.Add(constellations);
+            }
             alpha.BackColor = Color.Black;
             beta.BackColor = Color.Black;
             krtools = new ChromiumWebBrowser("https://krtools.deajae.co.uk/");
@@ -167,6 +172,9 @@ namespace GO2FlashLauncher
             metroCheckBox3.Checked = this.settings.SpinWithVouchers;
             numericUpDown4.Value = this.settings.MinVouchers;
             metroComboBox2.SelectedIndex = this.settings.TrialMaxLv - 1;
+            constellationStage.SelectedIndex = this.settings.ConstellationStage;
+            constellationLevel.SelectedIndex = this.settings.ConstellationLevel;
+            constellationFight.Checked = this.settings.ConstellationFight;
             RenderFleets();
             metroTabControl4.SelectedIndex = 0;
             normalInstance.SelectedIndex = 0;
@@ -915,6 +923,21 @@ namespace GO2FlashLauncher
         private void numericUpDown4_KeyDown(object sender, KeyEventArgs e)
         {
             settings.MinVouchers = (int)numericUpDown4.Value;
+        }
+
+        private void constellationStage_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            settings.ConstellationStage = constellationStage.SelectedIndex;
+        }
+
+        private void constellationLevel_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            settings.ConstellationLevel = constellationLevel.SelectedIndex;
+        }
+
+        private void constellationFight_CheckedChanged(object sender, EventArgs e)
+        {
+            settings.ConstellationFight = constellationFight.Checked;
         }
 
         private void Input_ValueChanged(object sender, EventArgs e)

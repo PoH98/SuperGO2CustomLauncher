@@ -124,6 +124,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Script\Clicker.cs" />
     <Compile Include="Script\GameLogic\Battle.cs" />
+    <Compile Include="Script\GameLogic\AbstractConstellation.cs" />
+    <Compile Include="Script\GameLogic\ConstellationCreator.cs" />
+    <Compile Include="Script\GameLogic\Constellation\Aquarius.cs" />
+    <Compile Include="Script\GameLogic\Constellation\Aries.cs" />
+    <Compile Include="Script\GameLogic\Constellation\Cancer.cs" />
+    <Compile Include="Script\GameLogic\Constellation\Capricorn.cs" />
+    <Compile Include="Script\GameLogic\Constellation\Leo.cs" />
+    <Compile Include="Script\GameLogic\Constellation\Libra.cs" />
+    <Compile Include="Script\GameLogic\Constellation\Pisces.cs" />
+    <Compile Include="Script\GameLogic\Constellation\Sagitarius.cs" />
+    <Compile Include="Script\GameLogic\Constellation\Scorpio.cs" />
+    <Compile Include="Script\GameLogic\Constellation\Taurus.cs" />
+    <Compile Include="Script\GameLogic\Constellation\Virgo.cs" />
     <Compile Include="Script\GameLogic\Inventory.cs" />
     <Compile Include="Script\GameLogic\LagDetection.cs" />
     <Compile Include="Script\GameLogic\MainScreen.cs" />
@@ -225,7 +238,12 @@
     <Content Include="Images\supplyconfirm2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\t9t2.png" />
+    <Content Include="Images\ti1ti.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\ti5ti.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Images\treasurebox3.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1882,39 +1900,6 @@
     <Content Include="Images\supplyzerohe32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Images\t10t.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\t10t2.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\t1t.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\t2t.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\t3t.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\t4t.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\t5t.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\t6t.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\t7t.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\t8t.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\t9t.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Images\takeitems.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -1949,9 +1934,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\ti4ti.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\ti5ti.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Images\ti6ti.png">
