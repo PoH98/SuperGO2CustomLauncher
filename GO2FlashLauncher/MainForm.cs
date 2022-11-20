@@ -22,7 +22,6 @@ using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace GO2FlashLauncher
 {
@@ -698,7 +697,7 @@ namespace GO2FlashLauncher
                     Dock = DockStyle.Fill,
                     BackColor = Color.Transparent
                 };
-                for (int y = 1 * x; y < ((x + 1) * 9); y++)
+                for (int y = 9 * x; y < ((x + 1) * 9); y++)
                 {
                     var group = new GroupBox
                     {
