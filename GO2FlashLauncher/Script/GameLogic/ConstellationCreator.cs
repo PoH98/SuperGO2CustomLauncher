@@ -24,6 +24,27 @@ namespace GO2FlashLauncher.Script.GameLogic
                 case Constellations.Capricorn:
                     c = new Capricorn(devtools, host);
                     break;
+                case Constellations.Leo:
+                    c = new Leo(devtools, host);
+                    break;
+                case Constellations.Libra:
+                    c = new Libra(devtools, host);
+                    break;
+                case Constellations.Pisces:
+                    c = new Pisces(devtools, host);
+                    break;
+                case Constellations.Sagitarius:
+                    c = new Sagitarius(devtools, host);
+                    break;
+                case Constellations.Scorpio:
+                    c = new Scorpio(devtools, host);
+                    break;
+                case Constellations.Taurus:
+                    c = new Taurus(devtools, host);
+                    break;
+                case Constellations.Virgo:
+                    c = new Virgo(devtools, host);
+                    break;
                 default:
                     throw new NotImplementedException();
             }

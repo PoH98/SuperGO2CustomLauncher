@@ -23,31 +23,31 @@ namespace GO2FlashLauncher.Script.GameLogic
         {
             var crop = await bmp.Crop(new Point(bmp.Width - 200, bmp.Height - 500), new Size(200, 500));
             var point = crop.FindImage("Images\\wheelmenu.png", 0.7);
-            if(point == null)
+            if (point == null)
             {
-                for(int x = 2; x < 4; x++)
+                for (int x = 2; x < 4; x++)
                 {
                     await Task.Delay(10);
                     point = crop.FindImage("Images\\wheelmenu2.png", 0.7);
-                    if(point != null)
+                    if (point != null)
                     {
                         break;
                     }
                 }
             }
-            if(point != null)
+            if (point != null)
             {
                 await host.LeftClick(new Point(point.Value.X + bmp.Width - 200, point.Value.Y + bmp.Height - 500), rnd.Next(80, 100));
                 await Task.Delay(300);
                 bmp = await devtools.Screenshot();
                 crop = await bmp.Crop(new Point(bmp.Width - 200, bmp.Height - 500), new Size(200, 500));
                 point = crop.FindImage("Images\\wheel.png", 0.7);
-                if(point == null)
+                if (point == null)
                 {
                     await Task.Delay(10);
                     point = crop.FindImage("Images\\wheel2.png", 0.7);
                 }
-                if(point != null)
+                if (point != null)
                 {
                     await host.LeftClick(new Point(point.Value.X + bmp.Width - 200, point.Value.Y + bmp.Height - 500), rnd.Next(80, 100));
                     return true;
@@ -63,17 +63,17 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         public async Task<SpinResult> Spin(Bitmap bmp, BaseResources resources, bool spinWithVoucher = true)
         {
-            if(resources.Vouchers < 5)
+            if (resources.Vouchers < 5)
             {
                 //no more spins
                 return SpinResult.NotEnoughVouchers;
             }
             var point = bmp.FindImage("Images\\spin.jpg", 0.7);
-            if(point == null)
+            if (point == null)
             {
                 point = bmp.FindImage("Images\\spin1.png", 0.7);
             }
-            if(point == null)
+            if (point == null)
             {
                 return SpinResult.Failed;
             }
@@ -81,45 +81,45 @@ namespace GO2FlashLauncher.Script.GameLogic
             await Task.Delay(500);
             bmp = await devtools.Screenshot();
             point = bmp.FindImage("Images\\wheelbuyandspin.png", 0.7);
-            if(point == null)
+            if (point == null)
             {
-                for(int x = 2; x < 5; x++)
+                for (int x = 2; x < 5; x++)
                 {
                     await Task.Delay(10);
-                    point = bmp.FindImage("Images\\wheelbuyandspin"+x+".png", 0.7);
-                    if(point != null)
+                    point = bmp.FindImage("Images\\wheelbuyandspin" + x + ".png", 0.7);
+                    if (point != null)
                     {
                         break;
                     }
                 }
             }
             var result = SpinResult.Failed;
-            if(point != null && spinWithVoucher)
+            if (point != null && spinWithVoucher)
             {
                 //have to use vouchers
                 resources.Vouchers -= 5;
                 var voucher = bmp.FindImage("Images\\vouchers.png", 0.7);
-                if(voucher == null)
+                if (voucher == null)
                 {
                     return result;
                 }
-                await host.LeftClick(new Point(voucher.Value.X - 10, voucher.Value.Y + 2), rnd.Next(80,100));
+                await host.LeftClick(new Point(voucher.Value.X - 10, voucher.Value.Y + 2), rnd.Next(80, 100));
                 await Task.Delay(100);
                 await host.LeftClick(point.Value, rnd.Next(80, 100));
                 result = SpinResult.Vouchers;
             }
-            else if(point != null)
+            else if (point != null)
             {
                 var skip = bmp.FindImage("Images\\spinskip.png", 0.7);
-                if(skip == null)
+                if (skip == null)
                 {
                     skip = bmp.FindImage("Images\\spinskip2.png", 0.7);
                 }
-                if(skip == null)
+                if (skip == null)
                 {
                     skip = bmp.FindImage("Images\\spinskip3.png", 0.7);
                 }
-                if(skip != null)
+                if (skip != null)
                 {
                     await host.LeftClick(skip.Value, rnd.Next(80, 100));
                 }
@@ -153,11 +153,11 @@ namespace GO2FlashLauncher.Script.GameLogic
         public async Task<bool> EndSpin(Bitmap bmp)
         {
             var point = bmp.FindImage("Images\\close18.png", 0.7);
-            if(point == null)
+            if (point == null)
             {
                 point = bmp.FindImage("Images\\close19.png", 0.7);
             }
-            if(point != null)
+            if (point != null)
             {
                 await host.LeftClick(point.Value, rnd.Next(80, 100));
                 return true;
@@ -168,7 +168,7 @@ namespace GO2FlashLauncher.Script.GameLogic
 
     public enum SpinResult
     {
-        Success, 
+        Success,
         Failed,
         Vouchers,
         NotEnoughVouchers

@@ -1,11 +1,6 @@
 ﻿using CefSharp;
 using CefSharp.DevTools;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GO2FlashLauncher.Script.GameLogic.Constellation
 {
@@ -17,22 +12,22 @@ namespace GO2FlashLauncher.Script.GameLogic.Constellation
 
         protected override Point Stage1(Point locate)
         {
-            return new Point(locate.X - 20, locate.Y + 215);
+            return new Point(locate.X - 20, locate.Y + 98);
         }
 
         protected override Point Stage2(Point locate)
         {
-            return new Point(locate.X - 155, locate.Y + 221);
+            return new Point(locate.X - 160, locate.Y + 108);
         }
 
         protected override Point Stage3(Point locate)
         {
-            return new Point(locate.X - 45, locate.Y + 333);
+            return new Point(locate.X - 45, locate.Y + 201);
         }
 
         protected override Point Stage4(Point locate)
         {
-            return new Point(locate.X - 206, locate.Y + 316);
+            return new Point(locate.X - 215, locate.Y + 216);
         }
     }
 }

@@ -73,7 +73,7 @@ namespace GO2FlashLauncher.Script
             }
             find.Dispose();
             watch.Stop();
-            Logger.LogDebug("Image detected with "+points.Count+" points in " + watch.ElapsedMilliseconds + "ms");
+            Logger.LogDebug("Image detected with " + points.Count + " points in " + watch.ElapsedMilliseconds + "ms");
             return points.ToArray();
         }
 

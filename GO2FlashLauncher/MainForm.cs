@@ -1,6 +1,4 @@
 ﻿using CefSharp;
-using CefSharp.DevTools.CSS;
-using CefSharp.Handler;
 using CefSharp.WinForms;
 using GO2FlashLauncher.Model;
 using GO2FlashLauncher.Model.SGO2;
@@ -18,8 +16,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security.Principal;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -68,7 +64,7 @@ namespace GO2FlashLauncher
             {
                 File.Delete("debug.log");
             }
-            if(Screen.PrimaryScreen.Bounds.Width <= 1280 || Screen.PrimaryScreen.Bounds.Height <= 970)
+            if (Screen.PrimaryScreen.Bounds.Width <= 1280 || Screen.PrimaryScreen.Bounds.Height <= 970)
             {
                 MaximizeBox = false;
             }
@@ -109,7 +105,7 @@ namespace GO2FlashLauncher
                 PersistUserPreferences = true,
                 PersistSessionCookies = true,
                 CachePath = Path.GetFullPath("cache"),
-                
+
             }
             ;
             var betaContext = new RequestContextSettings
@@ -126,7 +122,7 @@ namespace GO2FlashLauncher
 
             beta = new ChromiumWebBrowser("blank");
             alpha = new ChromiumWebBrowser("blank");
-            foreach(var constellations in Enum.GetNames(typeof(Constellations)))
+            foreach (var constellations in Enum.GetNames(typeof(Constellations)))
             {
                 constellationStage.Items.Add(constellations);
             }
@@ -166,7 +162,7 @@ namespace GO2FlashLauncher
             numericUpDown3.Value = this.settings.Delays;
             metroCheckBox1.Checked = this.settings.RestrictFight;
             metroCheckBox2.Checked = this.settings.TrialFight;
-            metroComboBox1.SelectedIndex = this.settings.RestrictLevel -1 ;
+            metroComboBox1.SelectedIndex = this.settings.RestrictLevel - 1;
             spin.Checked = this.settings.SpinWheel;
             metroCheckBox3.Checked = this.settings.SpinWithVouchers;
             numericUpDown4.Value = this.settings.MinVouchers;
@@ -174,6 +170,7 @@ namespace GO2FlashLauncher
             constellationStage.SelectedIndex = this.settings.ConstellationStage;
             constellationLevel.SelectedIndex = this.settings.ConstellationLevel;
             constellationFight.Checked = this.settings.ConstellationFight;
+            numericUpDown5.Value = this.settings.ConstellationCount;
             RenderFleets();
             metroTabControl4.SelectedIndex = 0;
             normalInstance.SelectedIndex = 0;
@@ -190,7 +187,7 @@ namespace GO2FlashLauncher
 
         private async void BrowserInitializedChanged(object sender, EventArgs e)
         {
-            if(script != null)
+            if (script != null)
             {
                 script.IsReloading = true;
             }
@@ -324,7 +321,7 @@ namespace GO2FlashLauncher
                 {
                     chrome.Back();
                     return;
-                }              
+                }
                 else if (chrome.Address.StartsWith("https://beta-client.supergo2.com/?userId="))
                 {
                     if (!e.Browser.HasDocument)
@@ -385,7 +382,7 @@ namespace GO2FlashLauncher
 
         private async void metroButton2_Click(object sender, EventArgs e)
         {
-            if(alpha == null)
+            if (alpha == null)
             {
                 return;
             }
@@ -393,7 +390,7 @@ namespace GO2FlashLauncher
             {
                 var url = await GO2HttpService.GetIFrameUrl(userId);
                 alpha.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
-                if(script != null)
+                if (script != null)
                 {
                     if (script.Running)
                     {
@@ -496,23 +493,23 @@ namespace GO2FlashLauncher
             {
                 label1.Text = "Online Players: 0";
             }
-            if(script != null)
+            if (script != null)
             {
                 if (!script.Running)
                 {
                     return;
                 }
-                if(resources == null && (script.Resources.Metal != 0 || script.Resources.HE3 != 0 || script.Resources.Gold != 0))
+                if (resources == null && (script.Resources.Metal != 0 || script.Resources.HE3 != 0 || script.Resources.Gold != 0))
                 {
                     resources = script.Resources;
                 }
-                if(resources != null)
+                if (resources != null)
                 {
                     //set resources gain
                     metalTotal.Text = (script.Resources.Metal - resources.Metal).ToString("N0");
                     heTotal.Text = (script.Resources.HE3 - resources.HE3).ToString("N0");
                     goldTotal.Text = (script.Resources.Gold - resources.Gold).ToString("N0");
-                    if(script.BotRuntime.TotalHours < 0)
+                    if (script.BotRuntime.TotalHours < 0)
                     {
                         return;
                     }
@@ -617,7 +614,7 @@ namespace GO2FlashLauncher
         public Control GenerateLeftFleetTabs(int type)
         {
             var tabCount = settings.Fleets.Count / 9;
-            var t = new MetroTabPage    
+            var t = new MetroTabPage
             {
                 Name = "FleetTab" + tabCount,
                 Text = "Fleet Page " + tabCount,
@@ -645,7 +642,7 @@ namespace GO2FlashLauncher
                     Width = 120,
                     Minimum = -1
                 };
-                switch(type)
+                switch (type)
                 {
                     case 0:
                         input.Value = settings.Fleets[y].Order;
@@ -811,7 +808,7 @@ namespace GO2FlashLauncher
 
         private void timer2_Tick(object sender, EventArgs e)
         {
-            if(fileSystemWatcher == null)
+            if (fileSystemWatcher == null)
             {
                 fileSystemWatcher = new FileSystemWatcher(Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).Directory.ToString(), "cache\\"));
                 fileSystemWatcher.Filter = "background.settings";
@@ -937,6 +934,11 @@ namespace GO2FlashLauncher
         private void constellationFight_CheckedChanged(object sender, EventArgs e)
         {
             settings.ConstellationFight = constellationFight.Checked;
+        }
+
+        private void numericUpDown5_ValueChanged(object sender, EventArgs e)
+        {
+            settings.ConstellationCount = (int)numericUpDown5.Value;
         }
 
         private void Input_ValueChanged(object sender, EventArgs e)

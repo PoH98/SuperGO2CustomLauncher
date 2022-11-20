@@ -22,7 +22,7 @@ namespace GO2FlashLauncher.Service
             foreach (var file in Directory.GetFiles(logPath))
             {
                 FileInfo fileInfo = new FileInfo(file);
-                if((DateTime.Now - fileInfo.CreationTime).TotalDays >= 7)
+                if ((DateTime.Now - fileInfo.CreationTime).TotalDays >= 7)
                 {
                     fileInfo.Delete();
                 }

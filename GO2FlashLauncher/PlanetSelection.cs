@@ -1,10 +1,6 @@
-﻿using GO2FlashLauncher.Model;
-using GO2FlashLauncher.Model.SGO2;
-using GO2FlashLauncher.Service;
+﻿using GO2FlashLauncher.Model.SGO2;
 using MetroFramework.Forms;
-using Newtonsoft.Json;
 using System;
-using System.IO;
 
 namespace GO2FlashLauncher
 {
@@ -21,7 +17,7 @@ namespace GO2FlashLauncher
 
         private void PlanetSelection_Load(object sender, EventArgs e)
         {
-            foreach(var planet in response.Data)
+            foreach (var planet in response.Data)
             {
                 comboBox1.Items.Add(planet.Username);
             }
@@ -38,7 +34,7 @@ namespace GO2FlashLauncher
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if(SelectedProfile >= 0)
+            if (SelectedProfile >= 0)
             {
                 DialogResult = System.Windows.Forms.DialogResult.OK;
                 Close();

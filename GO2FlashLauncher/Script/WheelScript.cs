@@ -26,7 +26,7 @@ namespace GO2FlashLauncher.Script
                 IsRunning = true;
                 BotStartTime = DateTime.Now;
                 var devTools = browser.GetBrowser().GetDevToolsClient();
-                var host = browser.GetBrowser().GetHost(); 
+                var host = browser.GetBrowser().GetHost();
                 try
                 {
                     var m = new MainScreen(browser);
@@ -121,16 +121,16 @@ namespace GO2FlashLauncher.Script
                                 {
                                     Logger.LogInfo("Detected Vouchers: " + resources.Vouchers);
                                 }
-                                else if(spinResult == SpinResult.Failed)
+                                else if (spinResult == SpinResult.Failed)
                                 {
                                     error++;
-                                    if(error > 10)
+                                    if (error > 10)
                                     {
                                         inWheel = false;
                                         mainScreenLocated = false;
                                     }
                                 }
-                                else if(spinResult == SpinResult.NotEnoughVouchers)
+                                else if (spinResult == SpinResult.NotEnoughVouchers)
                                 {
                                     Logger.LogError("No more vouchers, stop spinning...");
                                     return;

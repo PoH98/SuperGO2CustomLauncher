@@ -103,7 +103,7 @@ namespace GO2FlashLauncher.Script
                                     lastRefresh = DateTime.Now;
                                     continue;
                                 }
-                                else if(error > 20)
+                                else if (error > 20)
                                 {
                                     //start over again
                                     mainScreenLocated = false;
@@ -114,7 +114,7 @@ namespace GO2FlashLauncher.Script
                             //Screenshot browser
                             var bmp = await devTools.Screenshot();
                             //check for friendrequest
-                            if(bmp.FindImageGrayscaled("Images\\friendrequesttext.png", 0.7).HasValue)
+                            if (bmp.FindImageGrayscaled("Images\\friendrequesttext.png", 0.7).HasValue)
                             {
                                 var friendClose = bmp.FindImage("Images\\friendrequestclose.png", 0.8);
                                 if (friendClose.HasValue)
@@ -150,6 +150,7 @@ namespace GO2FlashLauncher.Script
                                     Logger.LogInfo("Detected Gold: " + resources.Gold);
                                     mainScreenLocated = true;
                                     error = 0;
+                                    Cancellation.ThrowIfCancellationRequested();
                                 }
                                 else
                                 {
@@ -219,6 +220,7 @@ namespace GO2FlashLauncher.Script
                                         {
                                             await Task.Delay(botSettings.Delays);
                                             bmp = await devTools.Screenshot();
+                                            Cancellation.ThrowIfCancellationRequested();
                                             if (botSettings.TrialFight)
                                             {
                                                 //new day, reset
@@ -227,8 +229,9 @@ namespace GO2FlashLauncher.Script
                                                     currentTrialLv = 1;
                                                     lastTrialDate = DateTime.Now;
                                                     trialStucked = false;
+                                                    runningTrial = false;
                                                 }
-                                                if(currentTrialLv <= botSettings.TrialMaxLv && currentTrialLv < 10 && !trialStucked)
+                                                if (currentTrialLv <= botSettings.TrialMaxLv && currentTrialLv < 10 && !trialStucked)
                                                 {
                                                     Logger.LogInfo("Entering Trial");
                                                     var r = await s.EnterTrial(bmp);
@@ -256,14 +259,14 @@ namespace GO2FlashLauncher.Script
                                                         spaceStationLocated = false;
                                                         break;
                                                     }
-                                                    if(state == InstanceEnterState.IncreaseFleet)
+                                                    if (state == InstanceEnterState.IncreaseFleet)
                                                     {
                                                         currentTrialLv = r.Item2;
                                                         instanceType = SelectFleetType.Trial;
                                                         runningTrial = true;
                                                         Logger.LogInfo("Current Trial Level: " + currentTrialLv);
                                                     }
-                                                    if(state == InstanceEnterState.InstanceCompleted)
+                                                    if (state == InstanceEnterState.InstanceCompleted)
                                                     {
                                                         Logger.LogInfo("Trial completed!");
                                                         await b.CloseButtons(bmp);
@@ -281,13 +284,14 @@ namespace GO2FlashLauncher.Script
                                             if (botSettings.RestrictFight && !runningTrial)
                                             {
                                                 //new day, reset
-                                                if(DateTime.Now.ToUniversalTime().Day != lastRestrictDate.ToUniversalTime().Day)
+                                                if (DateTime.Now.ToUniversalTime().Day != lastRestrictDate.ToUniversalTime().Day)
                                                 {
                                                     currentRestrictCount = 0;
                                                     lastRestrictDate = DateTime.Now;
+                                                    runningRestrict = false;
                                                 }
                                                 //fight restrict first
-                                                if(currentRestrictCount < 3)
+                                                if (currentRestrictCount < 3)
                                                 {
                                                     //enter restrict instead
                                                     Logger.LogInfo("Entering Restrict");
@@ -299,9 +303,9 @@ namespace GO2FlashLauncher.Script
                                                         currentRestrictCount++;
                                                         runningRestrict = true;
                                                     }
-                                                    catch(ArgumentException ex)
+                                                    catch (ArgumentException ex)
                                                     {
-                                                        if(ex.Message == "Already out of chance")
+                                                        if (ex.Message == "Already out of chance")
                                                         {
                                                             currentRestrictCount = 3;
                                                             Logger.LogInfo("Restrict already out of chances today, skipping...");
@@ -320,26 +324,34 @@ namespace GO2FlashLauncher.Script
                                                     runningRestrict = false;
                                                 }
                                             }
-                                            if(botSettings.ConstellationFight && !runningRestrict && !runningTrial)
+                                            if (botSettings.ConstellationFight && !runningRestrict && !runningTrial)
                                             {
                                                 if (DateTime.Now.ToUniversalTime().Day != lastConstDate.ToUniversalTime().Day)
                                                 {
                                                     currentConstellationCount = 0;
                                                     lastConstDate = DateTime.Now;
+                                                    runningConstellation = false;
                                                 }
-                                                if(currentConstellationCount < botSettings.ConstellationCount)
+                                                if (currentConstellationCount < botSettings.ConstellationCount)
                                                 {
                                                     Logger.LogInfo("Entering Constellations");
                                                     try
                                                     {
-                                                        state = await s.EnterConstellations(bmp, (Constellations)botSettings.ConstellationStage, botSettings.ConstellationLevel);
-                                                        instanceType = SelectFleetType.Constellation;
-                                                        currentConstellationCount++;
-                                                        runningConstellation = true;
+                                                        if (currentConstellationCount < botSettings.ConstellationCount)
+                                                        {
+                                                            state = await s.EnterConstellations(bmp, (Constellations)botSettings.ConstellationStage, botSettings.ConstellationLevel);
+                                                            instanceType = SelectFleetType.Constellation;
+                                                            currentConstellationCount++;
+                                                            runningConstellation = true;
+                                                        }
+                                                        else
+                                                        {
+                                                            Logger.LogWarning("Constellation had reached limit today!");
+                                                        }
                                                     }
-                                                    catch(ArgumentException ex)
+                                                    catch (ArgumentException ex)
                                                     {
-                                                        if(ex.Message == "")
+                                                        if (ex.Message == "")
                                                         {
                                                             Logger.LogInfo("Out of items to enter Constellations, skipping...");
                                                             bmp = await devTools.Screenshot();
@@ -363,7 +375,7 @@ namespace GO2FlashLauncher.Script
                                                 currentInstanceCount++;
                                                 Logger.LogInfo("Current is " + currentInstanceCount + " run!");
                                             }
-                                            
+
                                             switch (state)
                                             {
                                                 case InstanceEnterState.Error:
@@ -426,7 +438,7 @@ namespace GO2FlashLauncher.Script
                                                         }
                                                         await Task.Delay(100);
                                                     }
-                                                    if(error > 5)
+                                                    if (error > 5)
                                                     {
                                                         break;
                                                     }
@@ -442,7 +454,7 @@ namespace GO2FlashLauncher.Script
                                                             instanceLv = botSettings.RestrictLevel;
                                                             break;
                                                         case SelectFleetType.Constellation:
-                                                            instanceLv = botSettings.ConstellationLevel; 
+                                                            instanceLv = botSettings.ConstellationLevel;
                                                             break;
                                                     }
                                                     while (!await b.SelectFleet(bmp, botSettings.Fleets, instanceType, instanceLv, (Constellations)botSettings.ConstellationStage))
@@ -540,7 +552,7 @@ namespace GO2FlashLauncher.Script
                                     Logger.LogInfo("Battle Ends");
                                     if (inSpin)
                                     {
-                                        for(int x = 0; x < 3; x++)
+                                        for (int x = 0; x < 3; x++)
                                         {
                                             bmp = await devTools.Screenshot();
                                             await b.CloseButtons(bmp);
@@ -679,7 +691,7 @@ namespace GO2FlashLauncher.Script
                                                     inSpin = false;
                                                     spinable = false;
                                                 }
-                                                else if(spinResult == SpinResult.Vouchers)
+                                                else if (spinResult == SpinResult.Vouchers)
                                                 {
                                                     if (botSettings.SpinWithVouchers)
                                                     {
@@ -695,7 +707,7 @@ namespace GO2FlashLauncher.Script
                                                         spinable = false;
                                                     }
                                                 }
-                                                else if(spinResult == SpinResult.Success)
+                                                else if (spinResult == SpinResult.Success)
                                                 {
                                                     Logger.LogInfo("Free Spin!");
                                                 }
@@ -710,12 +722,12 @@ namespace GO2FlashLauncher.Script
                                             Logger.LogInfo("Vouchers are now enough for spinning!");
                                             spinable = true;
                                         }
-                                        else if(spinResult == SpinResult.Failed)
+                                        else if (spinResult == SpinResult.Failed)
                                         {
                                             Logger.LogInfo("Lets retry spin after error!");
                                             spinable = true;
                                         }
-                                        else if(spinResult == SpinResult.Vouchers && botSettings.SpinWithVouchers)
+                                        else if (spinResult == SpinResult.Vouchers && botSettings.SpinWithVouchers)
                                         {
                                             Logger.LogInfo("Spin with vouchers enabled! Lets spin now!");
                                             spinable = true;

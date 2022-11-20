@@ -16,7 +16,7 @@ namespace GO2FlashLauncher.Script.GameLogic
         private readonly IBrowserHost host;
         private readonly Random rnd = new Random();
         private readonly DevToolsClient devtools;
-        
+
         public Battle(ChromiumWebBrowser browser)
         {
             this.devtools = browser.GetBrowser().GetDevToolsClient();
@@ -332,7 +332,7 @@ namespace GO2FlashLauncher.Script.GameLogic
         public async Task<bool> RefillHE3(Bitmap bmp, BaseResources resources, decimal HaltOn)
         {
             var fullysupply = true;
-            if(resources.HE3 <= HaltOn)
+            if (resources.HE3 <= HaltOn)
             {
                 return false;
             }

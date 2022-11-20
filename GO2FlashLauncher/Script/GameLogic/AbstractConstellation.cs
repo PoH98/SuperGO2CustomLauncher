@@ -58,13 +58,13 @@ namespace GO2FlashLauncher.Script.GameLogic
             {
                 result = bmp.FindImage("Images\\Constellations3.png", 0.7);
             }
-            if(result == null)
+            if (result == null)
             {
                 throw new ArgumentException("Locate Constellation failed");
             }
             return result.Value;
         }
 
-        
+
     }
 }

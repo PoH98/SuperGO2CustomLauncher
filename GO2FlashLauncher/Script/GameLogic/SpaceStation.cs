@@ -4,7 +4,6 @@ using CefSharp.WinForms;
 using Emgu.CV;
 using Emgu.CV.OCR;
 using Emgu.CV.Structure;
-using GO2FlashLauncher.Script.GameLogic.Constellation;
 using GO2FlashLauncher.Service;
 using System;
 using System.Drawing;
@@ -224,7 +223,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             if (bmp.FindImage("Images\\instanceWindowMarker.png", 0.65) != null)
             {
                 result = bmp.FindImage("Images\\Constellations.png", 0.7);
-                if(result == null)
+                if (result == null)
                 {
                     result = bmp.FindImage("Images\\Constellations2.png", 0.7);
                 }
@@ -237,8 +236,8 @@ namespace GO2FlashLauncher.Script.GameLogic
                     await host.LeftClick(result.Value, rnd.Next(10, 50));
                     await Task.Delay(200);
                     bmp = await devtools.Screenshot();
-                    result = bmp.FindImage("Images\\Const"+constellations.ToString() + ".png", 0.8);
-                    if(result != null)
+                    result = bmp.FindImage("Images\\Const" + constellations.ToString() + ".png", 0.8);
+                    if (result != null)
                     {
                         await host.LeftClick(result.Value, rnd.Next(10, 50));
                         await Task.Delay(200);
@@ -248,7 +247,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                             await constel.EnterStage(stage);
                             return InstanceEnterState.IncreaseFleet;
                         }
-                        catch(NotImplementedException)
+                        catch (NotImplementedException)
                         {
                             Logger.LogError("This constellation is not implemented yet! Please be patient!");
                             return InstanceEnterState.Error;

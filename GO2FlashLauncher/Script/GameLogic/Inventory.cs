@@ -2,10 +2,7 @@
 using CefSharp.DevTools;
 using CefSharp.WinForms;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GO2FlashLauncher.Script.GameLogic
@@ -31,7 +28,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             var point = crop.FindImage("Images\\tools.png", 0.8);
             if (point == null)
             {
-                for(int x = 2;x < 8; x++)
+                for (int x = 2; x < 8; x++)
                 {
                     await Task.Delay(10);
                     point = crop.FindImage("Images\\tools.png", 0.8);
@@ -46,19 +43,19 @@ namespace GO2FlashLauncher.Script.GameLogic
             bmp = await devtools.Screenshot();
             crop = await bmp.Crop(new Point(bmp.Width - 300, bmp.Height - 500), new Size(300, 500));
             point = crop.FindImageGrayscaled("Images\\bag.png", 0.8);
-            if(point == null)
+            if (point == null)
             {
-                for(int x = 2; x < 4; x++)
+                for (int x = 2; x < 4; x++)
                 {
                     await Task.Delay(10);
-                    point = crop.FindImageGrayscaled("Images\\bag"+x+".png", 0.8);
-                    if(point != null)
+                    point = crop.FindImageGrayscaled("Images\\bag" + x + ".png", 0.8);
+                    if (point != null)
                     {
                         break;
                     }
                 }
             }
-            if(point == null)
+            if (point == null)
             {
                 return false;
             }
@@ -70,7 +67,7 @@ namespace GO2FlashLauncher.Script.GameLogic
         public async Task<bool> OpenTreasury(Bitmap bmp, int loopCount = 5)
         {
             bool filtered = false;
-            for(int y = 0; y < loopCount; y++)
+            for (int y = 0; y < loopCount; y++)
             {
                 Point? point;
                 int loop = 0;
