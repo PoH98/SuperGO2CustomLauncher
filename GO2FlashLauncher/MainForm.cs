@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GO2FlashLauncher
@@ -59,7 +60,7 @@ namespace GO2FlashLauncher
                 }
                 GO2HttpService.SetToken(settings.AuthKey);
                 var planet = await GO2HttpService.GetPlanets();
-                if(planet.Code == 401)
+                if (planet.Code == 401)
                 {
                     var profile = Encryption.Decrypt(settings.CredentialHash);
                     var credential = await GO2HttpService.Login(profile.Email, profile.Password);
@@ -67,13 +68,6 @@ namespace GO2FlashLauncher
                     planet = await GO2HttpService.GetPlanets();
                 }
                 textBox1.Text = settings.DiscordBotToken;
-                if (!string.IsNullOrEmpty(settings.DiscordBotToken))
-                {
-                    _client = new DiscordSocketClient();
-                    await _client.LoginAsync(TokenType.Bot, settings.DiscordBotToken);
-                    await _client.StartAsync();
-                    await _client.SetGameAsync("Not So Super GO2");
-                }
                 for (int x = 0; x < planet.Data.Count; x++)
                 {
                     var tab = new MetroTabPage()
@@ -81,7 +75,7 @@ namespace GO2FlashLauncher
                         Text = planet.Data[x].Username,
                         Theme = MetroThemeStyle.Dark
                     };
-                    if(settings.PlanetSettings.Count <= x)
+                    if (settings.PlanetSettings.Count <= x)
                     {
                         settings.PlanetSettings.Add(new PlanetSettings());
                     }
@@ -91,8 +85,8 @@ namespace GO2FlashLauncher
                     var control = new BotControl(settings, settings.PlanetSettings[x], GO2HttpService, _client)
                     {
                         Size = new Size(tab.Size.Width - 10, tab.Size.Height - 10),
-                        Location = new Point(5,5),
-                        Anchor= AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom,
+                        Location = new Point(5, 5),
+                        Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom,
                     };
                     tab.Controls.Add(control);
 
@@ -151,7 +145,7 @@ namespace GO2FlashLauncher
             Logger.CloseLog();
             try
             {
-                if(_client != null)
+                if (_client != null)
                 {
                     _client.LogoutAsync().Wait();
                     _client.StopAsync().Wait();
@@ -168,7 +162,7 @@ namespace GO2FlashLauncher
         private async void textBox1_TextChanged(object sender, EventArgs e)
         {
             settings.DiscordBotToken = textBox1.Text;
-            if(_client != null)
+            if (_client != null)
             {
                 _client.Dispose();
             }
@@ -182,13 +176,14 @@ namespace GO2FlashLauncher
                 _client = new DiscordSocketClient();
                 await _client.LoginAsync(TokenType.Bot, settings.DiscordBotToken);
                 await _client.StartAsync();
+                _client.Disconnected += _client_Disconnected;
                 await _client.SetGameAsync("Not So Super GO2");
             }
             else
             {
                 _client = null;
             }
-            foreach(var bot in bots)
+            foreach (var bot in bots)
             {
                 bot.SetDiscordBot(_client);
             }
@@ -199,6 +194,12 @@ namespace GO2FlashLauncher
                     MessageBox.Show("Your secret: " + settings.DiscordSecret + "\nPlease send this secret in discord so the bot knows you are its owner!");
                 }
             }
+        }
+
+        private async Task _client_Disconnected(Exception arg)
+        {
+            await _client.LoginAsync(TokenType.Bot, settings.DiscordBotToken);
+            await _client.StartAsync();
         }
 
         private async void timer1_Tick(object sender, EventArgs e)

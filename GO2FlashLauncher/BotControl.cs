@@ -1,23 +1,21 @@
 ﻿using CefSharp;
 using CefSharp.WinForms;
+using Discord.WebSocket;
 using GO2FlashLauncher.Model;
 using GO2FlashLauncher.Script;
+using GO2FlashLauncher.Script.GameLogic;
 using GO2FlashLauncher.Service;
-using MetroFramework.Controls;
 using MetroFramework;
+using MetroFramework.Controls;
 using System;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
-using System.Windows.Forms;
-using System.Linq;
-using Discord.WebSocket;
-using System.Threading.Tasks;
-using System.Text;
-using GO2FlashLauncher.Models;
-using Newtonsoft.Json;
 using System.Drawing.Imaging;
-using GO2FlashLauncher.Script.GameLogic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace GO2FlashLauncher
 {
@@ -58,10 +56,11 @@ namespace GO2FlashLauncher
             }
             InitializeComponent();
             timer2.Start();
-            if(client != null)
+            if (client != null)
             {
                 client.MessageReceived += Client_MessageReceived;
             }
+            RenderFleets();
         }
 
         private async Task Client_MessageReceived(SocketMessage arg)
@@ -72,7 +71,6 @@ namespace GO2FlashLauncher
             }
             try
             {
-
                 var replyOnce = botSettings.PlanetSettings.IndexOf(planet) == 0;
                 if (botSettings.DiscordUserID == ulong.Parse("0"))
                 {
@@ -118,7 +116,7 @@ namespace GO2FlashLauncher
                                         "gain <planetName> - get current planet gain\n" +
                                         "start <planetName> - start bot selected planet\n" +
                                         "stop <planetName> - stop bot selected planet\n" +
-                                        "refresh <planetName> - refresh selected planet\n" + 
+                                        "refresh <planetName> - refresh selected planet\n" +
                                         "img <planetName> - send screenshot of current planet doing (Might have delays)");
                                 }
                                 break;
@@ -153,7 +151,7 @@ namespace GO2FlashLauncher
                                 }
                                 else if (arg.Content.Trim().Contains("start " + planet.PlanetName))
                                 {
-                                    metroToggle1.Invoke((MethodInvoker)delegate()
+                                    metroToggle1.Invoke((MethodInvoker)delegate ()
                                     {
                                         metroToggle1.Checked = true;
                                     });
@@ -167,7 +165,7 @@ namespace GO2FlashLauncher
                                     });
                                     await arg.Channel.SendMessageAsync("Bot Stopped");
                                 }
-                                else if(arg.Content.Trim().Contains("refresh " + planet.PlanetName))
+                                else if (arg.Content.Trim().Contains("refresh " + planet.PlanetName))
                                 {
                                     metroButton2.Invoke((MethodInvoker)delegate
                                     {
@@ -175,19 +173,19 @@ namespace GO2FlashLauncher
                                     });
                                     await arg.Channel.SendMessageAsync("Refreshing browser...");
                                 }
-                                else if(arg.Content.Trim().Contains("img " + planet.PlanetName))
+                                else if (arg.Content.Trim().Contains("img " + planet.PlanetName))
                                 {
-                                    if(script == null)
+                                    if (script == null)
                                     {
                                         await arg.Channel.SendMessageAsync("Bot not started");
                                         return;
                                     }
-                                    if(script.lastbmp == null)
+                                    if (script.lastbmp == null)
                                     {
                                         await arg.Channel.SendMessageAsync("Bot unable to fetch screenshot now, please try again later");
                                         return;
                                     }
-                                    using(MemoryStream stream= new MemoryStream())
+                                    using (MemoryStream stream = new MemoryStream())
                                     {
                                         script.lastbmp.Save(stream, ImageFormat.Png);
                                         await arg.Channel.SendFileAsync(stream, "screenshot.png");
@@ -198,7 +196,7 @@ namespace GO2FlashLauncher
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await arg.Channel.SendMessageAsync(ex.Message);
             }
@@ -208,10 +206,10 @@ namespace GO2FlashLauncher
         public void SetDiscordBot(DiscordSocketClient client)
         {
             this.client = client;
-            if(this.client != null)
+            if (this.client != null)
             {
                 this.client.MessageReceived += Client_MessageReceived;
-            }        
+            }
         }
 
         private async void BotControl_Load(object sender, EventArgs e)
@@ -252,6 +250,7 @@ namespace GO2FlashLauncher
             ConfigTabs.SelectedIndex = 0;
             metroTabControl1.SelectedIndex = 0;
             metroToggle1.Checked = planet.RunBot;
+            textBox1.Text = botSettings.Delays.ToString();
         }
 
         private void RenderFleets()
@@ -450,9 +449,9 @@ namespace GO2FlashLauncher
 
         private void metroToggle1_CheckedChanged(object sender, EventArgs e)
         {
-            if(metroToggle1.Checked)
+            if (metroToggle1.Checked)
             {
-                if(script == null || !script.Running)
+                if (script == null || !script.Running)
                 {
                     script = new InstanceScript(botSettings, planet, client);
                     _ = script.Run(chrome, planet.PlanetId, httpService);
@@ -544,10 +543,16 @@ namespace GO2FlashLauncher
 
         private void timer2_Tick(object sender, EventArgs e)
         {
-            if(resources == null && script != null && script.Running)
+            if (resources == null && script != null && script.Running)
             {
-                resources = script.Resources;
+                if(script.Resources.Metal > 0 || script.Resources.HE3 > 0 || script.Resources.Gold > 0 || script.Resources.MP > 0 || script.Resources.Vouchers > 0)
+                    resources = script.Resources;
             }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            botSettings.Delays = int.Parse(textBox1.Text);
         }
     }
 

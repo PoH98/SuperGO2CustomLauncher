@@ -20,7 +20,7 @@ namespace GO2FlashLauncher.Script
             this.client = client;
             if (client != null && botSettings.DiscordUserID != 0)
             {
-                 user = client.GetUserAsync(botSettings.DiscordUserID).Result;
+                user = client.GetUserAsync(botSettings.DiscordUserID).Result;
             }
         }
 
@@ -83,7 +83,7 @@ namespace GO2FlashLauncher.Script
                         {
                             //Script stoped
                             Cancellation.ThrowIfCancellationRequested();
-                            if(DateTime.Now.ToUniversalTime().Date != now.ToUniversalTime().Date)
+                            if (DateTime.Now.ToUniversalTime().Date != now.ToUniversalTime().Date)
                             {
                                 Logger.LogInfo("Refreshing game to avoid slow game");
                                 var url = await httpService.GetIFrameUrl(userID);
@@ -129,7 +129,7 @@ namespace GO2FlashLauncher.Script
                             await Task.Delay(100);
                             if (m.DetectDisconnect(bmp))
                             {
-                                if(user != null)
+                                if (user != null)
                                 {
                                     await user.SendMessageAsync("Game disconnected, reconnecting...");
                                 }
@@ -144,7 +144,7 @@ namespace GO2FlashLauncher.Script
                                 lastRefresh = DateTime.Now;
                                 continue;
                             }
-                            var crop = await bmp.Crop(new Point(0,0), new Size((int)Math.Round((double)bmp.Width / 2), (int)Math.Round((double)bmp.Height / 2)));
+                            var crop = await bmp.Crop(new Point(0, 0), new Size((int)Math.Round((double)bmp.Width / 2), (int)Math.Round((double)bmp.Height / 2)));
                             if (bmp.FindImage("Images\\underattack.png", 0.8).HasValue || bmp.FindImage("Images\\underattack2.png", 0.8).HasValue)
                             {
                                 if (user != null)
@@ -252,6 +252,7 @@ namespace GO2FlashLauncher.Script
                                     SelectFleetType instanceType = SelectFleetType.Instance;
                                     while (loop)
                                     {
+                                        Instance:
                                         Cancellation.ThrowIfCancellationRequested();
                                         try
                                         {
@@ -302,8 +303,6 @@ namespace GO2FlashLauncher.Script
                                                         instanceType = SelectFleetType.Trial;
                                                         runningTrial = true;
                                                         Logger.LogInfo("Current Trial Level: " + currentTrialLv);
-                                                        if (user != null)
-                                                            await user.SendMessageAsync("Starting Trial " + currentTrialLv);
                                                     }
                                                     if (state == InstanceEnterState.InstanceCompleted)
                                                     {
@@ -341,8 +340,6 @@ namespace GO2FlashLauncher.Script
                                                         //have chances
                                                         currentRestrictCount++;
                                                         runningRestrict = true;
-                                                        if (user != null)
-                                                            await user.SendMessageAsync("Starting Restrict");
                                                     }
                                                     catch (ArgumentException ex)
                                                     {
@@ -384,8 +381,6 @@ namespace GO2FlashLauncher.Script
                                                             instanceType = SelectFleetType.Constellation;
                                                             currentConstellationCount++;
                                                             runningConstellation = true;
-                                                            if (user != null)
-                                                                await user.SendMessageAsync("Starting Constellation");
                                                         }
                                                         else
                                                         {
@@ -413,8 +408,6 @@ namespace GO2FlashLauncher.Script
                                             }
                                             if (!runningRestrict && !runningTrial && !runningConstellation)
                                             {
-                                                if (user != null)
-                                                    await user.SendMessageAsync("Entering i" + planetSettings.Instance);
                                                 Logger.LogInfo("Entering Instance");
                                                 state = await s.EnterInstance(bmp, planetSettings.Instance);
                                                 currentInstanceCount++;
@@ -506,6 +499,13 @@ namespace GO2FlashLauncher.Script
                                                     }
                                                     while (!await b.SelectFleet(bmp, planetSettings.Fleets, instanceType, instanceLv, (Constellations)planetSettings.ConstellationStage))
                                                     {
+                                                        if (runningTrial && currentTrialLv == 10)
+                                                        {
+                                                            //completed trial
+                                                            Logger.LogInfo("Trial seems completed");
+                                                            goto Instance;
+
+                                                        }
                                                         Logger.LogError("No fleet found!");
                                                         bmp = await devTools.Screenshot();
                                                         error++;

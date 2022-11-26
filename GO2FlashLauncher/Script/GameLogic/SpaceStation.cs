@@ -66,9 +66,10 @@ namespace GO2FlashLauncher.Script.GameLogic
         }
         public async Task<InstanceEnterState> EnterInstance(Bitmap bmp, int instanceLv)
         {
+            Point? result;
             //reduce search size
             bmp = await bmp.Crop(new Point(0, 0), new Size(bmp.Width, bmp.Height - 190));
-            var result = bmp.FindImage(Path.GetFullPath("Images\\instance.png"), 0.8);
+            result = bmp.FindImage(Path.GetFullPath("Images\\instance.png"), 0.8);
             if (result == null)
             {
                 await Task.Delay(10);
