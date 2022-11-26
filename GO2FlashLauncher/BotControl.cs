@@ -50,6 +50,7 @@ namespace GO2FlashLauncher
             settings.BackgroundColor = ColorToUInt(Color.Black);
             settings.SetOffScreenRenderingBestPerformanceArgs();
             settings.DisableGpuAcceleration();
+            settings.LogSeverity = LogSeverity.Fatal;
             if (!Cef.Initialize(settings, true))
             {
                 throw new Exception("Unable to Initialize Cef");
@@ -251,7 +252,11 @@ namespace GO2FlashLauncher
             metroTabControl1.SelectedIndex = 0;
             metroToggle1.Checked = planet.RunBot;
             textBox1.Text = botSettings.Delays.ToString();
+            metroCheckBox4.Checked = planet.SpinWheel;
+            textBox3.Text = planet.MinVouchers.ToString();
+            metroCheckBox5.Checked = planet.SpinWithVouchers;
         }
+
 
         private void RenderFleets()
         {
@@ -453,15 +458,22 @@ namespace GO2FlashLauncher
             {
                 if (script == null || !script.Running)
                 {
+                    Logger.ClearLog();
+                    Logger.LogInfo("Bot Started");
+                    Logger.LogInfo("Locked browser for botting...");
                     script = new InstanceScript(botSettings, planet, client);
                     _ = script.Run(chrome, planet.PlanetId, httpService);
+                    chrome.Enabled = false;
                 }
             }
             else
             {
+                Logger.LogInfo("Bot Stopped");
+                Logger.LogInfo("Unlocked browser for botting...");
                 script.Stop();
                 script = null;
                 resources = null;
+                chrome.Enabled = true;
             }
         }
 
@@ -480,7 +492,7 @@ namespace GO2FlashLauncher
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            planet.HaltOn = decimal.Parse(textBox2.Text);
+            planet.HaltOn = int.Parse(textBox2.Text.Replace(".0", "").Replace(".",""));
         }
 
         private void numericOnly(object sender, KeyPressEventArgs e)
@@ -553,6 +565,21 @@ namespace GO2FlashLauncher
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             botSettings.Delays = int.Parse(textBox1.Text);
+        }
+
+        private void metroCheckBox4_CheckedChanged(object sender, EventArgs e)
+        {
+            planet.SpinWheel = metroCheckBox4.Checked;
+        }
+
+        private void metroCheckBox5_CheckedChanged(object sender, EventArgs e)
+        {
+            planet.SpinWithVouchers = metroCheckBox5.Checked;
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+            planet.MinVouchers = int.Parse(textBox3.Text);
         }
     }
 

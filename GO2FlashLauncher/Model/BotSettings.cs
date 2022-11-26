@@ -28,7 +28,7 @@ namespace GO2FlashLauncher.Model
         public bool RunBot { get; set; } = true;
         public bool RunWheel { get; set; } = true;
         public List<Fleet> Fleets { get; set; } = new List<Fleet>();
-        public decimal HaltOn { get; set; } = 300000;
+        public int HaltOn { get; set; } = 300000;
         public decimal InstanceHitCount { get; set; } = 1;
         public bool RestrictFight { get; set; } = false;
         public bool TrialFight { get; set; } = false;

@@ -164,6 +164,8 @@ namespace GO2FlashLauncher
             settings.DiscordBotToken = textBox1.Text;
             if (_client != null)
             {
+                await _client.StopAsync();
+                await _client.LogoutAsync();
                 _client.Dispose();
             }
             if (string.IsNullOrEmpty(settings.DiscordSecret))
@@ -187,12 +189,9 @@ namespace GO2FlashLauncher
             {
                 bot.SetDiscordBot(_client);
             }
-            if (string.IsNullOrEmpty(settings.DiscordBotToken))
+            if (settings.DiscordUserID == 0)
             {
-                if (settings.DiscordUserID == 0)
-                {
-                    MessageBox.Show("Your secret: " + settings.DiscordSecret + "\nPlease send this secret in discord so the bot knows you are its owner!");
-                }
+                MessageBox.Show("Your secret: " + settings.DiscordSecret + "\nPlease send this secret in discord so the bot knows you are its owner!");
             }
         }
 
@@ -214,6 +213,11 @@ namespace GO2FlashLauncher
             {
                 Text = "Not So Super GO2 | Online Players: 0";
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Your secret: " + settings.DiscordSecret + "\nPlease send this secret in discord so the bot knows you are its owner!");
         }
     }
 }

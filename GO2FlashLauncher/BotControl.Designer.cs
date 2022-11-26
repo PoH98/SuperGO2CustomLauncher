@@ -75,6 +75,12 @@
             this.metroLabel10 = new MetroFramework.Controls.MetroLabel();
             this.metroTabPage2 = new MetroFramework.Controls.MetroTabPage();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.metroCheckBox4 = new MetroFramework.Controls.MetroCheckBox();
+            this.metroLabel15 = new MetroFramework.Controls.MetroLabel();
+            this.metroLabel16 = new MetroFramework.Controls.MetroLabel();
+            this.metroLabel17 = new MetroFramework.Controls.MetroLabel();
+            this.metroCheckBox5 = new MetroFramework.Controls.MetroCheckBox();
+            this.textBox3 = new System.Windows.Forms.TextBox();
             this.BotInstance.SuspendLayout();
             this.View.SuspendLayout();
             this.BotSettings.SuspendLayout();
@@ -87,6 +93,7 @@
             this.metroTabPage5.SuspendLayout();
             this.metroTabPage6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
+            this.metroTabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // BotInstance
@@ -191,7 +198,7 @@
             this.ConfigTabs.Controls.Add(this.metroTabPage2);
             this.ConfigTabs.Location = new System.Drawing.Point(3, 3);
             this.ConfigTabs.Name = "ConfigTabs";
-            this.ConfigTabs.SelectedIndex = 0;
+            this.ConfigTabs.SelectedIndex = 1;
             this.ConfigTabs.Size = new System.Drawing.Size(1071, 547);
             this.ConfigTabs.TabIndex = 2;
             this.ConfigTabs.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -219,6 +226,9 @@
             // 
             // textBox1
             // 
+            this.textBox1.BackColor = System.Drawing.Color.Black;
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBox1.ForeColor = System.Drawing.Color.White;
             this.textBox1.Location = new System.Drawing.Point(609, 14);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(125, 20);
@@ -307,6 +317,9 @@
             // 
             // numericUpDown1
             // 
+            this.numericUpDown1.BackColor = System.Drawing.Color.Black;
+            this.numericUpDown1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.numericUpDown1.ForeColor = System.Drawing.Color.White;
             this.numericUpDown1.Location = new System.Drawing.Point(678, 15);
             this.numericUpDown1.Maximum = new decimal(new int[] {
             999999,
@@ -357,11 +370,15 @@
             this.metroComboBox1.Name = "metroComboBox1";
             this.metroComboBox1.Size = new System.Drawing.Size(183, 29);
             this.metroComboBox1.TabIndex = 11;
+            this.metroComboBox1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroComboBox1.UseSelectable = true;
             this.metroComboBox1.SelectedIndexChanged += new System.EventHandler(this.metroComboBox1_SelectedIndexChanged);
             // 
             // textBox2
             // 
+            this.textBox2.BackColor = System.Drawing.Color.Black;
+            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBox2.ForeColor = System.Drawing.Color.White;
             this.textBox2.Location = new System.Drawing.Point(169, 44);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(183, 20);
@@ -447,6 +464,7 @@
             this.metroComboBox2.Name = "metroComboBox2";
             this.metroComboBox2.Size = new System.Drawing.Size(183, 29);
             this.metroComboBox2.TabIndex = 13;
+            this.metroComboBox2.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroComboBox2.UseSelectable = true;
             this.metroComboBox2.SelectedIndexChanged += new System.EventHandler(this.metroComboBox2_SelectedIndexChanged);
             // 
@@ -521,6 +539,7 @@
             this.metroComboBox3.Name = "metroComboBox3";
             this.metroComboBox3.Size = new System.Drawing.Size(183, 29);
             this.metroComboBox3.TabIndex = 19;
+            this.metroComboBox3.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroComboBox3.UseSelectable = true;
             this.metroComboBox3.SelectedIndexChanged += new System.EventHandler(this.metroComboBox3_SelectedIndexChanged);
             // 
@@ -651,6 +670,7 @@
             this.metroComboBox5.Name = "metroComboBox5";
             this.metroComboBox5.Size = new System.Drawing.Size(183, 29);
             this.metroComboBox5.TabIndex = 20;
+            this.metroComboBox5.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroComboBox5.UseSelectable = true;
             this.metroComboBox5.SelectedIndexChanged += new System.EventHandler(this.metroComboBox5_SelectedIndexChanged);
             // 
@@ -677,6 +697,7 @@
             this.metroComboBox4.Name = "metroComboBox4";
             this.metroComboBox4.Size = new System.Drawing.Size(183, 29);
             this.metroComboBox4.TabIndex = 15;
+            this.metroComboBox4.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroComboBox4.UseSelectable = true;
             this.metroComboBox4.SelectedIndexChanged += new System.EventHandler(this.metroComboBox4_SelectedIndexChanged);
             // 
@@ -692,6 +713,12 @@
             // 
             // metroTabPage2
             // 
+            this.metroTabPage2.Controls.Add(this.textBox3);
+            this.metroTabPage2.Controls.Add(this.metroCheckBox5);
+            this.metroTabPage2.Controls.Add(this.metroLabel17);
+            this.metroTabPage2.Controls.Add(this.metroLabel16);
+            this.metroTabPage2.Controls.Add(this.metroCheckBox4);
+            this.metroTabPage2.Controls.Add(this.metroLabel15);
             this.metroTabPage2.HorizontalScrollbarBarColor = true;
             this.metroTabPage2.HorizontalScrollbarHighlightOnWheel = false;
             this.metroTabPage2.HorizontalScrollbarSize = 10;
@@ -709,6 +736,72 @@
             // 
             this.timer2.Interval = 10000;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            // 
+            // metroCheckBox4
+            // 
+            this.metroCheckBox4.AutoSize = true;
+            this.metroCheckBox4.Location = new System.Drawing.Point(130, 15);
+            this.metroCheckBox4.Name = "metroCheckBox4";
+            this.metroCheckBox4.Size = new System.Drawing.Size(26, 15);
+            this.metroCheckBox4.TabIndex = 24;
+            this.metroCheckBox4.Text = " ";
+            this.metroCheckBox4.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroCheckBox4.UseSelectable = true;
+            this.metroCheckBox4.CheckedChanged += new System.EventHandler(this.metroCheckBox4_CheckedChanged);
+            // 
+            // metroLabel15
+            // 
+            this.metroLabel15.AutoSize = true;
+            this.metroLabel15.Location = new System.Drawing.Point(3, 11);
+            this.metroLabel15.Name = "metroLabel15";
+            this.metroLabel15.Size = new System.Drawing.Size(75, 19);
+            this.metroLabel15.TabIndex = 23;
+            this.metroLabel15.Text = "Spin Wheel";
+            this.metroLabel15.Theme = MetroFramework.MetroThemeStyle.Dark;
+            // 
+            // metroLabel16
+            // 
+            this.metroLabel16.AutoSize = true;
+            this.metroLabel16.Location = new System.Drawing.Point(3, 39);
+            this.metroLabel16.Name = "metroLabel16";
+            this.metroLabel16.Size = new System.Drawing.Size(87, 19);
+            this.metroLabel16.TabIndex = 25;
+            this.metroLabel16.Text = "Min Vouchers";
+            this.metroLabel16.Theme = MetroFramework.MetroThemeStyle.Dark;
+            // 
+            // metroLabel17
+            // 
+            this.metroLabel17.AutoSize = true;
+            this.metroLabel17.Location = new System.Drawing.Point(3, 69);
+            this.metroLabel17.Name = "metroLabel17";
+            this.metroLabel17.Size = new System.Drawing.Size(117, 19);
+            this.metroLabel17.TabIndex = 26;
+            this.metroLabel17.Text = "Spin with Vouchers";
+            this.metroLabel17.Theme = MetroFramework.MetroThemeStyle.Dark;
+            // 
+            // metroCheckBox5
+            // 
+            this.metroCheckBox5.AutoSize = true;
+            this.metroCheckBox5.Location = new System.Drawing.Point(130, 69);
+            this.metroCheckBox5.Name = "metroCheckBox5";
+            this.metroCheckBox5.Size = new System.Drawing.Size(26, 15);
+            this.metroCheckBox5.TabIndex = 27;
+            this.metroCheckBox5.Text = " ";
+            this.metroCheckBox5.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroCheckBox5.UseSelectable = true;
+            this.metroCheckBox5.CheckedChanged += new System.EventHandler(this.metroCheckBox5_CheckedChanged);
+            // 
+            // textBox3
+            // 
+            this.textBox3.BackColor = System.Drawing.Color.Black;
+            this.textBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBox3.ForeColor = System.Drawing.Color.White;
+            this.textBox3.Location = new System.Drawing.Point(129, 40);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(171, 20);
+            this.textBox3.TabIndex = 28;
+            this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
+            this.textBox3.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.numericOnly);
             // 
             // BotControl
             // 
@@ -736,6 +829,8 @@
             this.metroTabPage6.ResumeLayout(false);
             this.metroTabPage6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
+            this.metroTabPage2.ResumeLayout(false);
+            this.metroTabPage2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -788,5 +883,11 @@
         private MetroFramework.Controls.MetroToggle metroToggle1;
         private MetroFramework.Controls.MetroLabel metroLabel14;
         private System.Windows.Forms.Timer timer2;
+        private MetroFramework.Controls.MetroCheckBox metroCheckBox4;
+        private MetroFramework.Controls.MetroLabel metroLabel15;
+        private MetroFramework.Controls.MetroLabel metroLabel17;
+        private MetroFramework.Controls.MetroLabel metroLabel16;
+        private System.Windows.Forms.TextBox textBox3;
+        private MetroFramework.Controls.MetroCheckBox metroCheckBox5;
     }
 }
