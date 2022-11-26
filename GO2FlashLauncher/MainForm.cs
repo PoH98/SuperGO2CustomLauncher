@@ -88,8 +88,8 @@ namespace GO2FlashLauncher
                         Location = new Point(5, 5),
                         Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom,
                     };
+                    bots.Add(control);
                     tab.Controls.Add(control);
-
                 }
             }
             catch
@@ -99,6 +99,10 @@ namespace GO2FlashLauncher
             }
             rpc.SetPresence();
             timer1.Start();
+            if (!string.IsNullOrEmpty(settings.DiscordBotToken))
+            {
+                button2.PerformClick();
+            }
         }
 
         private void Login()
@@ -159,40 +163,9 @@ namespace GO2FlashLauncher
             Cef.Shutdown();
         }
 
-        private async void textBox1_TextChanged(object sender, EventArgs e)
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
             settings.DiscordBotToken = textBox1.Text;
-            if (_client != null)
-            {
-                await _client.StopAsync();
-                await _client.LogoutAsync();
-                _client.Dispose();
-            }
-            if (string.IsNullOrEmpty(settings.DiscordSecret))
-            {
-                settings.DiscordSecret = Guid.NewGuid().ToString().Split('-')[0];
-            }
-            //suppose discord token will be over 55 char to 70
-            if (!string.IsNullOrEmpty(settings.DiscordBotToken) && settings.DiscordBotToken.Length > 55)
-            {
-                _client = new DiscordSocketClient();
-                await _client.LoginAsync(TokenType.Bot, settings.DiscordBotToken);
-                await _client.StartAsync();
-                _client.Disconnected += _client_Disconnected;
-                await _client.SetGameAsync("Not So Super GO2");
-            }
-            else
-            {
-                _client = null;
-            }
-            foreach (var bot in bots)
-            {
-                bot.SetDiscordBot(_client);
-            }
-            if (settings.DiscordUserID == 0)
-            {
-                MessageBox.Show("Your secret: " + settings.DiscordSecret + "\nPlease send this secret in discord so the bot knows you are its owner!");
-            }
         }
 
         private async Task _client_Disconnected(Exception arg)
@@ -218,6 +191,50 @@ namespace GO2FlashLauncher
         private void button1_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Your secret: " + settings.DiscordSecret + "\nPlease send this secret in discord so the bot knows you are its owner!");
+        }
+
+        private async void button2_Click(object sender, EventArgs e)
+        {
+            if (_client != null)
+            {
+                await _client.StopAsync();
+                await _client.LogoutAsync();
+                _client.Dispose();
+            }
+            if (string.IsNullOrEmpty(settings.DiscordSecret))
+            {
+                settings.DiscordSecret = Guid.NewGuid().ToString().Split('-')[0];
+            }
+            //suppose discord token will be over 55 char to 70
+            try
+            {
+                if (!string.IsNullOrEmpty(settings.DiscordBotToken))
+                {
+                    _client = new DiscordSocketClient();
+                    await _client.LoginAsync(TokenType.Bot, settings.DiscordBotToken);
+                    await _client.StartAsync();
+                    _client.Disconnected += _client_Disconnected;
+                    await _client.SetGameAsync("Not So Super GO2");
+                }
+                else
+                {
+                    _client = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message + "\nPlease try restart the bot which might resolve the error", "Discord Bot binding error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            foreach (var bot in bots)
+            {
+                bot.SetDiscordBot(_client);
+            }
+            if (settings.DiscordUserID == 0)
+            {
+                MessageBox.Show("Your secret: " + settings.DiscordSecret + "\nPlease send this secret in discord so the bot knows you are its owner!");
+            }
         }
     }
 }
