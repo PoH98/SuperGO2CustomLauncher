@@ -1,4 +1,5 @@
 ﻿using CefSharp;
+using CefSharp.WinForms;
 using Discord;
 using Discord.WebSocket;
 using GO2FlashLauncher.Model;
@@ -91,6 +92,16 @@ namespace GO2FlashLauncher
                     bots.Add(control);
                     tab.Controls.Add(control);
                 }
+                var krtab = new MetroTabPage()
+                {
+                    Text = "Krtools",
+                    Theme = MetroThemeStyle.Dark
+                };
+                krtab.Controls.Add(new Krtools()
+                {
+                    Dock = DockStyle.Fill
+                });
+                metroTabControl1.Controls.Add(krtab);
             }
             catch
             {

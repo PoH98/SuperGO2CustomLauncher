@@ -102,6 +102,12 @@
     <Compile Include="BotControl.Designer.cs">
       <DependentUpon>BotControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Krtools.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Krtools.Designer.cs">
+      <DependentUpon>Krtools.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -155,6 +161,9 @@
     <Compile Include="Service\Encryption.cs" />
     <EmbeddedResource Include="BotControl.resx">
       <DependentUpon>BotControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Krtools.resx">
+      <DependentUpon>Krtools.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.cs</DependentUpon>
