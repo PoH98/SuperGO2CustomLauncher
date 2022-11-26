@@ -183,10 +183,6 @@ namespace GO2FlashLauncher
                 await _client.LoginAsync(TokenType.Bot, settings.DiscordBotToken);
                 await _client.StartAsync();
                 await _client.SetGameAsync("Not So Super GO2");
-                if (settings.DiscordUserID == 0)
-                {
-                    MessageBox.Show("Your secret: " + settings.DiscordSecret + "\nPlease send this secret in discord so the bot knows you are its owner!");
-                }
             }
             else
             {
@@ -195,6 +191,13 @@ namespace GO2FlashLauncher
             foreach(var bot in bots)
             {
                 bot.SetDiscordBot(_client);
+            }
+            if (string.IsNullOrEmpty(settings.DiscordBotToken))
+            {
+                if (settings.DiscordUserID == 0)
+                {
+                    MessageBox.Show("Your secret: " + settings.DiscordSecret + "\nPlease send this secret in discord so the bot knows you are its owner!");
+                }
             }
         }
 

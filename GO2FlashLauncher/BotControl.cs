@@ -208,9 +208,9 @@ namespace GO2FlashLauncher
         public void SetDiscordBot(DiscordSocketClient client)
         {
             this.client = client;
-            if(client!= null)
+            if(this.client != null)
             {
-                client.MessageReceived += Client_MessageReceived;
+                this.client.MessageReceived += Client_MessageReceived;
             }        
         }
 
