@@ -2,6 +2,7 @@
 using GO2FlashLauncher.Model;
 using GO2FlashLauncher.Service;
 using System;
+using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,10 +12,14 @@ namespace GO2FlashLauncher.Script
     {
         protected bool IsRunning;
         protected readonly BotSettings botSettings;
+        protected readonly PlanetSettings planetSettings;
         protected BaseResources resources = new BaseResources();
         protected DateTime BotStartTime;
         public bool IsReloading { get; set; }
+        public Bitmap lastbmp { get; set; }
         private CancellationTokenSource CancellationToken = new CancellationTokenSource();
+        private BotSettings settings;
+
         public BaseResources Resources
         {
             get
@@ -29,10 +34,17 @@ namespace GO2FlashLauncher.Script
                 return DateTime.Now - BotStartTime;
             }
         }
-        public AbstractScript(BotSettings settings)
+        public AbstractScript(BotSettings settings, PlanetSettings planetSettings)
         {
             this.botSettings = settings;
+            this.planetSettings = planetSettings;
         }
+
+        protected AbstractScript(BotSettings settings)
+        {
+            this.settings = settings;
+        }
+
         /// <summary>
         /// Check if script is running
         /// </summary>

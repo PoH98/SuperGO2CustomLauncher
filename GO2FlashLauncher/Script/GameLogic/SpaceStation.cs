@@ -66,6 +66,8 @@ namespace GO2FlashLauncher.Script.GameLogic
         }
         public async Task<InstanceEnterState> EnterInstance(Bitmap bmp, int instanceLv)
         {
+            //reduce search size
+            bmp = await bmp.Crop(new Point(0, 0), new Size(bmp.Width, bmp.Height - 190));
             var result = bmp.FindImage(Path.GetFullPath("Images\\instance.png"), 0.8);
             if (result == null)
             {
@@ -77,7 +79,6 @@ namespace GO2FlashLauncher.Script.GameLogic
                 await host.LeftClick(result.Value, rnd.Next(10, 50));
                 await Task.Delay(800);
                 bmp = await devtools.Screenshot();
-
             }
             //detect already in instance
             if (bmp.FindImage("Images\\instanceWindowMarker.png", 0.65) != null)
@@ -105,6 +106,8 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         public async Task<InstanceEnterState> EnterRestrict(Bitmap bmp, int instanceLv)
         {
+            //reduce search size
+            bmp = await bmp.Crop(new Point(0, 0), new Size(bmp.Width, bmp.Height - 190));
             var result = bmp.FindImage(Path.GetFullPath("Images\\instance.png"), 0.8);
             if (result == null)
             {
@@ -164,6 +167,8 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         public async Task<(InstanceEnterState, int)> EnterTrial(Bitmap bmp)
         {
+            //reduce search size
+            bmp = await bmp.Crop(new Point(0, 0), new Size(bmp.Width, bmp.Height - 190));
             var result = bmp.FindImage(Path.GetFullPath("Images\\instance.png"), 0.8);
             if (result == null)
             {
@@ -207,6 +212,8 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         public async Task<InstanceEnterState> EnterConstellations(Bitmap bmp, Constellations constellations, int stage)
         {
+            //reduce search size
+            bmp = await bmp.Crop(new Point(0, 0), new Size(bmp.Width, bmp.Height - 190));
             var result = bmp.FindImage(Path.GetFullPath("Images\\instance.png"), 0.8);
             if (result == null)
             {

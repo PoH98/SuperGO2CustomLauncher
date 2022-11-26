@@ -1,5 +1,7 @@
 ﻿using CefSharp;
 using CefSharp.WinForms;
+using Discord;
+using Discord.WebSocket;
 using GO2FlashLauncher.Model;
 using GO2FlashLauncher.Script.GameLogic;
 using GO2FlashLauncher.Service;
@@ -11,8 +13,15 @@ namespace GO2FlashLauncher.Script
 {
     internal class InstanceScript : AbstractScript
     {
-        public InstanceScript(BotSettings settings) : base(settings)
+        private readonly DiscordSocketClient client;
+        private readonly IUser user;
+        public InstanceScript(BotSettings settings, PlanetSettings planetSettings, DiscordSocketClient client) : base(settings, planetSettings)
         {
+            this.client = client;
+            if (client != null && botSettings.DiscordUserID != 0)
+            {
+                 user = client.GetUserAsync(botSettings.DiscordUserID).Result;
+            }
         }
 
         public override Task Run(ChromiumWebBrowser browser, int userID, GO2HttpService httpService)
@@ -26,6 +35,10 @@ namespace GO2FlashLauncher.Script
                 }
                 IsRunning = true;
                 BotStartTime = DateTime.Now;
+                while (!browser.IsBrowserInitialized)
+                {
+                    await Task.Delay(1000);
+                }
                 var devTools = browser.GetBrowser().GetDevToolsClient();
                 var host = browser.GetBrowser().GetHost();
                 host.SetFocus(false);
@@ -60,15 +73,28 @@ namespace GO2FlashLauncher.Script
                     DateTime lastTrialDate = DateTime.Now;
                     DateTime lastRefresh = DateTime.Now;
                     DateTime lastConstDate = DateTime.Now;
+                    DateTime now = DateTime.Now;
                     int error = 0;
                     int lag = 0;
-                    Bitmap lastbmp = null;
+
                     do
                     {
                         try
                         {
                             //Script stoped
                             Cancellation.ThrowIfCancellationRequested();
+                            if(DateTime.Now.ToUniversalTime().Date != now.ToUniversalTime().Date)
+                            {
+                                Logger.LogInfo("Refreshing game to avoid slow game");
+                                var url = await httpService.GetIFrameUrl(userID);
+                                browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                mainScreenLocated = false;
+                                spaceStationLocated = false;
+                                inStage = false;
+                                await Task.Delay(3000);
+                                lastRefresh = DateTime.Now;
+                                continue;
+                            }
                             if (IsReloading)
                             {
                                 await Task.Delay(200);
@@ -90,20 +116,7 @@ namespace GO2FlashLauncher.Script
                             if (error > 5)
                             {
                                 var lagging = await devTools.Screenshot();
-                                if (m.DetectDisconnect(lagging))
-                                {
-                                    Logger.LogWarning("Disconnected, reconnect after 30 sec...");
-                                    await Task.Delay(new TimeSpan(0, 0, 30));
-                                    var url = await httpService.GetIFrameUrl(userID);
-                                    browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
-                                    mainScreenLocated = false;
-                                    spaceStationLocated = false;
-                                    inStage = false;
-                                    await Task.Delay(3000);
-                                    lastRefresh = DateTime.Now;
-                                    continue;
-                                }
-                                else if (error > 20)
+                                if (error > 20)
                                 {
                                     //start over again
                                     mainScreenLocated = false;
@@ -113,6 +126,30 @@ namespace GO2FlashLauncher.Script
                             }
                             //Screenshot browser
                             var bmp = await devTools.Screenshot();
+                            await Task.Delay(100);
+                            if (m.DetectDisconnect(bmp))
+                            {
+                                if(user != null)
+                                {
+                                    await user.SendMessageAsync("Game disconnected, reconnecting...");
+                                }
+                                Logger.LogWarning("Disconnected, reconnect after 5 sec...");
+                                await Task.Delay(new TimeSpan(0, 0, 5));
+                                var url = await httpService.GetIFrameUrl(userID);
+                                browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                mainScreenLocated = false;
+                                spaceStationLocated = false;
+                                inStage = false;
+                                await Task.Delay(3000);
+                                lastRefresh = DateTime.Now;
+                                continue;
+                            }
+                            var crop = await bmp.Crop(new Point(0,0), new Size((int)Math.Round((double)bmp.Width / 2), (int)Math.Round((double)bmp.Height / 2)));
+                            if (bmp.FindImage("Images\\underattack.png", 0.8).HasValue || bmp.FindImage("Images\\underattack2.png", 0.8).HasValue)
+                            {
+                                if (user != null)
+                                    await user.SendMessageAsync("You are under attack!");
+                            }
                             //check for friendrequest
                             if (bmp.FindImageGrayscaled("Images\\friendrequesttext.png", 0.7).HasValue)
                             {
@@ -120,7 +157,7 @@ namespace GO2FlashLauncher.Script
                                 if (friendClose.HasValue)
                                 {
                                     await host.LeftClick(friendClose.Value, 100);
-                                    await Task.Delay(botSettings.Delays);
+                                    await Task.Delay(botSettings.Delays - 100);
                                     bmp = await devTools.Screenshot();
                                 }
                             }
@@ -221,7 +258,7 @@ namespace GO2FlashLauncher.Script
                                             await Task.Delay(botSettings.Delays);
                                             bmp = await devTools.Screenshot();
                                             Cancellation.ThrowIfCancellationRequested();
-                                            if (botSettings.TrialFight)
+                                            if (planetSettings.TrialFight)
                                             {
                                                 //new day, reset
                                                 if (DateTime.Now.ToUniversalTime().Day != lastRestrictDate.ToUniversalTime().Day)
@@ -231,7 +268,7 @@ namespace GO2FlashLauncher.Script
                                                     trialStucked = false;
                                                     runningTrial = false;
                                                 }
-                                                if (currentTrialLv <= botSettings.TrialMaxLv && currentTrialLv < 10 && !trialStucked)
+                                                if (currentTrialLv <= planetSettings.TrialMaxLv && currentTrialLv < 10 && !trialStucked)
                                                 {
                                                     Logger.LogInfo("Entering Trial");
                                                     var r = await s.EnterTrial(bmp);
@@ -248,7 +285,7 @@ namespace GO2FlashLauncher.Script
                                                         spaceStationLocated = false;
                                                         break;
                                                     }
-                                                    if (r.Item2 > botSettings.TrialMaxLv && state == InstanceEnterState.IncreaseFleet)
+                                                    if (r.Item2 > planetSettings.TrialMaxLv && state == InstanceEnterState.IncreaseFleet)
                                                     {
                                                         currentTrialLv = r.Item2;
                                                         Logger.LogWarning("Trial " + r.Item2 + " is not attackable, skipping...");
@@ -265,6 +302,8 @@ namespace GO2FlashLauncher.Script
                                                         instanceType = SelectFleetType.Trial;
                                                         runningTrial = true;
                                                         Logger.LogInfo("Current Trial Level: " + currentTrialLv);
+                                                        if (user != null)
+                                                            await user.SendMessageAsync("Starting Trial " + currentTrialLv);
                                                     }
                                                     if (state == InstanceEnterState.InstanceCompleted)
                                                     {
@@ -281,7 +320,7 @@ namespace GO2FlashLauncher.Script
                                                     runningTrial = false;
                                                 }
                                             }
-                                            if (botSettings.RestrictFight && !runningTrial)
+                                            if (planetSettings.RestrictFight && !runningTrial)
                                             {
                                                 //new day, reset
                                                 if (DateTime.Now.ToUniversalTime().Day != lastRestrictDate.ToUniversalTime().Day)
@@ -297,11 +336,13 @@ namespace GO2FlashLauncher.Script
                                                     Logger.LogInfo("Entering Restrict");
                                                     try
                                                     {
-                                                        state = await s.EnterRestrict(bmp, botSettings.RestrictLevel);
+                                                        state = await s.EnterRestrict(bmp, planetSettings.RestrictLevel);
                                                         instanceType = SelectFleetType.Restrict;
                                                         //have chances
                                                         currentRestrictCount++;
                                                         runningRestrict = true;
+                                                        if (user != null)
+                                                            await user.SendMessageAsync("Starting Restrict");
                                                     }
                                                     catch (ArgumentException ex)
                                                     {
@@ -324,7 +365,7 @@ namespace GO2FlashLauncher.Script
                                                     runningRestrict = false;
                                                 }
                                             }
-                                            if (botSettings.ConstellationFight && !runningRestrict && !runningTrial)
+                                            if (planetSettings.ConstellationFight && !runningRestrict && !runningTrial)
                                             {
                                                 if (DateTime.Now.ToUniversalTime().Day != lastConstDate.ToUniversalTime().Day)
                                                 {
@@ -332,17 +373,19 @@ namespace GO2FlashLauncher.Script
                                                     lastConstDate = DateTime.Now;
                                                     runningConstellation = false;
                                                 }
-                                                if (currentConstellationCount < botSettings.ConstellationCount)
+                                                if (currentConstellationCount < planetSettings.ConstellationCount)
                                                 {
                                                     Logger.LogInfo("Entering Constellations");
                                                     try
                                                     {
-                                                        if (currentConstellationCount < botSettings.ConstellationCount)
+                                                        if (currentConstellationCount < planetSettings.ConstellationCount)
                                                         {
-                                                            state = await s.EnterConstellations(bmp, (Constellations)botSettings.ConstellationStage, botSettings.ConstellationLevel);
+                                                            state = await s.EnterConstellations(bmp, (Constellations)planetSettings.ConstellationStage, planetSettings.ConstellationLevel);
                                                             instanceType = SelectFleetType.Constellation;
                                                             currentConstellationCount++;
                                                             runningConstellation = true;
+                                                            if (user != null)
+                                                                await user.SendMessageAsync("Starting Constellation");
                                                         }
                                                         else
                                                         {
@@ -370,8 +413,10 @@ namespace GO2FlashLauncher.Script
                                             }
                                             if (!runningRestrict && !runningTrial && !runningConstellation)
                                             {
+                                                if (user != null)
+                                                    await user.SendMessageAsync("Entering i" + planetSettings.Instance);
                                                 Logger.LogInfo("Entering Instance");
-                                                state = await s.EnterInstance(bmp, botSettings.Instance);
+                                                state = await s.EnterInstance(bmp, planetSettings.Instance);
                                                 currentInstanceCount++;
                                                 Logger.LogInfo("Current is " + currentInstanceCount + " run!");
                                             }
@@ -395,9 +440,11 @@ namespace GO2FlashLauncher.Script
                                                     await Task.Delay(botSettings.Delays);
                                                     bmp = await devTools.Screenshot();
                                                     Logger.LogInfo("Refilling fleets");
-                                                    if (!await b.RefillHE3(bmp, resources, botSettings.HaltOn))
+                                                    if (!await b.RefillHE3(bmp, resources, planetSettings.HaltOn))
                                                     {
                                                         //no HE3
+                                                        if (user != null)
+                                                            await user.SendMessageAsync("Out of HE3, going to halt attack!");
                                                         Logger.LogWarning("Out of HE3! Halt attack now!");
                                                         inStage = false;
                                                         mainScreenLocated = false;
@@ -448,16 +495,16 @@ namespace GO2FlashLauncher.Script
                                                     switch (instanceType)
                                                     {
                                                         case SelectFleetType.Instance:
-                                                            instanceLv = botSettings.Instance;
+                                                            instanceLv = planetSettings.Instance;
                                                             break;
                                                         case SelectFleetType.Restrict:
-                                                            instanceLv = botSettings.RestrictLevel;
+                                                            instanceLv = planetSettings.RestrictLevel;
                                                             break;
                                                         case SelectFleetType.Constellation:
-                                                            instanceLv = botSettings.ConstellationLevel;
+                                                            instanceLv = planetSettings.ConstellationLevel;
                                                             break;
                                                     }
-                                                    while (!await b.SelectFleet(bmp, botSettings.Fleets, instanceType, instanceLv, (Constellations)botSettings.ConstellationStage))
+                                                    while (!await b.SelectFleet(bmp, planetSettings.Fleets, instanceType, instanceLv, (Constellations)planetSettings.ConstellationStage))
                                                     {
                                                         Logger.LogError("No fleet found!");
                                                         bmp = await devTools.Screenshot();
@@ -568,7 +615,7 @@ namespace GO2FlashLauncher.Script
                                 }
                                 else
                                 {
-                                    var crop = await bmp.Crop(new Point(0, 0), new Size(500, 500));
+                                    crop = await bmp.Crop(new Point(0, 0), new Size(500, 500));
                                     var mail = crop.FindImage("Images\\mail.png", 0.6);
                                     if (mail.HasValue)
                                     {
@@ -589,7 +636,7 @@ namespace GO2FlashLauncher.Script
                                             bmp = await devTools.Screenshot();
                                         }
                                     }
-                                    if (stageCount >= botSettings.InstanceHitCount && botSettings.InstanceHitCount > 0 && !suspendCollect && !runningRestrict && !runningTrial && !runningConstellation)
+                                    if (stageCount >= planetSettings.InstanceHitCount && planetSettings.InstanceHitCount > 0 && !suspendCollect && !runningRestrict && !runningTrial && !runningConstellation)
                                     {
                                         //open box
                                         if (await i.OpenInventory(bmp))
@@ -658,7 +705,7 @@ namespace GO2FlashLauncher.Script
                                         }
                                     }
                                 }
-                                if (botSettings.SpinWheel)
+                                if (planetSettings.SpinWheel)
                                 {
                                     if (spinable)
                                     {
@@ -670,7 +717,7 @@ namespace GO2FlashLauncher.Script
                                         }
                                         else
                                         {
-                                            if (resources.Vouchers < botSettings.MinVouchers)
+                                            if (resources.Vouchers < planetSettings.MinVouchers)
                                             {
                                                 Logger.LogWarning("Not enough vouchers for spinning, exiting");
                                                 await w.EndSpin(bmp);
@@ -680,7 +727,7 @@ namespace GO2FlashLauncher.Script
                                             }
                                             else
                                             {
-                                                spinResult = await w.Spin(bmp, resources, botSettings.SpinWithVouchers);
+                                                spinResult = await w.Spin(bmp, resources, planetSettings.SpinWithVouchers);
                                                 if (spinResult == SpinResult.Failed)
                                                 {
                                                     //stop spin, something wrong
@@ -693,7 +740,7 @@ namespace GO2FlashLauncher.Script
                                                 }
                                                 else if (spinResult == SpinResult.Vouchers)
                                                 {
-                                                    if (botSettings.SpinWithVouchers)
+                                                    if (planetSettings.SpinWithVouchers)
                                                     {
                                                         Logger.LogInfo("Predicted " + resources.Vouchers + " left!");
                                                     }
@@ -717,7 +764,7 @@ namespace GO2FlashLauncher.Script
                                     else
                                     {
                                         //detect vouchers
-                                        if (resources.Vouchers > botSettings.MinVouchers && spinResult == SpinResult.NotEnoughVouchers)
+                                        if (resources.Vouchers > planetSettings.MinVouchers && spinResult == SpinResult.NotEnoughVouchers)
                                         {
                                             Logger.LogInfo("Vouchers are now enough for spinning!");
                                             spinable = true;
@@ -727,7 +774,7 @@ namespace GO2FlashLauncher.Script
                                             Logger.LogInfo("Lets retry spin after error!");
                                             spinable = true;
                                         }
-                                        else if (spinResult == SpinResult.Vouchers && botSettings.SpinWithVouchers)
+                                        else if (spinResult == SpinResult.Vouchers && planetSettings.SpinWithVouchers)
                                         {
                                             Logger.LogInfo("Spin with vouchers enabled! Lets spin now!");
                                             spinable = true;
@@ -822,7 +869,7 @@ namespace GO2FlashLauncher.Script
                             }
                             Logger.LogError(ex.ToString());
                         }
-                        await Task.Delay(botSettings.Delays);
+                        await Task.Delay(botSettings.Delays - 100);
                     }
                     while (true);
                 }

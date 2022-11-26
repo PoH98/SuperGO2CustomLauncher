@@ -96,26 +96,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\SGO2\GetFrameResponse.cs" />
-    <Compile Include="Model\SGO2\GetPlanetResponse.cs" />
-    <Compile Include="Model\SGO2\LoginResponse.cs" />
-    <Compile Include="PlanetSelection.cs">
-      <SubType>Form</SubType>
+    <Compile Include="BotControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PlanetSelection.Designer.cs">
-      <DependentUpon>PlanetSelection.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Login.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Login.Designer.cs">
-      <DependentUpon>Login.cs</DependentUpon>
+    <Compile Include="BotControl.Designer.cs">
+      <DependentUpon>BotControl.cs</DependentUpon>
     </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\SGO2\GetFrameResponse.cs" />
+    <Compile Include="Model\SGO2\GetPlanetResponse.cs" />
+    <Compile Include="Model\SGO2\LoginResponse.cs" />
+    <Compile Include="Login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Login.Designer.cs">
+      <DependentUpon>Login.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\BaseResources.cs" />
     <Compile Include="Model\BotSettings.cs" />
@@ -153,8 +153,8 @@
     <Compile Include="Service\Logger.cs" />
     <Compile Include="Service\RPC.cs" />
     <Compile Include="Service\Encryption.cs" />
-    <EmbeddedResource Include="PlanetSelection.resx">
-      <DependentUpon>PlanetSelection.cs</DependentUpon>
+    <EmbeddedResource Include="BotControl.resx">
+      <DependentUpon>BotControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.cs</DependentUpon>
@@ -2112,8 +2112,11 @@
     <PackageReference Include="CefSharp.WinForms">
       <Version>87.1.132</Version>
     </PackageReference>
+    <PackageReference Include="Discord.Net">
+      <Version>3.8.1</Version>
+    </PackageReference>
     <PackageReference Include="DiscordRichPresence">
-      <Version>1.1.1.14</Version>
+      <Version>1.1.3.18</Version>
     </PackageReference>
     <PackageReference Include="Emgu.CV">
       <Version>4.6.0.5131</Version>
@@ -2125,7 +2128,7 @@
       <Version>4.6.0.5131</Version>
     </PackageReference>
     <PackageReference Include="System.Drawing.Common">
-      <Version>6.0.0</Version>
+      <Version>7.0.0</Version>
     </PackageReference>
     <PackageReference Include="System.Drawing.Primitives">
       <Version>4.3.0</Version>

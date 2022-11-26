@@ -41,11 +41,11 @@ namespace GO2FlashLauncher.Service
         /// Log info
         /// </summary>
         /// <param name="info"></param>
-        public static void LogInfo(string info)
+        public static async void LogInfo(string info)
         {
             var text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][INF]: " + info;
             var data = Encoding.UTF8.GetBytes(text);
-            logStream.WriteAsync(data, 0, data.Length);
+            await logStream.WriteAsync(data, 0, data.Length);
             if (logger == null)
             {
                 return;
@@ -64,11 +64,11 @@ namespace GO2FlashLauncher.Service
         /// Log error
         /// </summary>
         /// <param name="info"></param>
-        public static void LogError(string info)
+        public static async void LogError(string info)
         {
             var text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][ERR]: " + info;
             var data = Encoding.UTF8.GetBytes(text);
-            logStream.WriteAsync(data, 0, data.Length);
+            await logStream.WriteAsync(data, 0, data.Length);
             if (logger == null)
             {
                 return;
@@ -86,18 +86,18 @@ namespace GO2FlashLauncher.Service
         /// <summary>
         /// Clear logs
         /// </summary>
-        public static void ClearLog()
+        public static async void ClearLog()
         {
             var text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][CLR]: ===========================================================";
             var data = Encoding.UTF8.GetBytes(text);
-            logStream.WriteAsync(data, 0, data.Length);
+            await logStream.WriteAsync(data, 0, data.Length);
             logger.Invoke((MethodInvoker)delegate
             {
                 logger.Text = "";
             });
         }
 
-        public static void LogDebug(string debug)
+        public static async void LogDebug(string debug)
         {
             if (logger == null || !File.Exists("debug.txt"))
             {
@@ -105,7 +105,7 @@ namespace GO2FlashLauncher.Service
             }
             var text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][DBG]: " + debug;
             var data = Encoding.UTF8.GetBytes(text);
-            logStream.WriteAsync(data, 0, data.Length);
+            await logStream.WriteAsync(data, 0, data.Length);
             logger.Invoke((MethodInvoker)delegate
             {
                 logger.SelectionStart = logger.TextLength;
@@ -118,11 +118,11 @@ namespace GO2FlashLauncher.Service
         }
 
 
-        public static void LogWarning(string warn)
+        public static async void LogWarning(string warn)
         {
             var text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][WRN]: " + warn;
             var data = Encoding.UTF8.GetBytes(text);
-            logStream.WriteAsync(data, 0, data.Length);
+            await logStream.WriteAsync(data, 0, data.Length);
             if (logger == null)
             {
                 return;
@@ -136,6 +136,11 @@ namespace GO2FlashLauncher.Service
                 logger.Select(logger.TextLength, 0);
                 logger.ScrollToCaret();
             });
+        }
+
+        public static void CloseLog()
+        {
+            logStream.Close();
         }
     }
 }
