@@ -92,7 +92,7 @@ namespace GO2FlashLauncher.Script
                                 spaceStationLocated = false;
                                 inStage = false;
                                 await Task.Delay(3000);
-                                lastRefresh = DateTime.Now;
+                                now = DateTime.Now;
                                 continue;
                             }
                             if (IsReloading)
