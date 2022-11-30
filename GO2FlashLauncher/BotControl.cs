@@ -49,7 +49,6 @@ namespace GO2FlashLauncher
             settings.CefCommandLineArgs.Add("no-activate");
             settings.BackgroundColor = ColorToUInt(Color.Black);
             settings.SetOffScreenRenderingBestPerformanceArgs();
-            settings.DisableGpuAcceleration();
             settings.LogSeverity = LogSeverity.Fatal;
             if (!Cef.Initialize(settings, true))
             {
