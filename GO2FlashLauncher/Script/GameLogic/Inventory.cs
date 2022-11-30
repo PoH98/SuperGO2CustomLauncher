@@ -88,7 +88,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                         }
                         filtered = true;
                         await host.LeftClick(point.Value, rnd.Next(80, 100));
-                        await Task.Delay(500);
+                        await Task.Delay(200);
                     }
                     bmp = await devtools.Screenshot();
                     //find treasure box
@@ -158,6 +158,100 @@ namespace GO2FlashLauncher.Script.GameLogic
                 await Task.Delay(800);
             }
             //success
+            return true;
+        }
+
+        public async Task<bool> OpenTruce(Bitmap bmp)
+        {
+            Point? point;
+            //click on filter
+            point = bmp.FindImage("Images\\bagitemfilter.png", 0.7);
+            if (point == null)
+            {
+                point = bmp.FindImage("Images\\bagitemfilter2.png", 0.7);
+                if (point == null)
+                {
+                    //error
+                    return false;
+                }
+            }
+            await host.LeftClick(point.Value, rnd.Next(80, 100));
+            await Task.Delay(200);
+            bmp = await devtools.Screenshot();
+            point = bmp.FindImage("Images\\truced.png", 0.7);
+            if (point == null)
+            {
+                for(int x = 2; x < 4; x++)
+                {
+                    point = bmp.FindImage("Images\\truced"+x+".png", 0.7);
+                    if(point != null)
+                    {
+                        break;
+                    }
+                }
+            }
+            if (point == null)
+            {
+                //error
+                return false;
+            }
+            await host.LeftClick(point.Value, rnd.Next(80, 100));
+            await Task.Delay(100);
+            bmp = await devtools.Screenshot();
+            var bagpoint = bmp.FindImage("Images\\returnbag.png", 0.7);
+            if(bagpoint != null)
+            {
+                await host.LeftClick(point.Value, rnd.Next(80, 100));
+                await Task.Delay(100);
+                bmp = await devtools.Screenshot();
+                point = bmp.FindImage("Images\\OK.png", 0.7);
+                if(point == null)
+                {
+                    for(int x = 2; x < 5; x++)
+                    {
+                        point = bmp.FindImage("Images\\OK" + x + ".png", 0.7);
+                        if(point != null)
+                        {
+                            break;
+                        }
+                    }
+                }
+                if(point == null)
+                {
+                    //error
+                    throw new ArgumentException("Weird error occurs");
+                }
+                await host.LeftClick(point.Value, rnd.Next(80, 100));
+                await Task.Delay(100);
+                bmp = await devtools.Screenshot();
+                point = bmp.FindImage("Images\\truced.png", 0.7);
+                if (point == null)
+                {
+                    for (int x = 2; x < 4; x++)
+                    {
+                        point = bmp.FindImage("Images\\truced" + x + ".png", 0.7);
+                        if (point != null)
+                        {
+                            break;
+                        }
+                    }
+                }
+                if (point == null)
+                {
+                    //error
+                    return false;
+                }
+                await host.LeftClick(point.Value, rnd.Next(80, 100));
+            }
+            await Task.Delay(50);
+            bmp = await devtools.Screenshot();
+            point = bmp.FindImage("Images//usebtn.png", 0.8);
+            if (point == null)
+            {
+                //error
+                return false;
+            }
+            await host.LeftClick(point.Value, rnd.Next(80, 100));
             return true;
         }
     }

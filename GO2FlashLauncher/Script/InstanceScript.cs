@@ -145,10 +145,32 @@ namespace GO2FlashLauncher.Script
                                 continue;
                             }
                             var crop = await bmp.Crop(new Point(0, 0), new Size((int)Math.Round((double)bmp.Width / 2), (int)Math.Round((double)bmp.Height / 2)));
-                            if (bmp.FindImage("Images\\underattack.png", 0.8).HasValue || bmp.FindImage("Images\\underattack2.png", 0.8).HasValue)
+                            var underAttack = bmp.FindImage("Images\\underattack.png", 0.8);
+                            if(underAttack == null)
+                            {
+                                underAttack = bmp.FindImage("Images\\underattack2.png", 0.8);
+                            }
+                            if (underAttack.HasValue)
                             {
                                 if (user != null)
                                     await user.SendMessageAsync("You are under attack!");
+                                await i.OpenInventory(bmp);
+                                await Task.Delay(500);
+                                bmp = await devTools.Screenshot();
+                                if(!await i.OpenTruce(bmp))
+                                {
+                                    if (user != null)
+                                        await user.SendMessageAsync("Truce failed to open! Danger!");
+                                    Logger.LogError("Unable to open truce.");
+                                }
+                                bmp = await devTools.Screenshot();
+                                await b.CloseButtons(bmp);
+                                await Task.Delay(50);
+                                //click away the warning
+                                await host.LeftClick(underAttack.Value, 100);
+                                await Task.Delay(100);
+                                bmp = await devTools.Screenshot();
+                                await b.CloseButtons(bmp);
                             }
                             //check for friendrequest
                             if (bmp.FindImageGrayscaled("Images\\friendrequesttext.png", 0.7).HasValue)
