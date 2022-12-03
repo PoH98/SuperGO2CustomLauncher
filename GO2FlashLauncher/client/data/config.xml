@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<config>
+<resources path="https://beta-client.supergo2.com/" gMap="asset/map/" res="asset/" client="asset/0058" galaxyAssetPath="0630galaxy_asset">
+                <resource name="GameRes"                src="0045GameRes.swf"  type="Mc"/>
+                <resource name="games_asset"            src="0425games_asset.swf"  type="Mc"/>
+                <resource name="Picres"                 src="0045Picres.swf"  type="Mc"/>
+                <resource name="lottery"                src="302lottery.swf"  type="Mc"/>
+                <resource name="map_asset"              src="0518map_asset.swf"  type="Mc"/>
+                <resource name="Airship"                src="1206Airship.swf"  type="Mc"/>
+                <resource name="chat"                   src="0628chat_asset.swf"  type="Mc"/>
+         <resource name="font"                  src="225afont.swf"  type="Mc"/>
+        </resources>
+        <music path="https://beta-client.supergo2.com/" res="asset/music/">
+                <audio name="galaxy_music"      src="galaxy.mp3" type="Sound"/> 
+                <audio name="battle_music"      src="battle.mp3" type="Sound"/>
+
+                <audio name="bomb_effect"       src="EBomb.mp3" type="Sound"/>
+                <audio name="cmderBlast_effect" src="ECommander.mp3" type="Sound"/>
+                <audio name="shipBlast_effect"  src="EShipBlast.mp3" type="Sound"/>
+                <audio name="shield_effect"     src="EShield.mp3" type="Sound"/>
+
+                <audio name="connon_effect"     src="EConnon.mp3" type="Sound"/>
+                <audio name="missile_effect"    src="EMissile.mp3" type="Sound"/>
+                <audio name="shipBase_effect"   src="EShipBase.mp3" type="Sound"/>
+                <audio name="laser_effect"      src="ELaser.mp3" type="Sound"/>
+
+                <audio name="particle_effect"   src="EParticle.mp3" type="Sound"/>
+                <audio name="flack_effect"      src="EFlack.mp3" type="Sound"/>
+                <audio name="thor_effect"       src="EThor.mp3" type="Sound"/>  
+
+                <audio name="move_effect"       src="EMove.mp3" type="Sound"/>   
+        </music>
+        <Note>
+                <Msg    name="loadLoginServer" src="Connecting to the login server."/>
+                <Msg    name="loadGameServer" src="Connecting to the game server."/>
+                <Msg    name="enterGameServer" src="Initializing the game world."/>
+                <Msg    name="loadRes" src="Loading game data."/>
+                <Msg    name="loadResError" src="Game data failed to load. Please try again."/>
+                <Msg    name="loadResCompleted" src="Game data have been loaded successfully."/>
+                <Msg   name="InitGameData" src="Game Initialization."/>
+        </Note>
+</config>

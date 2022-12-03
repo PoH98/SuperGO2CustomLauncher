@@ -1,4 +1,5 @@
 ﻿using CefSharp;
+using CefSharp.SchemeHandler;
 using CefSharp.WinForms;
 using Discord.WebSocket;
 using GO2FlashLauncher.Model;
@@ -50,6 +51,16 @@ namespace GO2FlashLauncher
             settings.BackgroundColor = ColorToUInt(Color.Black);
             settings.SetOffScreenRenderingBestPerformanceArgs();
             settings.LogSeverity = LogSeverity.Fatal;
+            settings.RegisterScheme(new CefCustomScheme
+            {
+                SchemeName = "https",
+                DomainName = "beta-client.supergo2.com",
+                SchemeHandlerFactory = new FolderSchemeHandlerFactory(
+                    rootFolder: Path.Combine(Directory.GetCurrentDirectory(), "client"),
+                    hostName: "beta-client.supergo2.com",
+                    defaultPage: "index.html" // will default to index.html
+                )
+            });
             if (!Cef.Initialize(settings, true))
             {
                 throw new Exception("Unable to Initialize Cef");
@@ -579,6 +590,11 @@ namespace GO2FlashLauncher
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
             planet.MinVouchers = int.Parse(textBox3.Text);
+        }
+
+        private void metroButton3_Click(object sender, EventArgs e)
+        {
+            chrome.ShowDevTools();
         }
     }
 
