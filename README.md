@@ -7,3 +7,7 @@ A custom launcher for SuperGO2
 * Show full descriptions for BP
 
 Nothing else provided, for real! （´◔ ₃ ◔`)
+
+# Project Closed
+Reason: 
+I Got Garbage
