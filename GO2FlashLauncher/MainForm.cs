@@ -27,6 +27,7 @@ namespace GO2FlashLauncher
         DiscordSocketClient _client;
         List<BotControl> bots = new List<BotControl>();
         HttpClient hc = new HttpClient();
+        bool loginError = false;
         public MainForm()
         {
             InitializeComponent();
@@ -105,6 +106,7 @@ namespace GO2FlashLauncher
             }
             catch
             {
+                loginError = true;
                 File.WriteAllText("Profile\\" + profileName + "\\config.json", JsonConvert.SerializeObject(new BotSettings()));
                 MainForm_Load(sender, e);
             }
@@ -119,6 +121,7 @@ namespace GO2FlashLauncher
         private void Login()
         {
             Login login = new Login(profileName);
+            login.IsError = loginError;
             if (login.ShowDialog() == DialogResult.OK)
             {
                 if (File.Exists("Profile\\" + profileName + "\\config.json"))
@@ -189,7 +192,7 @@ namespace GO2FlashLauncher
         {
             try
             {
-                var response = await hc.GetAsync("https://beta-api.supergo2.com/metrics/online");
+                var response = await hc.GetAsync("https://api.guerradenaves.lat/metrics/online");
                 var online = JsonConvert.DeserializeObject<OnlinePlayers>(await response.Content.ReadAsStringAsync());
                 Text = "Not So Super GO2 | Online Players: " + online.Data.Online;
             }

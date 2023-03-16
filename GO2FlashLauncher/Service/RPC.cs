@@ -22,7 +22,7 @@ namespace GO2FlashLauncher.Service
             }
             if (Inited)
             {
-                rpc.SetPresence(new RichPresence()
+                /*rpc.SetPresence(new RichPresence()
                 {
                     Details = "Playing Stage",
                     State = "A New Galaxy Awakens",
@@ -36,10 +36,10 @@ namespace GO2FlashLauncher.Service
                         new Button()
                         {
                             Label = "Website",
-                            Url = "https://supergo2.com"
+                            Url = "https://guerradenaves.lat"
                         }
                     }
-                });
+                });*/
             }
         }
     }

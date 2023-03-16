@@ -11,6 +11,7 @@ namespace GO2FlashLauncher
     {
         readonly BotSettings settings = new BotSettings();
         readonly string path = null;
+        public bool IsError = false;
         public Login(string profileName)
         {
             path = "Profile\\" + profileName + "\\config.json";
@@ -34,6 +35,11 @@ namespace GO2FlashLauncher
             File.WriteAllText(path, JsonConvert.SerializeObject(settings));
             DialogResult = System.Windows.Forms.DialogResult.OK;
             Close();
+        }
+
+        private void Login_Shown(object sender, EventArgs e)
+        {
+            error.Visible = IsError;
         }
     }
 }

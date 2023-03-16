@@ -23,7 +23,7 @@ namespace GO2FlashLauncher
     internal partial class BotControl : UserControl
     {
         private ChromiumWebBrowser chrome;
-        private readonly string url = "https://beta-client.supergo2.com/?userId={0}&sessionKey={1}";
+        private readonly string url = "https://api.guerradenaves.lat/?userId={0}&sessionKey={1}";
         private readonly GO2HttpService httpService;
         private PlanetSettings planet;
         private BotSettings botSettings;
