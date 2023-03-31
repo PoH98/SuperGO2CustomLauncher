@@ -1,0 +1,86 @@
+﻿<html>
+<head>
+	<title>GO2</title>
+	<link rel="icon" type="image/ico" href="favicon.ico" sizes="32x32" />
+	<style>
+		body{
+			margin: 0;
+		}
+        .centerize {
+            margin: 0 auto;
+            background: black;
+            position: relative;
+            z-index: 1;
+            padding: 0px 0px 0 0px;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+		.full-screen {
+			height: 820px;
+			width: 100vw;
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<div class="centerize">
+		<center class="full-screen">
+			<div></div>
+			<div class="play" id="altContent">
+				<a href="http://get.adobe.com/flashplayer/">You need to install the Flash plugin</a>
+			</div>
+		</center>
+		<script src="./scripts/jquery.min.js" crossorigin="anonymous"></script>
+		<script src="./scripts/loader.js" type="text/javascript"></script>
+		<script type="text/javascript">
+
+			const query = new URLSearchParams(window.location.search);
+
+			var userId = query.get('userId');
+			var sessionKey = query.get('sessionKey');
+
+			console.log("[INFO] UserID = " + userId + " Loaded! " + sessionKey);
+			console.log("[INFO] Loading game... ");
+			const apiKey = "410602368996176";
+			const sessionIp = "134.195.198.252";
+			var flashvars = {
+				ApiKey: apiKey,
+				SessionIP: sessionIp,
+				UserId: userId,
+				GiftId: "",
+				SessionKey: sessionKey,
+				SessionSecret: sessionKey,
+				Language: "1",
+				IsFan: "",
+				ServerPort: "5050",
+				GameUrl: "http://go2.igg.com",
+				ForJS: "1",
+				platform: "1",
+				MvpUrl: "http://go2.igg.com/paybyvip/?fb_sig_user=" + userId,
+			};
+			var params = {
+				menu: "false",
+				scale: "noScale",
+				wmode: "window",
+				allowScriptAccess: "always",
+				allowFullScreen: "true",
+			};
+			var attributes = {
+				id: "SnsScSWF",
+				name: "SnsScSWF",
+				wmode: "window",
+				allowScriptAccess: "always",
+				allowFullScreen: "true",
+			};
+			$(document).ready(function () {
+				swfobject.embedSWF("./PreLoader.swf", "altContent", "100%", "100%", "9.0.0", "expressInstall.swf", flashvars, params, attributes);
+			});
+		</script>
+	</div>
+</body>
+
+</html>
