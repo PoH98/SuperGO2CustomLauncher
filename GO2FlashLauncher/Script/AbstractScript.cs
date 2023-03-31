@@ -18,7 +18,6 @@ namespace GO2FlashLauncher.Script
         public bool IsReloading { get; set; }
         public Bitmap lastbmp { get; set; }
         private CancellationTokenSource CancellationToken = new CancellationTokenSource();
-        private BotSettings settings;
 
         public BaseResources Resources
         {
@@ -42,7 +41,7 @@ namespace GO2FlashLauncher.Script
 
         protected AbstractScript(BotSettings settings)
         {
-            this.settings = settings;
+            this.botSettings = settings;
         }
 
         /// <summary>

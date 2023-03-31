@@ -23,7 +23,8 @@ namespace GO2FlashLauncher
     internal partial class BotControl : UserControl
     {
         private ChromiumWebBrowser chrome;
-        private readonly string url = "https://api.guerradenaves.lat/?userId={0}&sessionKey={1}";
+        private readonly string Host = "client.guerradenaves.lat";
+        private readonly string url = "https://client.guerradenaves.lat/?userId={0}&sessionKey={1}";
         private readonly GO2HttpService httpService;
         private PlanetSettings planet;
         private BotSettings botSettings;
@@ -37,34 +38,39 @@ namespace GO2FlashLauncher
             this.botSettings = botSettings;
             this.httpService = httpService;
             this.client = client;
-            var settings = new CefSettings();
-            settings.CachePath = Path.GetFullPath("cache");
-            settings.CefCommandLineArgs.Add("enable-system-flash", "1");
-            settings.CefCommandLineArgs.Add("ppapi-flash-path", Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).Directory.ToString(), "libs\\pepflashplayer.dll"));
-            settings.CefCommandLineArgs.Add("ppapi-flash-version", "28.0.0.137");
-            settings.CefCommandLineArgs["plugin-policy"] = "allow";
-            settings.CefCommandLineArgs.Add("allow-outdated-plugins");
-            settings.CefCommandLineArgs.Add("use-angle", "gl");
-            settings.CefCommandLineArgs.Add("disable-quic");
-            settings.CefCommandLineArgs.Add("off-screen-rendering-enabled");
-            settings.CefCommandLineArgs.Add("no-activate");
-            settings.BackgroundColor = ColorToUInt(Color.Black);
-            settings.SetOffScreenRenderingBestPerformanceArgs();
-            settings.LogSeverity = LogSeverity.Fatal;
-            settings.RegisterScheme(new CefCustomScheme
+            if (!Cef.IsInitialized)
             {
-                SchemeName = "https",
-                DomainName = "beta-client.supergo2.com",
-                SchemeHandlerFactory = new FolderSchemeHandlerFactory(
-                    rootFolder: Path.Combine(Directory.GetCurrentDirectory(), "client"),
-                    hostName: "beta-client.supergo2.com",
-                    defaultPage: "index.html" // will default to index.html
-                )
-            });
-            if (!Cef.Initialize(settings, true))
-            {
-                throw new Exception("Unable to Initialize Cef");
+                var settings = new CefSettings();
+                settings.CachePath = Path.GetFullPath("cache");
+                settings.CefCommandLineArgs.Add("enable-system-flash", "1");
+                settings.CefCommandLineArgs.Add("ppapi-flash-path", Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).Directory.ToString(), "libs\\pepflashplayer.dll"));
+                settings.CefCommandLineArgs.Add("ppapi-flash-version", "28.0.0.137");
+                settings.CefCommandLineArgs["plugin-policy"] = "allow";
+                settings.CefCommandLineArgs.Add("allow-outdated-plugins");
+                settings.CefCommandLineArgs.Add("use-angle", "gl");
+                settings.CefCommandLineArgs.Add("disable-quic");
+                settings.CefCommandLineArgs.Add("off-screen-rendering-enabled");
+                settings.CefCommandLineArgs.Add("no-activate");
+                settings.BackgroundColor = ColorToUInt(Color.Black);
+                settings.SetOffScreenRenderingBestPerformanceArgs();
+                settings.LogSeverity = LogSeverity.Fatal;
+                settings.RegisterScheme(new CefCustomScheme
+                {
+                    SchemeName = "https",
+                    DomainName = Host,
+                    SchemeHandlerFactory = new FolderSchemeHandlerFactory(
+                        rootFolder: ClientUpdatorService.Instance.RootPath,
+                        hostName: Host,
+                        defaultPage: "index.html"
+                    )
+                });
+
+                if (!Cef.Initialize(settings, true))
+                {
+                    throw new Exception("Unable to Initialize Cef");
+                }
             }
+            ClientUpdatorService.Instance.UpdateFiles();
             InitializeComponent();
             timer2.Start();
             if (client != null)

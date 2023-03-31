@@ -23,7 +23,7 @@ namespace GO2FlashLauncher
         readonly RPC rpc = new RPC();
         GO2HttpService GO2HttpService = new GO2HttpService();
         readonly string profileName = "Bot1";
-        BotSettings settings = new BotSettings();
+        BotSettings settings = ConfigService.Instance.Config;
         DiscordSocketClient _client;
         List<BotControl> bots = new List<BotControl>();
         HttpClient hc = new HttpClient();
@@ -46,7 +46,7 @@ namespace GO2FlashLauncher
             Logger.Init(richTextBox1, profileName);
             try
             {
-                settings = JsonConvert.DeserializeObject<BotSettings>(File.ReadAllText("Profile\\" + profileName + "\\config.json"));
+                settings = ConfigService.Instance.Config;
                 if (settings.CredentialHash == null)
                 {
                     Login();
@@ -104,10 +104,11 @@ namespace GO2FlashLauncher
                 });
                 metroTabControl1.Controls.Add(krtab);
             }
-            catch
+            catch(Exception ex)
             {
+                MessageBox.Show(ex.ToString());
                 loginError = true;
-                File.WriteAllText("Profile\\" + profileName + "\\config.json", JsonConvert.SerializeObject(new BotSettings()));
+                ConfigService.Instance.Save();
                 MainForm_Load(sender, e);
             }
             rpc.SetPresence();
@@ -124,10 +125,9 @@ namespace GO2FlashLauncher
             login.IsError = loginError;
             if (login.ShowDialog() == DialogResult.OK)
             {
-                if (File.Exists("Profile\\" + profileName + "\\config.json"))
-                {
-                    settings = JsonConvert.DeserializeObject<BotSettings>(File.ReadAllText("Profile\\" + profileName + "\\config.json"));
-                }
+                ConfigService.Instance.Save();
+                ConfigService.Instance.Load();
+                settings = ConfigService.Instance.Config;
             }
             else
             {
@@ -151,15 +151,7 @@ namespace GO2FlashLauncher
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!Directory.Exists("Profile"))
-            {
-                Directory.CreateDirectory("Profile");
-            }
-            if (!Directory.Exists("Profile\\" + profileName))
-            {
-                Directory.CreateDirectory("Profile\\" + profileName);
-            }
-            File.WriteAllText("Profile\\" + profileName + "\\config.json", JsonConvert.SerializeObject(settings));
+            ConfigService.Instance.Save();
             Logger.CloseLog();
             try
             {

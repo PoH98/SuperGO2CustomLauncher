@@ -14,25 +14,13 @@ namespace GO2FlashLauncher
         public bool IsError = false;
         public Login(string profileName)
         {
-            path = "Profile\\" + profileName + "\\config.json";
-            if (File.Exists(path))
-            {
-                try
-                {
-                    settings = JsonConvert.DeserializeObject<BotSettings>(File.ReadAllText(path));
-                }
-                catch
-                {
-
-                }
-            }
             InitializeComponent();
         }
 
         private void metroButton1_Click(object sender, EventArgs e)
         {
-            settings.CredentialHash = Encryption.Encrypt(metroTextBox1.Text, metroTextBox2.Text);
-            File.WriteAllText(path, JsonConvert.SerializeObject(settings));
+            ConfigService.Instance.Config.CredentialHash = Encryption.Encrypt(metroTextBox1.Text, metroTextBox2.Text);
+            ConfigService.Instance.Save();
             DialogResult = System.Windows.Forms.DialogResult.OK;
             Close();
         }

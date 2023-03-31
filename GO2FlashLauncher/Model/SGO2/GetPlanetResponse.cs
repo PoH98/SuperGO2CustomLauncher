@@ -58,7 +58,7 @@ namespace GO2FlashLauncher.Model.SGO2
         public int FreeSpins { get; set; }
 
         [JsonProperty("lastSpin")]
-        public DateTime LastSpin { get; set; }
+        public DateTime? LastSpin { get; set; }
     }
 
     public class GetPlanetResponse

@@ -87,7 +87,7 @@ namespace GO2FlashLauncher.Script
                             {
                                 Logger.LogInfo("Refreshing game to avoid slow game");
                                 var url = await httpService.GetIFrameUrl(userID);
-                                browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                 mainScreenLocated = false;
                                 spaceStationLocated = false;
                                 inStage = false;
@@ -104,7 +104,7 @@ namespace GO2FlashLauncher.Script
                             {
                                 Logger.LogInfo("Refreshing game to avoid slow game");
                                 var url = await httpService.GetIFrameUrl(userID);
-                                browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                 mainScreenLocated = false;
                                 spaceStationLocated = false;
                                 inStage = false;
@@ -136,7 +136,7 @@ namespace GO2FlashLauncher.Script
                                 Logger.LogWarning("Disconnected, reconnect after 5 sec...");
                                 await Task.Delay(new TimeSpan(0, 0, 5));
                                 var url = await httpService.GetIFrameUrl(userID);
-                                browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                 mainScreenLocated = false;
                                 spaceStationLocated = false;
                                 inStage = false;
@@ -467,7 +467,7 @@ namespace GO2FlashLauncher.Script
                                                         try
                                                         {
                                                             var url = await httpService.GetIFrameUrl(userID);
-                                                            browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                                            browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                             lastRefresh = DateTime.Now;
                                                         }
                                                         catch
@@ -494,7 +494,7 @@ namespace GO2FlashLauncher.Script
                                                             mainScreenLocated = false;
                                                             inStage = false;
                                                             var url = await httpService.GetIFrameUrl(userID);
-                                                            browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                                            browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                             lastRefresh = DateTime.Now;
                                                             break;
                                                         }
@@ -539,7 +539,7 @@ namespace GO2FlashLauncher.Script
                                                             mainScreenLocated = false;
                                                             inStage = false;
                                                             var url = await httpService.GetIFrameUrl(userID);
-                                                            browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                                            browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                             lastRefresh = DateTime.Now;
                                                             break;
                                                         }
@@ -581,7 +581,7 @@ namespace GO2FlashLauncher.Script
                                             mainScreenLocated = false;
                                             inStage = false;
                                             var url = await httpService.GetIFrameUrl(userID);
-                                            browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                            browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                             error = 0;
                                             await Task.Delay(botSettings.Delays);
                                             lastRefresh = DateTime.Now;
@@ -607,7 +607,7 @@ namespace GO2FlashLauncher.Script
                                         inStage = false;
                                         error = 0;
                                         var url = await httpService.GetIFrameUrl(userID);
-                                        browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                        browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                         await Task.Delay(botSettings.Delays);
                                         lastRefresh = DateTime.Now;
                                     }
@@ -691,7 +691,7 @@ namespace GO2FlashLauncher.Script
                                                     inStage = false;
                                                     error = 0;
                                                     var url = await httpService.GetIFrameUrl(userID);
-                                                    browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                                    browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                     await Task.Delay(botSettings.Delays);
                                                     lastRefresh = DateTime.Now;
                                                     break;
@@ -717,7 +717,7 @@ namespace GO2FlashLauncher.Script
                                                     inStage = false;
                                                     error = 0;
                                                     var url = await httpService.GetIFrameUrl(userID);
-                                                    browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                                    browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                     await Task.Delay(botSettings.Delays);
                                                     lastRefresh = DateTime.Now;
                                                     break;
@@ -832,7 +832,7 @@ namespace GO2FlashLauncher.Script
                                             inStage = false;
                                             error = 0;
                                             var url = await httpService.GetIFrameUrl(userID);
-                                            browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                            browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                             await Task.Delay(botSettings.Delays);
                                             Cancellation.ThrowIfCancellationRequested();
                                             lastRefresh = DateTime.Now;
@@ -873,7 +873,7 @@ namespace GO2FlashLauncher.Script
                                 {
                                     Logger.LogError("Lag detected! Lag confirmed! Restarting...");
                                     var url = await httpService.GetIFrameUrl(userID);
-                                    browser.Load("https://beta-client.supergo2.com/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
+                                    browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                     lag = 0;
                                     inStage = false;
                                     mainScreenLocated = false;
