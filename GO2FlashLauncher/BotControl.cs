@@ -43,7 +43,7 @@ namespace GO2FlashLauncher
                 var settings = new CefSettings();
                 settings.CachePath = Path.GetFullPath("cache");
                 settings.CefCommandLineArgs.Add("enable-system-flash", "1");
-                settings.CefCommandLineArgs.Add("ppapi-flash-path", Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).Directory.ToString(), "libs\\pepflashplayer.dll"));
+                settings.CefCommandLineArgs.Add("ppapi-flash-path", Path.Combine(Application.ExecutablePath.Remove(Application.ExecutablePath.LastIndexOf("\\")), "libs\\pepflashplayer.dll"));
                 settings.CefCommandLineArgs.Add("ppapi-flash-version", "28.0.0.137");
                 settings.CefCommandLineArgs["plugin-policy"] = "allow";
                 settings.CefCommandLineArgs.Add("allow-outdated-plugins");
