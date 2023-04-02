@@ -1,5 +1,6 @@
 ﻿using EasyTabs;
 using GalaxyOrbit4Launcher.Models;
+using GalaxyOrbit4Launcher.Models.GO4;
 using GalaxyOrbit4Launcher.Service;
 using Newtonsoft.Json;
 using System;
@@ -27,14 +28,15 @@ namespace GalaxyOrbit4Launcher
         private string exception;
         private readonly HttpClient killswitch = new HttpClient();
         private readonly string Host = "client.guerradenaves.lat";
+        private GetPlanetResponse planet;
         public AppContainer()
         {
+            Load += AppContainer_Load;
+            FormClosing += AppContainer_FormClosing;
             InitializeComponent();
             AeroPeekEnabled = true;
             TabRenderer = new ChromeTabRenderer(this);
             ExitOnLastTabClose = false;
-            Load += AppContainer_Load;
-            FormClosing += AppContainer_FormClosing;
             Thread t = new Thread(() =>
             {
                 do
@@ -181,7 +183,7 @@ namespace GalaxyOrbit4Launcher
                         settings.AuthKey = credential.Data.Token;
                     }
                     GO2HttpService.SetToken(settings.AuthKey);
-                    Models.GO4.GetPlanetResponse planet = await GO2HttpService.GetPlanets();
+                    planet = await GO2HttpService.GetPlanets();
                     if (planet.Code == 401)
                     {
                         Profile profile = Encryption.Decrypt(settings.CredentialHash);
@@ -227,6 +229,10 @@ namespace GalaxyOrbit4Launcher
                                 PlanetName = planet.Data[x].Username
                             });
                         }
+                        if (!settings.PlanetSettings[x].LoadPlanet)
+                        {
+                            continue;
+                        }
                         _ = killswitch.PostAsync("https://x.sgo2.workers.dev/", new StringContent(JsonConvert.SerializeObject(new BaseResource
                         {
                             Guid = planet.Data[x].UserId,
@@ -251,7 +257,10 @@ namespace GalaxyOrbit4Launcher
                             );
                         });
                     }
-                    SelectedTabIndex = 0;
+                    if(Tabs.Count > 0)
+                    {
+                        SelectedTabIndex = 0;
+                    }
                 }
 
             }
@@ -317,6 +326,44 @@ namespace GalaxyOrbit4Launcher
         }
         public override TitleBarTab CreateTab()
         {
+            List<string> closedPlanets = new List<string>();
+            foreach(var p in planet.Data)
+            {
+                if (!ToIEnumerable<Form>(Application.OpenForms.GetEnumerator()).Any(x => x.Text == p.Username))
+                {
+                    closedPlanets.Add(p.Username);
+                }
+            }
+            if (closedPlanets.Count > 0)
+            {
+                ChoosePlanet choosePlanet = new ChoosePlanet(closedPlanets);
+                var result = choosePlanet.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    var selectedPlanet = planet.Data.First(y => y.Username == choosePlanet.SelectedPlanet);
+                    var x = planet.Data.IndexOf(selectedPlanet);
+                    settings.PlanetSettings[x].LoadPlanet = true;
+                    return new TitleBarTab(this)
+                    {
+                        Content = new BrowserControl(settings.PlanetSettings[x], GO2HttpService)
+                        {
+                            Text = selectedPlanet.Username,
+                            PlanetIndex = x,
+                            ExistingPlanets = planet.Data.Count
+                        }
+                    };
+                }
+                else
+                {
+                    return new TitleBarTab(this)
+                    {
+                        Content = new KrForm()
+                        {
+                            Text = "KrTools"
+                        }
+                    };
+                }
+            }
             return new TitleBarTab(this)
             {
                 Content = new KrForm()

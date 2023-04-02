@@ -40,5 +40,6 @@ namespace GalaxyOrbit4Launcher.Models
         public long ConstellationCount { get; set; } = 3;
         public int PlanetId { get; set; } = -1;
         public string PlanetName { get; set; } = "Unknown Planet";
+        public bool LoadPlanet { get; set; } = true;
     }
 }
