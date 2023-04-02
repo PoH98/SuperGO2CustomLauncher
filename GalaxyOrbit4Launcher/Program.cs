@@ -28,12 +28,18 @@ namespace GalaxyOrbit4Launcher
         [STAThread]
         private static void Main()
         {
+            var flashPath = Path.Combine(Application.ExecutablePath.Remove(Application.ExecutablePath.LastIndexOf("\\")), "libs\\pepflashplayer.dll");
+            if(!File.Exists(flashPath))
+            {
+                MessageBox.Show("Unable to find flash in folder \"" + flashPath + "\"! Application exiting...");
+                Environment.Exit(0);
+            }
             CefSettings settings = new CefSettings
             {
                 CachePath = Path.GetFullPath("cache")
             };
             settings.CefCommandLineArgs.Add("enable-system-flash", "1");
-            settings.CefCommandLineArgs.Add("ppapi-flash-path", Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).Directory.ToString(), "libs\\pepflashplayer.dll"));
+            settings.CefCommandLineArgs.Add("ppapi-flash-path", flashPath);
             settings.CefCommandLineArgs.Add("ppapi-flash-version", "28.0.0.137");
             settings.CefCommandLineArgs["plugin-policy"] = "allow";
             settings.CefCommandLineArgs.Add("allow-outdated-plugins");
@@ -55,7 +61,7 @@ namespace GalaxyOrbit4Launcher
                     defaultPage: "index.html"
                 )
             });
-            if (!Cef.Initialize(settings, true))
+            if (!Cef.Initialize(settings))
             {
                 throw new Exception("Unable to Initialize Cef");
             }

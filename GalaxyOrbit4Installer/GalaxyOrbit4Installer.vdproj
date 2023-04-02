@@ -15,36 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_00CC9C3E99AA2668B97F929F99262147"
-        "OwnerKey" = "8:_A4B7A07AAB3B812501FF448EDBCF5278"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_00CC9C3E99AA2668B97F929F99262147"
-        "OwnerKey" = "8:_0C6492CE29852C9FCC887BA493AE67AB"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_00CC9C3E99AA2668B97F929F99262147"
-        "OwnerKey" = "8:_462414D755A64CBB830B17B62CE4DD9E"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_00CC9C3E99AA2668B97F929F99262147"
-        "OwnerKey" = "8:_1B6267AA1BB4ADD8170A3F7979F12106"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_00CC9C3E99AA2668B97F929F99262147"
-        "OwnerKey" = "8:_D9D87A95565F4B1AB48CA5E64F0217A6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_00CF624918214A64A9EE9CF9A194837D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -131,12 +101,6 @@
         {
         "MsmKey" = "8:_1AEBB3D3E83442449777741DC998457B"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1B6267AA1BB4ADD8170A3F7979F12106"
-        "OwnerKey" = "8:_D9D87A95565F4B1AB48CA5E64F0217A6"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -310,12 +274,6 @@
         "Entry"
         {
         "MsmKey" = "8:_4382C64D05594205BC651E20CE87B449"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4520B9F592CE496FB6B5BCC93A382341"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -699,12 +657,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_9760F9DB2A5F47218348A71679900663"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_99AAD8E7F57E4A778EC24F11E82D2841"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -718,12 +670,6 @@
         "Entry"
         {
         "MsmKey" = "8:_9AA6C3B7C98A4DB3A38C233CF29AC7C6"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9C0A87DBC30C415B915679EE83B6422C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -759,14 +705,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_A4B7A07AAB3B812501FF448EDBCF5278"
+        "MsmKey" = "8:_A2AC005EA2D6E4950CEB8C0CEC0CE8B3"
         "OwnerKey" = "8:_D9D87A95565F4B1AB48CA5E64F0217A6"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_A4B7A07AAB3B812501FF448EDBCF5278"
-        "OwnerKey" = "8:_1B6267AA1BB4ADD8170A3F7979F12106"
+        "MsmKey" = "8:_A2AC005EA2D6E4950CEB8C0CEC0CE8B3"
+        "OwnerKey" = "8:_F79A76BE81C6D1516211FB7E8147636B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -851,6 +797,42 @@
         {
         "MsmKey" = "8:_B426845CD4714FF095AA4745EAF20062"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B6E73FB566A833EDD080C94B413AAE15"
+        "OwnerKey" = "8:_A2AC005EA2D6E4950CEB8C0CEC0CE8B3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B6E73FB566A833EDD080C94B413AAE15"
+        "OwnerKey" = "8:_462414D755A64CBB830B17B62CE4DD9E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B6E73FB566A833EDD080C94B413AAE15"
+        "OwnerKey" = "8:_0C6492CE29852C9FCC887BA493AE67AB"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B6E73FB566A833EDD080C94B413AAE15"
+        "OwnerKey" = "8:_D6CBC6547F076B0FC3DE44E0FFDAAF60"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B6E73FB566A833EDD080C94B413AAE15"
+        "OwnerKey" = "8:_D9D87A95565F4B1AB48CA5E64F0217A6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B6E73FB566A833EDD080C94B413AAE15"
+        "OwnerKey" = "8:_F79A76BE81C6D1516211FB7E8147636B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1001,6 +983,12 @@
         {
         "MsmKey" = "8:_D671144A58F64C8F9C1BD0A62D95CA0F"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D6CBC6547F076B0FC3DE44E0FFDAAF60"
+        "OwnerKey" = "8:_D9D87A95565F4B1AB48CA5E64F0217A6"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1173,6 +1161,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_F79A76BE81C6D1516211FB7E8147636B"
+        "OwnerKey" = "8:_D9D87A95565F4B1AB48CA5E64F0217A6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F79A76BE81C6D1516211FB7E8147636B"
+        "OwnerKey" = "8:_D6CBC6547F076B0FC3DE44E0FFDAAF60"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_F814A33426D6444C97339C34AF069E4E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1199,6 +1199,30 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_462414D755A64CBB830B17B62CE4DD9E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_D6CBC6547F076B0FC3DE44E0FFDAAF60"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_F79A76BE81C6D1516211FB7E8147636B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A2AC005EA2D6E4950CEB8C0CEC0CE8B3"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B6E73FB566A833EDD080C94B413AAE15"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -1330,24 +1354,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_1B6267AA1BB4ADD8170A3F7979F12106"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A4B7A07AAB3B812501FF448EDBCF5278"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_00CC9C3E99AA2668B97F929F99262147"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_2ECD7BDC9549568563DBAEB4BEB3E4D8"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1410,10 +1416,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.8.1"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.8.1 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.8.1"
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
                     }
                 }
             }
@@ -1446,37 +1452,6 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_00CC9C3E99AA2668B97F929F99262147"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:CefSharp, Version=86.0.241.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=x86"
-                "ScatterAssemblies"
-                {
-                    "_00CC9C3E99AA2668B97F929F99262147"
-                    {
-                    "Name" = "8:CefSharp.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:CefSharp.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_05B9627EB749453F9C3889C5BED88A6E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_00CF624918214A64A9EE9CF9A194837D"
             {
             "SourcePath" = "8:..\\GalaxyOrbit4Launcher\\bin\\x86\\Release\\locales\\hu.pak"
@@ -1632,7 +1607,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:CefSharp.BrowserSubprocess.Core, Version=86.0.241.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:CefSharp.BrowserSubprocess.Core, Version=87.1.132.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_0C6492CE29852C9FCC887BA493AE67AB"
@@ -1777,37 +1752,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_1B6267AA1BB4ADD8170A3F7979F12106"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:CefSharp.WinForms, Version=86.0.241.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=x86"
-                "ScatterAssemblies"
-                {
-                    "_1B6267AA1BB4ADD8170A3F7979F12106"
-                    {
-                    "Name" = "8:CefSharp.WinForms.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:CefSharp.WinForms.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_05B9627EB749453F9C3889C5BED88A6E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1F152AB2A021402DA6A45F068BCD26EF"
@@ -2385,26 +2329,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4520B9F592CE496FB6B5BCC93A382341"
-            {
-            "SourcePath" = "8:..\\GalaxyOrbit4Launcher\\bin\\x86\\Release\\CefSharp.WinForms.XML"
-            "TargetName" = "8:CefSharp.WinForms.XML"
-            "Tag" = "8:"
-            "Folder" = "8:_05B9627EB749453F9C3889C5BED88A6E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_461B49D2977847ED807E41D93C62C211"
             {
             "SourcePath" = "8:..\\GalaxyOrbit4Launcher\\client\\index.html"
@@ -2429,7 +2353,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:CefSharp.BrowserSubprocess, Version=86.0.241.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:CefSharp.BrowserSubprocess, Version=87.1.132.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
                     "_462414D755A64CBB830B17B62CE4DD9E"
@@ -3582,26 +3506,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9760F9DB2A5F47218348A71679900663"
-            {
-            "SourcePath" = "8:..\\GalaxyOrbit4Launcher\\bin\\x86\\Release\\CefSharp.Core.xml"
-            "TargetName" = "8:CefSharp.Core.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_05B9627EB749453F9C3889C5BED88A6E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_99AAD8E7F57E4A778EC24F11E82D2841"
             {
             "SourcePath" = "8:..\\GalaxyOrbit4Launcher\\bin\\x86\\Release\\snapshot_blob.bin"
@@ -3646,26 +3550,6 @@
             {
             "SourcePath" = "8:..\\GalaxyOrbit4Launcher\\bin\\x86\\Release\\libEGL.dll"
             "TargetName" = "8:libEGL.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_05B9627EB749453F9C3889C5BED88A6E"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9C0A87DBC30C415B915679EE83B6422C"
-            {
-            "SourcePath" = "8:..\\GalaxyOrbit4Launcher\\bin\\x86\\Release\\CefSharp.XML"
-            "TargetName" = "8:CefSharp.XML"
             "Tag" = "8:"
             "Folder" = "8:_05B9627EB749453F9C3889C5BED88A6E"
             "Condition" = "8:"
@@ -3773,20 +3657,20 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A4B7A07AAB3B812501FF448EDBCF5278"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A2AC005EA2D6E4950CEB8C0CEC0CE8B3"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:CefSharp.Core, Version=86.0.241.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=x86"
+            "AssemblyAsmDisplayName" = "8:CefSharp.Core.Runtime, Version=87.1.132.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=x86"
                 "ScatterAssemblies"
                 {
-                    "_A4B7A07AAB3B812501FF448EDBCF5278"
+                    "_A2AC005EA2D6E4950CEB8C0CEC0CE8B3"
                     {
-                    "Name" = "8:CefSharp.Core.dll"
+                    "Name" = "8:CefSharp.Core.Runtime.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:CefSharp.Core.dll"
+            "SourcePath" = "8:CefSharp.Core.Runtime.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_05B9627EB749453F9C3889C5BED88A6E"
@@ -4064,6 +3948,37 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B6E73FB566A833EDD080C94B413AAE15"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:CefSharp, Version=87.1.132.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_B6E73FB566A833EDD080C94B413AAE15"
+                    {
+                    "Name" = "8:CefSharp.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:CefSharp.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_05B9627EB749453F9C3889C5BED88A6E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B7EACFBA6B754B03B53218FCA5B29D13"
@@ -4537,6 +4452,37 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D6CBC6547F076B0FC3DE44E0FFDAAF60"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:CefSharp.WinForms, Version=87.1.132.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_D6CBC6547F076B0FC3DE44E0FFDAAF60"
+                    {
+                    "Name" = "8:CefSharp.WinForms.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:CefSharp.WinForms.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_05B9627EB749453F9C3889C5BED88A6E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D89BE810852D4FCFA1FB73942DBC5FD2"
@@ -5041,6 +4987,37 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F79A76BE81C6D1516211FB7E8147636B"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:CefSharp.Core, Version=87.1.132.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_F79A76BE81C6D1516211FB7E8147636B"
+                    {
+                    "Name" = "8:CefSharp.Core.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:CefSharp.Core.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_05B9627EB749453F9C3889C5BED88A6E"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F814A33426D6444C97339C34AF069E4E"
             {
             "SourcePath" = "8:..\\GalaxyOrbit4Launcher\\client\\asset\\res\\Repaircenter.swf"
@@ -5309,15 +5286,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:GalaxyOrbit4Installer"
-        "ProductCode" = "8:{0E242996-D402-4EB3-8C82-00DF14187C0F}"
-        "PackageCode" = "8:{76FADE02-F08F-4962-9F5B-AFAA8A772EFF}"
+        "ProductCode" = "8:{4860D3B2-ECB0-4AF3-B09A-637CD1271E1C}"
+        "PackageCode" = "8:{5C1B3B07-9471-4D89-9BD1-65AE4ECCB67F}"
         "UpgradeCode" = "8:{25902D8E-799C-4FDE-AAC9-607A8080EBC7}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.2"
+        "ProductVersion" = "8:1.0.8"
         "Manufacturer" = "8:Default Company Name"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

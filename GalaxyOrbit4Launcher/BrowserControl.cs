@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Management;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GalaxyOrbit4Launcher
