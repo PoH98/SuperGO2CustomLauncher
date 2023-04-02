@@ -15,14 +15,14 @@ namespace GO2FlashLauncher.Script.GameLogic
         private readonly DevToolsClient devtools;
         public Wheel(ChromiumWebBrowser browser)
         {
-            this.devtools = browser.GetBrowser().GetDevToolsClient();
+            devtools = browser.GetBrowser().GetDevToolsClient();
             host = browser.GetBrowser().GetHost();
         }
 
         public async Task<bool> GetIn(Bitmap bmp)
         {
-            var crop = await bmp.Crop(new Point(bmp.Width - 200, bmp.Height - 500), new Size(200, 500));
-            var point = crop.FindImage("Images\\wheelmenu.png", 0.7);
+            Bitmap crop = await bmp.Crop(new Point(bmp.Width - 200, bmp.Height - 500), new Size(200, 500));
+            Point? point = crop.FindImage("Images\\wheelmenu.png", 0.7);
             if (point == null)
             {
                 for (int x = 2; x < 4; x++)
@@ -68,7 +68,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 //no more spins
                 return SpinResult.NotEnoughVouchers;
             }
-            var point = bmp.FindImage("Images\\spin.jpg", 0.7);
+            Point? point = bmp.FindImage("Images\\spin.jpg", 0.7);
             if (point == null)
             {
                 point = bmp.FindImage("Images\\spin1.png", 0.7);
@@ -93,12 +93,12 @@ namespace GO2FlashLauncher.Script.GameLogic
                     }
                 }
             }
-            var result = SpinResult.Failed;
+            SpinResult result = SpinResult.Failed;
             if (point != null && spinWithVoucher)
             {
                 //have to use vouchers
                 resources.Vouchers -= 5;
-                var voucher = bmp.FindImage("Images\\vouchers.png", 0.7);
+                Point? voucher = bmp.FindImage("Images\\vouchers.png", 0.7);
                 if (voucher == null)
                 {
                     return result;
@@ -110,7 +110,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             else if (point != null)
             {
-                var skip = bmp.FindImage("Images\\spinskip.png", 0.7);
+                Point? skip = bmp.FindImage("Images\\spinskip.png", 0.7);
                 if (skip == null)
                 {
                     skip = bmp.FindImage("Images\\spinskip2.png", 0.7);
@@ -152,7 +152,7 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         public async Task<bool> EndSpin(Bitmap bmp)
         {
-            var point = bmp.FindImage("Images\\close18.png", 0.7);
+            Point? point = bmp.FindImage("Images\\close18.png", 0.7);
             if (point == null)
             {
                 point = bmp.FindImage("Images\\close19.png", 0.7);

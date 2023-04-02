@@ -43,5 +43,6 @@ namespace GO2FlashLauncher.Model
         public long ConstellationCount { get; set; } = 3;
         public int PlanetId { get; set; } = -1;
         public string PlanetName { get; set; }
+        public bool LoadPlanet { get; set; } = true;
     }
 }

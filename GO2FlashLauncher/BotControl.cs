@@ -13,7 +13,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -26,8 +25,8 @@ namespace GO2FlashLauncher
         private readonly string Host = "client.guerradenaves.lat";
         private readonly string url = "https://client.guerradenaves.lat/?userId={0}&sessionKey={1}";
         private readonly GO2HttpService httpService;
-        private PlanetSettings planet;
-        private BotSettings botSettings;
+        private readonly PlanetSettings planet;
+        private readonly BotSettings botSettings;
         private AbstractScript script;
         private DiscordSocketClient client;
         private BaseResources resources;
@@ -40,8 +39,10 @@ namespace GO2FlashLauncher
             this.client = client;
             if (!Cef.IsInitialized)
             {
-                var settings = new CefSettings();
-                settings.CachePath = Path.GetFullPath("cache");
+                CefSettings settings = new CefSettings
+                {
+                    CachePath = Path.GetFullPath("cache")
+                };
                 settings.CefCommandLineArgs.Add("enable-system-flash", "1");
                 settings.CefCommandLineArgs.Add("ppapi-flash-path", Path.Combine(Application.ExecutablePath.Remove(Application.ExecutablePath.LastIndexOf("\\")), "libs\\pepflashplayer.dll"));
                 settings.CefCommandLineArgs.Add("ppapi-flash-version", "28.0.0.137");
@@ -88,7 +89,7 @@ namespace GO2FlashLauncher
             }
             try
             {
-                var replyOnce = botSettings.PlanetSettings.IndexOf(planet) == 0;
+                bool replyOnce = botSettings.PlanetSettings.IndexOf(planet) == 0;
                 if (botSettings.DiscordUserID == ulong.Parse("0"))
                 {
                     if (replyOnce)
@@ -96,15 +97,13 @@ namespace GO2FlashLauncher
                         if (arg.Content.Trim() == "bind " + botSettings.DiscordSecret)
                         {
                             botSettings.DiscordUserID = arg.Author.Id;
-                            await arg.Channel.SendMessageAsync("User bind successfully");
-                        }
-                        else if (arg.Content.Trim() == "help")
-                        {
-                            await arg.Channel.SendMessageAsync("bind - bind you to this bot\nhelp - this message\n");
+                            _ = await arg.Channel.SendMessageAsync("User bind successfully");
                         }
                         else
                         {
-                            await arg.Channel.SendMessageAsync("You are not authorized to use this bot. Plase use \"/bind <secret>\" to bind your user with this bot");
+                            _ = arg.Content.Trim() == "help"
+                                ? await arg.Channel.SendMessageAsync("bind - bind you to this bot\nhelp - this message\n")
+                                : await arg.Channel.SendMessageAsync("You are not authorized to use this bot. Plase use \"/bind <secret>\" to bind your user with this bot");
                         }
                     }
                 }
@@ -114,7 +113,7 @@ namespace GO2FlashLauncher
                     {
                         if (replyOnce)
                         {
-                            await arg.Channel.SendMessageAsync("You are not authorized to use this bot.");
+                            _ = await arg.Channel.SendMessageAsync("You are not authorized to use this bot.");
                         }
 
                     }
@@ -125,7 +124,7 @@ namespace GO2FlashLauncher
                             case "help":
                                 if (replyOnce)
                                 {
-                                    await arg.Channel.SendMessageAsync(
+                                    _ = await arg.Channel.SendMessageAsync(
                                         "bind <secret>- bind you to this bot\n" +
                                         "help - this message\n" +
                                         "list - list all planet name\n" +
@@ -141,71 +140,71 @@ namespace GO2FlashLauncher
                                 if (replyOnce)
                                 {
                                     StringBuilder sb = new StringBuilder();
-                                    foreach (var planet in botSettings.PlanetSettings)
+                                    foreach (PlanetSettings planet in botSettings.PlanetSettings)
                                     {
-                                        sb.AppendLine(planet.PlanetName);
+                                        _ = sb.AppendLine(planet.PlanetName);
                                     }
-                                    await arg.Channel.SendMessageAsync("Listed planet list: \n" + sb.ToString());
+                                    _ = await arg.Channel.SendMessageAsync("Listed planet list: \n" + sb.ToString());
                                 }
                                 break;
                             default:
                                 if (arg.Content.Trim() == "resource " + planet.PlanetName)
                                 {
-                                    await arg.Channel.SendMessageAsync("Current planet resources: \n" + script.Resources.ToString());
+                                    _ = await arg.Channel.SendMessageAsync("Current planet resources: \n" + script.Resources.ToString());
                                 }
                                 else if (arg.Content.Trim() == "gain " + planet.PlanetName)
                                 {
                                     if (script == null || !script.Running)
                                     {
-                                        await arg.Channel.SendMessageAsync("Bot is not started.");
+                                        _ = await arg.Channel.SendMessageAsync("Bot is not started.");
                                     }
                                     if (resources == null)
                                     {
-                                        await arg.Channel.SendMessageAsync("Bot not loaded resources details yet.");
+                                        _ = await arg.Channel.SendMessageAsync("Bot not loaded resources details yet.");
                                     }
-                                    await arg.Channel.SendMessageAsync("Current planet gained resources: \nMetal:" + (script.Resources.Metal - resources.Metal) +
+                                    _ = await arg.Channel.SendMessageAsync("Current planet gained resources: \nMetal:" + (script.Resources.Metal - resources.Metal) +
                                         "\nHE3: " + (script.Resources.HE3 - resources.HE3) + "\nGold: " + (script.Resources.Gold - resources.Gold));
                                 }
                                 else if (arg.Content.Trim().Contains("start " + planet.PlanetName))
                                 {
-                                    metroToggle1.Invoke((MethodInvoker)delegate ()
+                                    _ = metroToggle1.Invoke((MethodInvoker)delegate ()
                                     {
                                         metroToggle1.Checked = true;
                                     });
-                                    await arg.Channel.SendMessageAsync("Bot Started");
+                                    _ = await arg.Channel.SendMessageAsync("Bot Started");
                                 }
                                 else if (arg.Content.Trim().Contains("stop " + planet.PlanetName))
                                 {
-                                    metroToggle1.Invoke((MethodInvoker)delegate ()
+                                    _ = metroToggle1.Invoke((MethodInvoker)delegate ()
                                     {
                                         metroToggle1.Checked = false;
                                     });
-                                    await arg.Channel.SendMessageAsync("Bot Stopped");
+                                    _ = await arg.Channel.SendMessageAsync("Bot Stopped");
                                 }
                                 else if (arg.Content.Trim().Contains("refresh " + planet.PlanetName))
                                 {
-                                    metroButton2.Invoke((MethodInvoker)delegate
+                                    _ = metroButton2.Invoke((MethodInvoker)delegate
                                     {
                                         metroButton2.PerformClick();
                                     });
-                                    await arg.Channel.SendMessageAsync("Refreshing browser...");
+                                    _ = await arg.Channel.SendMessageAsync("Refreshing browser...");
                                 }
                                 else if (arg.Content.Trim().Contains("img " + planet.PlanetName))
                                 {
                                     if (script == null)
                                     {
-                                        await arg.Channel.SendMessageAsync("Bot not started");
+                                        _ = await arg.Channel.SendMessageAsync("Bot not started");
                                         return;
                                     }
                                     if (script.lastbmp == null)
                                     {
-                                        await arg.Channel.SendMessageAsync("Bot unable to fetch screenshot now, please try again later");
+                                        _ = await arg.Channel.SendMessageAsync("Bot unable to fetch screenshot now, please try again later");
                                         return;
                                     }
                                     using (MemoryStream stream = new MemoryStream())
                                     {
                                         script.lastbmp.Save(stream, ImageFormat.Png);
-                                        await arg.Channel.SendFileAsync(stream, "screenshot.png");
+                                        _ = await arg.Channel.SendFileAsync(stream, "screenshot.png");
                                     }
                                 }
                                 break;
@@ -215,7 +214,7 @@ namespace GO2FlashLauncher
             }
             catch (Exception ex)
             {
-                await arg.Channel.SendMessageAsync(ex.Message);
+                _ = await arg.Channel.SendMessageAsync(ex.Message);
             }
 
         }
@@ -231,28 +230,34 @@ namespace GO2FlashLauncher
 
         private async void BotControl_Load(object sender, EventArgs e)
         {
-            var alphaContext = new RequestContextSettings
+            if (planet.LoadPlanet)
             {
-                IgnoreCertificateErrors = true,
-                PersistUserPreferences = true,
-                PersistSessionCookies = true,
-                CachePath = Path.GetFullPath("cache"),
-            };
-            var iframeUrl = await httpService.GetIFrameUrl(planet.PlanetId);
-            chrome = new ChromiumWebBrowser(string.Format(url, iframeUrl.Data.UserId, iframeUrl.Data.SessionKey));
-            chrome.RequestContext = new RequestContext(alphaContext);
-            chrome.FocusHandler = null;
-            await Cef.UIThreadTaskFactory.StartNew(delegate
-            {
-                chrome.RequestContext.SetPreference("profile.default_content_setting_values.plugins", 1, out string error);
-            });
-            foreach (var constellations in Enum.GetNames(typeof(Constellations)))
-            {
-                metroComboBox5.Items.Add(constellations);
+                RequestContextSettings alphaContext = new RequestContextSettings
+                {
+                    IgnoreCertificateErrors = true,
+                    PersistUserPreferences = true,
+                    PersistSessionCookies = true,
+                    CachePath = Path.GetFullPath("cache"),
+                };
+                Model.SGO2.GetFrameResponse iframeUrl = await httpService.GetIFrameUrl(planet.PlanetId);
+                chrome = new ChromiumWebBrowser(string.Format(url, iframeUrl.Data.UserId, iframeUrl.Data.SessionKey))
+                {
+                    RequestContext = new RequestContext(alphaContext),
+                    FocusHandler = null
+                };
+                await Cef.UIThreadTaskFactory.StartNew(delegate
+                {
+                    _ = chrome.RequestContext.SetPreference("profile.default_content_setting_values.plugins", 1, out string error);
+                });
+                chrome.MenuHandler = new CustomMenuHandler();
+                chrome.Dock = DockStyle.Fill;
+                ChromeContainer.Controls.Add(chrome);
+                haltLabel.Visible = false;
             }
-            chrome.MenuHandler = new CustomMenuHandler();
-            chrome.Dock = DockStyle.Fill;
-            ChromeContainer.Controls.Add(chrome);
+            foreach (string constellations in Enum.GetNames(typeof(Constellations)))
+            {
+                _ = metroComboBox5.Items.Add(constellations);
+            }
             metroComboBox1.SelectedIndex = planet.Instance - 1;
             numericUpDown1.Value = planet.InstanceHitCount;
             textBox2.Text = planet.HaltOn.ToString();
@@ -293,28 +298,28 @@ namespace GO2FlashLauncher
 
         public Control GenerateLeftFleetTabs(int type)
         {
-            var tabCount = planet.Fleets.Count / 9;
-            var t = new MetroTabPage
+            int tabCount = planet.Fleets.Count / 9;
+            MetroTabPage t = new MetroTabPage
             {
                 Name = "FleetTab" + tabCount,
                 Text = "Fleet Page " + tabCount,
                 Theme = MetroThemeStyle.Dark
             };
-            var p = new FlowLayoutPanel()
+            FlowLayoutPanel p = new FlowLayoutPanel()
             {
                 Dock = DockStyle.Fill,
                 BackColor = Color.Transparent
             };
-            for (int y = (planet.Fleets.Count - planet.Fleets.Count % 9); y < planet.Fleets.Count; y++)
+            for (int y = planet.Fleets.Count - (planet.Fleets.Count % 9); y < planet.Fleets.Count; y++)
             {
-                var group = new GroupBox
+                GroupBox group = new GroupBox
                 {
                     Text = planet.Fleets[y].Name,
                     Height = 45,
                     Width = 170,
                     ForeColor = Color.White
                 };
-                var input = new NumericUpDown
+                NumericUpDown input = new NumericUpDown
                 {
                     Name = planet.Fleets[y].Name + "_" + type,
                     Top = 15,
@@ -337,7 +342,7 @@ namespace GO2FlashLauncher
                         input.Value = planet.Fleets[y].ConstellationOrder;
                         break;
                 }
-                var removeFleet = new MetroButton
+                MetroButton removeFleet = new MetroButton
                 {
                     Name = "btnRem_" + planet.Fleets[y].Name,
                     Text = "🗙",
@@ -359,16 +364,16 @@ namespace GO2FlashLauncher
 
         private void RemoveFleet_Click(object sender, EventArgs e)
         {
-            var name = (sender as MetroButton).Name.Replace("btnRem_", "");
-            var data = planet.Fleets.First(x => x.Name == name);
-            planet.Fleets.Remove(data);
+            string name = (sender as MetroButton).Name.Replace("btnRem_", "");
+            Fleet data = planet.Fleets.First(x => x.Name == name);
+            _ = planet.Fleets.Remove(data);
             RenderFleets();
         }
 
         private void Input_ValueChanged(object sender, EventArgs e)
         {
-            var name = string.Join("_", (sender as NumericUpDown).Name.Split('_').Take((sender as NumericUpDown).Name.Split('_').Length - 1));
-            var type = Convert.ToInt32((sender as NumericUpDown).Name.Split('_').Last());
+            string name = string.Join("_", (sender as NumericUpDown).Name.Split('_').Take((sender as NumericUpDown).Name.Split('_').Length - 1));
+            int type = Convert.ToInt32((sender as NumericUpDown).Name.Split('_').Last());
             switch (type)
             {
                 case 0:
@@ -393,27 +398,27 @@ namespace GO2FlashLauncher
             int x = 0;
             for (x = 0; x < tabs; x++)
             {
-                var tab = new MetroTabPage
+                MetroTabPage tab = new MetroTabPage
                 {
                     Name = "FleetTab" + x,
                     Text = "Fleet Page " + x,
                     Theme = MetroThemeStyle.Dark
                 };
-                var panel = new FlowLayoutPanel()
+                FlowLayoutPanel panel = new FlowLayoutPanel()
                 {
                     Dock = DockStyle.Fill,
                     BackColor = Color.Transparent
                 };
                 for (int y = 9 * x; y < ((x + 1) * 9); y++)
                 {
-                    var group = new GroupBox
+                    GroupBox group = new GroupBox
                     {
                         Text = planet.Fleets[y].Name,
                         Height = 45,
                         Width = 170,
                         ForeColor = Color.White
                     };
-                    var input = new NumericUpDown
+                    NumericUpDown input = new NumericUpDown
                     {
                         Name = planet.Fleets[y].Name + "_" + type,
                         Top = 15,
@@ -436,7 +441,7 @@ namespace GO2FlashLauncher
                             input.Value = planet.Fleets[y].ConstellationOrder;
                             break;
                     }
-                    var removeFleet = new MetroButton
+                    MetroButton removeFleet = new MetroButton
                     {
                         Name = "btnRem_" + planet.Fleets[y].Name,
                         Text = "🗙",
@@ -464,12 +469,17 @@ namespace GO2FlashLauncher
 
         private async void metroButton2_Click(object sender, EventArgs e)
         {
-            var iframeUrl = await httpService.GetIFrameUrl(planet.PlanetId);
+            Model.SGO2.GetFrameResponse iframeUrl = await httpService.GetIFrameUrl(planet.PlanetId);
             chrome.Load(string.Format(url, iframeUrl.Data.UserId, iframeUrl.Data.SessionKey));
         }
 
         private void metroToggle1_CheckedChanged(object sender, EventArgs e)
         {
+            if(chrome == null)
+            {
+                metroToggle1.Checked = false;
+                return;
+            }
             if (metroToggle1.Checked)
             {
                 if (script == null || !script.Running)
@@ -480,6 +490,7 @@ namespace GO2FlashLauncher
                     script = new InstanceScript(botSettings, planet, client);
                     _ = script.Run(chrome, planet.PlanetId, httpService);
                     chrome.Enabled = false;
+                    planet.RunBot = true;
                 }
             }
             else
@@ -490,6 +501,7 @@ namespace GO2FlashLauncher
                 script = null;
                 resources = null;
                 chrome.Enabled = true;
+                planet.RunBot = false;
             }
         }
 
@@ -508,7 +520,7 @@ namespace GO2FlashLauncher
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            planet.HaltOn = int.Parse(textBox2.Text.Replace(".0", "").Replace(".",""));
+            planet.HaltOn = int.Parse(textBox2.Text.Replace(".0", "").Replace(".", ""));
         }
 
         private void numericOnly(object sender, KeyPressEventArgs e)
@@ -573,8 +585,10 @@ namespace GO2FlashLauncher
         {
             if (resources == null && script != null && script.Running)
             {
-                if(script.Resources.Metal > 0 || script.Resources.HE3 > 0 || script.Resources.Gold > 0 || script.Resources.MP > 0 || script.Resources.Vouchers > 0)
+                if (script.Resources.Metal > 0 || script.Resources.HE3 > 0 || script.Resources.Gold > 0 || script.Resources.MP > 0 || script.Resources.Vouchers > 0)
+                {
                     resources = script.Resources;
+                }
             }
         }
 
@@ -602,13 +616,62 @@ namespace GO2FlashLauncher
         {
             chrome.ShowDevTools();
         }
+
+        private async void metroButton4_Click(object sender, EventArgs e)
+        {
+            if(chrome != null)
+            {
+                metroToggle1.Checked = false;
+                Logger.LogInfo("Bot Stopped");
+                Logger.LogInfo("Unlocked browser for botting...");
+                if(script != null && script.Running)
+                {
+                    script.Stop();
+                    script = null;
+                    resources = null;
+                }
+                await Cef.UIThreadTaskFactory.StartNew(delegate
+                {
+                    chrome.DestroyWindow();
+                });
+                ChromeContainer.Controls.Remove(chrome);
+                chrome = null;
+                planet.LoadPlanet = false;
+                haltLabel.Visible = true;
+            }
+            else
+            {
+                RequestContextSettings alphaContext = new RequestContextSettings
+                {
+                    IgnoreCertificateErrors = true,
+                    PersistUserPreferences = true,
+                    PersistSessionCookies = true,
+                    CachePath = Path.GetFullPath("cache"),
+                };
+                Model.SGO2.GetFrameResponse iframeUrl = await httpService.GetIFrameUrl(planet.PlanetId);
+                chrome = new ChromiumWebBrowser(string.Format(url, iframeUrl.Data.UserId, iframeUrl.Data.SessionKey))
+                {
+                    RequestContext = new RequestContext(alphaContext),
+                    FocusHandler = null
+                };
+                await Cef.UIThreadTaskFactory.StartNew(delegate
+                {
+                    _ = chrome.RequestContext.SetPreference("profile.default_content_setting_values.plugins", 1, out string error);
+                });
+                chrome.MenuHandler = new CustomMenuHandler();
+                chrome.Dock = DockStyle.Fill;
+                ChromeContainer.Controls.Add(chrome);
+                planet.LoadPlanet = true;
+                haltLabel.Visible = false;
+            }
+        }
     }
 
     public class CustomMenuHandler : IContextMenuHandler
     {
         public void OnBeforeContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model)
         {
-            model.Clear();
+            _ = model.Clear();
         }
 
         public bool OnContextMenuCommand(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, CefMenuCommand commandId, CefEventFlags eventFlags)

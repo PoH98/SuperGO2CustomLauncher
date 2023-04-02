@@ -17,51 +17,27 @@ namespace GO2FlashLauncher.Script
         protected DateTime BotStartTime;
         public bool IsReloading { get; set; }
         public Bitmap lastbmp { get; set; }
-        private CancellationTokenSource CancellationToken = new CancellationTokenSource();
+        private readonly CancellationTokenSource CancellationToken = new CancellationTokenSource();
 
-        public BaseResources Resources
-        {
-            get
-            {
-                return resources;
-            }
-        }
-        public TimeSpan BotRuntime
-        {
-            get
-            {
-                return DateTime.Now - BotStartTime;
-            }
-        }
+        public BaseResources Resources => resources;
+        public TimeSpan BotRuntime => DateTime.Now - BotStartTime;
         public AbstractScript(BotSettings settings, PlanetSettings planetSettings)
         {
-            this.botSettings = settings;
+            botSettings = settings;
             this.planetSettings = planetSettings;
         }
 
         protected AbstractScript(BotSettings settings)
         {
-            this.botSettings = settings;
+            botSettings = settings;
         }
 
         /// <summary>
         /// Check if script is running
         /// </summary>
-        public bool Running
-        {
-            get
-            {
-                return IsRunning;
-            }
-        }
+        public bool Running => IsRunning;
 
-        protected CancellationToken Cancellation
-        {
-            get
-            {
-                return this.CancellationToken.Token;
-            }
-        }
+        protected CancellationToken Cancellation => CancellationToken.Token;
         /// <summary>
         /// Main loop of script
         /// </summary>

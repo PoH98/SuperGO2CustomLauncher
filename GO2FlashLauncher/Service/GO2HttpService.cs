@@ -59,14 +59,14 @@ namespace GO2FlashLauncher.Service
         public async Task<GetFrameResponse> GetIFrameUrl(int id)
         {
             HttpResponseMessage response = await httpClient.GetAsync(Host + "/account/play/user/" + id);
-            var result = JsonConvert.DeserializeObject<GetFrameResponse>(await response.Content.ReadAsStringAsync());
+            GetFrameResponse result = JsonConvert.DeserializeObject<GetFrameResponse>(await response.Content.ReadAsStringAsync());
             return result;
         }
 
         public async Task<GetPlanetResponse> GetPlanets()
         {
             HttpResponseMessage response = await httpClient.GetAsync(Host + "/account/list/user");
-            var result = JsonConvert.DeserializeObject<GetPlanetResponse>(await response.Content.ReadAsStringAsync());
+            GetPlanetResponse result = JsonConvert.DeserializeObject<GetPlanetResponse>(await response.Content.ReadAsStringAsync());
             return result;
         }
     }

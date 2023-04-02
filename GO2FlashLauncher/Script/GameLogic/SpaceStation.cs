@@ -23,7 +23,7 @@ namespace GO2FlashLauncher.Script.GameLogic
         public SpaceStation(ChromiumWebBrowser browser)
         {
             host = browser.GetBrowser().GetHost();
-            this.devtools = browser.GetBrowser().GetDevToolsClient();
+            devtools = browser.GetBrowser().GetDevToolsClient();
             ocr = new Tesseract("libs", "eng", OcrEngineMode.TesseractLstmCombined);
             ocr.SetVariable("tessedit_char_whitelist", "1234567890");
         }
@@ -32,7 +32,7 @@ namespace GO2FlashLauncher.Script.GameLogic
         {
             for (int x = 0; x < 10; x++)
             {
-                var result = bmp.FindImage(Path.GetFullPath("Images\\spacebase.png"), 0.8);
+                Point? result = bmp.FindImage(Path.GetFullPath("Images\\spacebase.png"), 0.8);
                 if (result == null)
                 {
                     await Task.Delay(10);
@@ -49,7 +49,7 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         public async Task<Point?> Locate(Bitmap bmp)
         {
-            var result = bmp.FindImage(Path.GetFullPath("Images\\station.png"), 0.8);
+            Point? result = bmp.FindImage(Path.GetFullPath("Images\\station.png"), 0.8);
             if (result == null)
             {
                 for (int i = 2; i < 8; i++)
@@ -109,7 +109,7 @@ namespace GO2FlashLauncher.Script.GameLogic
         {
             //reduce search size
             bmp = await bmp.Crop(new Point(0, 0), new Size(bmp.Width, bmp.Height - 190));
-            var result = bmp.FindImage(Path.GetFullPath("Images\\instance.png"), 0.8);
+            Point? result = bmp.FindImage(Path.GetFullPath("Images\\instance.png"), 0.8);
             if (result == null)
             {
                 await Task.Delay(10);
@@ -132,13 +132,13 @@ namespace GO2FlashLauncher.Script.GameLogic
                     bmp = await devtools.Screenshot();
                 }
                 //read OCR restrict count left
-                var ocrPoint = bmp.FindImage("Images\\restrictRemaining.png", 0.7);
+                Point? ocrPoint = bmp.FindImage("Images\\restrictRemaining.png", 0.7);
                 if (ocrPoint != null)
                 {
-                    var crop = await bmp.Crop(new Point(ocrPoint.Value.X + 61, ocrPoint.Value.Y), new Size(15, 20));
+                    Bitmap crop = await bmp.Crop(new Point(ocrPoint.Value.X + 61, ocrPoint.Value.Y), new Size(15, 20));
                     ocr.SetImage(crop.ToImage<Gray, byte>());
-                    var str = ocr.GetUTF8Text();
-                    int.TryParse(str, out int count);
+                    string str = ocr.GetUTF8Text();
+                    _ = int.TryParse(str, out int count);
                     if (count == 0)
                     {
                         throw new ArgumentException("Already out of chance");
@@ -170,7 +170,7 @@ namespace GO2FlashLauncher.Script.GameLogic
         {
             //reduce search size
             bmp = await bmp.Crop(new Point(0, 0), new Size(bmp.Width, bmp.Height - 190));
-            var result = bmp.FindImage(Path.GetFullPath("Images\\instance.png"), 0.8);
+            Point? result = bmp.FindImage(Path.GetFullPath("Images\\instance.png"), 0.8);
             if (result == null)
             {
                 await Task.Delay(10);
@@ -215,7 +215,7 @@ namespace GO2FlashLauncher.Script.GameLogic
         {
             //reduce search size
             bmp = await bmp.Crop(new Point(0, 0), new Size(bmp.Width, bmp.Height - 190));
-            var result = bmp.FindImage(Path.GetFullPath("Images\\instance.png"), 0.8);
+            Point? result = bmp.FindImage(Path.GetFullPath("Images\\instance.png"), 0.8);
             if (result == null)
             {
                 await Task.Delay(10);
@@ -251,7 +251,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                         await Task.Delay(200);
                         try
                         {
-                            var constel = constellationCreator.Create(constellations, devtools, host);
+                            AbstractConstellation constel = constellationCreator.Create(constellations, devtools, host);
                             await constel.EnterStage(stage);
                             return InstanceEnterState.IncreaseFleet;
                         }

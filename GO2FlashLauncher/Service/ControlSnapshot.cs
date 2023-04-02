@@ -13,7 +13,7 @@ namespace GO2FlashLauncher.Service
             int width = 0, height = 0;
             IntPtr hwnd = IntPtr.Zero;
             IntPtr dc = IntPtr.Zero;
-            c.Invoke(new MethodInvoker(() =>
+            _ = c.Invoke(new MethodInvoker(() =>
             {
                 width = c.ClientSize.Width;
                 height = c.ClientSize.Height;
@@ -30,7 +30,7 @@ namespace GO2FlashLauncher.Service
                         IntPtr bdc = g.GetHdc();
                         try
                         {
-                            BitBlt(bdc, 0, 0, width, height, dc, 0, 0, TernaryRasterOperations.SRCCOPY);
+                            _ = BitBlt(bdc, 0, 0, width, height, dc, 0, 0, TernaryRasterOperations.SRCCOPY);
                         }
                         finally
                         {
@@ -40,7 +40,7 @@ namespace GO2FlashLauncher.Service
                 }
                 finally
                 {
-                    ReleaseDC(hwnd, dc);
+                    _ = ReleaseDC(hwnd, dc);
                 }
             }
             return bmp;

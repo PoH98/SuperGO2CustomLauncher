@@ -39,8 +39,8 @@ namespace GO2FlashLauncher.Script
                 {
                     await Task.Delay(1000);
                 }
-                var devTools = browser.GetBrowser().GetDevToolsClient();
-                var host = browser.GetBrowser().GetHost();
+                CefSharp.DevTools.DevToolsClient devTools = browser.GetBrowser().GetDevToolsClient();
+                IBrowserHost host = browser.GetBrowser().GetHost();
                 host.SetFocus(false);
                 try
                 {
@@ -86,7 +86,7 @@ namespace GO2FlashLauncher.Script
                             if (DateTime.Now.ToUniversalTime().Date != now.ToUniversalTime().Date)
                             {
                                 Logger.LogInfo("Refreshing game to avoid slow game");
-                                var url = await httpService.GetIFrameUrl(userID);
+                                Model.SGO2.GetFrameResponse url = await httpService.GetIFrameUrl(userID);
                                 browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                 mainScreenLocated = false;
                                 spaceStationLocated = false;
@@ -103,7 +103,7 @@ namespace GO2FlashLauncher.Script
                             if ((DateTime.Now - lastRefresh).TotalHours > 12)
                             {
                                 Logger.LogInfo("Refreshing game to avoid slow game");
-                                var url = await httpService.GetIFrameUrl(userID);
+                                Model.SGO2.GetFrameResponse url = await httpService.GetIFrameUrl(userID);
                                 browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                 mainScreenLocated = false;
                                 spaceStationLocated = false;
@@ -115,7 +115,7 @@ namespace GO2FlashLauncher.Script
                             //error too much
                             if (error > 5)
                             {
-                                var lagging = await devTools.Screenshot();
+                                Bitmap lagging = await devTools.Screenshot();
                                 if (error > 20)
                                 {
                                     //start over again
@@ -125,17 +125,17 @@ namespace GO2FlashLauncher.Script
                                 }
                             }
                             //Screenshot browser
-                            var bmp = await devTools.Screenshot();
+                            Bitmap bmp = await devTools.Screenshot();
                             await Task.Delay(100);
                             if (m.DetectDisconnect(bmp))
                             {
                                 if (user != null)
                                 {
-                                    await user.SendMessageAsync("Game disconnected, reconnecting...");
+                                    _ = await user.SendMessageAsync("Game disconnected, reconnecting...");
                                 }
                                 Logger.LogWarning("Disconnected, reconnect after 5 sec...");
                                 await Task.Delay(new TimeSpan(0, 0, 5));
-                                var url = await httpService.GetIFrameUrl(userID);
+                                Model.SGO2.GetFrameResponse url = await httpService.GetIFrameUrl(userID);
                                 browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                 mainScreenLocated = false;
                                 spaceStationLocated = false;
@@ -144,38 +144,44 @@ namespace GO2FlashLauncher.Script
                                 lastRefresh = DateTime.Now;
                                 continue;
                             }
-                            var crop = await bmp.Crop(new Point(0, 0), new Size((int)Math.Round((double)bmp.Width / 2), (int)Math.Round((double)bmp.Height / 2)));
-                            var underAttack = bmp.FindImage("Images\\underattack.png", 0.8);
-                            if(underAttack == null)
+                            Bitmap crop = await bmp.Crop(new Point(0, 0), new Size((int)Math.Round((double)bmp.Width / 2), (int)Math.Round((double)bmp.Height / 2)));
+                            Point? underAttack = bmp.FindImage("Images\\underattack.png", 0.8);
+                            if (underAttack == null)
                             {
                                 underAttack = bmp.FindImage("Images\\underattack2.png", 0.8);
                             }
                             if (underAttack.HasValue)
                             {
                                 if (user != null)
-                                    await user.SendMessageAsync("You are under attack!");
-                                await i.OpenInventory(bmp);
+                                {
+                                    _ = await user.SendMessageAsync("You are under attack!");
+                                }
+
+                                _ = await i.OpenInventory(bmp);
                                 await Task.Delay(500);
                                 bmp = await devTools.Screenshot();
-                                if(!await i.OpenTruce(bmp))
+                                if (!await i.OpenTruce(bmp))
                                 {
                                     if (user != null)
-                                        await user.SendMessageAsync("Truce failed to open! Danger!");
+                                    {
+                                        _ = await user.SendMessageAsync("Truce failed to open! Danger!");
+                                    }
+
                                     Logger.LogError("Unable to open truce.");
                                 }
                                 bmp = await devTools.Screenshot();
-                                await b.CloseButtons(bmp);
+                                _ = await b.CloseButtons(bmp);
                                 await Task.Delay(50);
                                 //click away the warning
                                 await host.LeftClick(underAttack.Value, 100);
                                 await Task.Delay(100);
                                 bmp = await devTools.Screenshot();
-                                await b.CloseButtons(bmp);
+                                _ = await b.CloseButtons(bmp);
                             }
                             //check for friendrequest
                             if (bmp.FindImageGrayscaled("Images\\friendrequesttext.png", 0.7).HasValue)
                             {
-                                var friendClose = bmp.FindImage("Images\\friendrequestclose.png", 0.8);
+                                Point? friendClose = bmp.FindImage("Images\\friendrequestclose.png", 0.8);
                                 if (friendClose.HasValue)
                                 {
                                     await host.LeftClick(friendClose.Value, 100);
@@ -194,11 +200,11 @@ namespace GO2FlashLauncher.Script
                                         if (x <= 1)
                                         {
                                             //don't click home base
-                                            await m.Locate(bmp, false);
+                                            _ = await m.Locate(bmp, false);
                                         }
                                         else
                                         {
-                                            await m.Locate(bmp);
+                                            _ = await m.Locate(bmp);
                                         }
                                         await Task.Delay(100);
                                     }
@@ -240,10 +246,10 @@ namespace GO2FlashLauncher.Script
                                 if (await m.Locate(bmp))
                                 {
                                     await Task.Delay(botSettings.Delays / 2);
-                                    await m.LocateWarehouse(bmp);
+                                    _ = await m.LocateWarehouse(bmp);
                                     await Task.Delay(botSettings.Delays);
                                     bmp = await devTools.Screenshot();
-                                    await m.Collect(bmp);
+                                    _ = await m.Collect(bmp);
                                     collectedResources = true;
                                     lastCollectTime = DateTime.Now;
                                 }
@@ -256,7 +262,7 @@ namespace GO2FlashLauncher.Script
                                 Logger.LogInfo("Going to space station");
                                 await Task.Delay(botSettings.Delays / 4 * 3);
                                 bmp = await devTools.Screenshot();
-                                var spaceStationLocation = await s.Locate(bmp);
+                                Point? spaceStationLocation = await s.Locate(bmp);
                                 if (spaceStationLocation.HasValue)
                                 {
                                     Logger.LogInfo("Space station located");
@@ -294,7 +300,7 @@ namespace GO2FlashLauncher.Script
                                                 if (currentTrialLv <= planetSettings.TrialMaxLv && currentTrialLv < 10 && !trialStucked)
                                                 {
                                                     Logger.LogInfo("Entering Trial");
-                                                    var r = await s.EnterTrial(bmp);
+                                                    (InstanceEnterState, int) r = await s.EnterTrial(bmp);
                                                     state = r.Item1;
                                                     if (currentTrialLv == r.Item2 && state == InstanceEnterState.IncreaseFleet)
                                                     {
@@ -302,7 +308,7 @@ namespace GO2FlashLauncher.Script
                                                         trialStucked = true;
                                                         Logger.LogWarning("Seems like you can't win this Trial " + r.Item2 + ", skipping...");
                                                         bmp = await devTools.Screenshot();
-                                                        await b.CloseButtons(bmp);
+                                                        _ = await b.CloseButtons(bmp);
                                                         await Task.Delay(botSettings.Delays);
                                                         inStage = false;
                                                         spaceStationLocated = false;
@@ -313,7 +319,7 @@ namespace GO2FlashLauncher.Script
                                                         currentTrialLv = r.Item2;
                                                         Logger.LogWarning("Trial " + r.Item2 + " is not attackable, skipping...");
                                                         bmp = await devTools.Screenshot();
-                                                        await b.CloseButtons(bmp);
+                                                        _ = await b.CloseButtons(bmp);
                                                         await Task.Delay(botSettings.Delays);
                                                         inStage = false;
                                                         spaceStationLocated = false;
@@ -329,7 +335,7 @@ namespace GO2FlashLauncher.Script
                                                     if (state == InstanceEnterState.InstanceCompleted)
                                                     {
                                                         Logger.LogInfo("Trial completed!");
-                                                        await b.CloseButtons(bmp);
+                                                        _ = await b.CloseButtons(bmp);
                                                         await Task.Delay(botSettings.Delays);
                                                         inStage = false;
                                                         spaceStationLocated = false;
@@ -370,7 +376,7 @@ namespace GO2FlashLauncher.Script
                                                             currentRestrictCount = 3;
                                                             Logger.LogInfo("Restrict already out of chances today, skipping...");
                                                             bmp = await devTools.Screenshot();
-                                                            await b.CloseButtons(bmp);
+                                                            _ = await b.CloseButtons(bmp);
                                                             await Task.Delay(botSettings.Delays);
                                                             runningRestrict = false;
                                                             inStage = false;
@@ -415,7 +421,7 @@ namespace GO2FlashLauncher.Script
                                                         {
                                                             Logger.LogInfo("Out of items to enter Constellations, skipping...");
                                                             bmp = await devTools.Screenshot();
-                                                            await b.CloseButtons(bmp);
+                                                            _ = await b.CloseButtons(bmp);
                                                             await Task.Delay(botSettings.Delays);
                                                             runningConstellation = false;
                                                             inStage = false;
@@ -459,14 +465,17 @@ namespace GO2FlashLauncher.Script
                                                     {
                                                         //no HE3
                                                         if (user != null)
-                                                            await user.SendMessageAsync("Out of HE3, going to halt attack!");
+                                                        {
+                                                            _ = await user.SendMessageAsync("Out of HE3, going to halt attack!");
+                                                        }
+
                                                         Logger.LogWarning("Out of HE3! Halt attack now!");
                                                         inStage = false;
                                                         mainScreenLocated = false;
                                                         spaceStationLocated = false;
                                                         try
                                                         {
-                                                            var url = await httpService.GetIFrameUrl(userID);
+                                                            Model.SGO2.GetFrameResponse url = await httpService.GetIFrameUrl(userID);
                                                             browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                             lastRefresh = DateTime.Now;
                                                         }
@@ -493,7 +502,7 @@ namespace GO2FlashLauncher.Script
                                                             spaceStationLocated = false;
                                                             mainScreenLocated = false;
                                                             inStage = false;
-                                                            var url = await httpService.GetIFrameUrl(userID);
+                                                            Model.SGO2.GetFrameResponse url = await httpService.GetIFrameUrl(userID);
                                                             browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                             lastRefresh = DateTime.Now;
                                                             break;
@@ -506,7 +515,7 @@ namespace GO2FlashLauncher.Script
                                                     }
                                                     await Task.Delay(botSettings.Delays - 100);
                                                     bmp = await devTools.Screenshot();
-                                                    var instanceLv = 1;
+                                                    int instanceLv = 1;
                                                     switch (instanceType)
                                                     {
                                                         case SelectFleetType.Instance:
@@ -538,7 +547,7 @@ namespace GO2FlashLauncher.Script
                                                             spaceStationLocated = false;
                                                             mainScreenLocated = false;
                                                             inStage = false;
-                                                            var url = await httpService.GetIFrameUrl(userID);
+                                                            Model.SGO2.GetFrameResponse url = await httpService.GetIFrameUrl(userID);
                                                             browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                             lastRefresh = DateTime.Now;
                                                             break;
@@ -552,7 +561,7 @@ namespace GO2FlashLauncher.Script
                                                     }
                                                     await Task.Delay(botSettings.Delays - 100);
                                                     bmp = await devTools.Screenshot();
-                                                    var p = bmp.FindImage("Images\\instanceStart.png", 0.7);
+                                                    Point? p = bmp.FindImage("Images\\instanceStart.png", 0.7);
                                                     if (p != null)
                                                     {
                                                         await host.LeftClick(p.Value, 100);
@@ -580,7 +589,7 @@ namespace GO2FlashLauncher.Script
                                             spaceStationLocated = false;
                                             mainScreenLocated = false;
                                             inStage = false;
-                                            var url = await httpService.GetIFrameUrl(userID);
+                                            Model.SGO2.GetFrameResponse url = await httpService.GetIFrameUrl(userID);
                                             browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                             error = 0;
                                             await Task.Delay(botSettings.Delays);
@@ -595,7 +604,7 @@ namespace GO2FlashLauncher.Script
                                     error++;
                                     if (error > 3)
                                     {
-                                        await b.CloseButtons(bmp);
+                                        _ = await b.CloseButtons(bmp);
                                         await Task.Delay(300);
                                     }
                                     if (error > 10)
@@ -606,7 +615,7 @@ namespace GO2FlashLauncher.Script
                                         mainScreenLocated = false;
                                         inStage = false;
                                         error = 0;
-                                        var url = await httpService.GetIFrameUrl(userID);
+                                        Model.SGO2.GetFrameResponse url = await httpService.GetIFrameUrl(userID);
                                         browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                         await Task.Delay(botSettings.Delays);
                                         lastRefresh = DateTime.Now;
@@ -624,11 +633,11 @@ namespace GO2FlashLauncher.Script
                                         for (int x = 0; x < 3; x++)
                                         {
                                             bmp = await devTools.Screenshot();
-                                            await b.CloseButtons(bmp);
+                                            _ = await b.CloseButtons(bmp);
                                             await Task.Delay(botSettings.Delays);
                                         }
                                         bmp = await devTools.Screenshot();
-                                        await w.EndSpin(bmp);
+                                        _ = await w.EndSpin(bmp);
                                     }
                                     inStage = false;
                                     stageCount++;
@@ -638,13 +647,13 @@ namespace GO2FlashLauncher.Script
                                 else
                                 {
                                     crop = await bmp.Crop(new Point(0, 0), new Size(500, 500));
-                                    var mail = crop.FindImage("Images\\mail.png", 0.6);
+                                    Point? mail = crop.FindImage("Images\\mail.png", 0.6);
                                     if (mail.HasValue)
                                     {
                                         if (inSpin)
                                         {
                                             Logger.LogInfo("Found mail, exiting spin...");
-                                            await w.EndSpin(bmp);
+                                            _ = await w.EndSpin(bmp);
                                             inSpin = false;
                                         }
                                         else
@@ -690,7 +699,7 @@ namespace GO2FlashLauncher.Script
                                                     mainScreenLocated = false;
                                                     inStage = false;
                                                     error = 0;
-                                                    var url = await httpService.GetIFrameUrl(userID);
+                                                    Model.SGO2.GetFrameResponse url = await httpService.GetIFrameUrl(userID);
                                                     browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                     await Task.Delay(botSettings.Delays);
                                                     lastRefresh = DateTime.Now;
@@ -716,7 +725,7 @@ namespace GO2FlashLauncher.Script
                                                     mainScreenLocated = false;
                                                     inStage = false;
                                                     error = 0;
-                                                    var url = await httpService.GetIFrameUrl(userID);
+                                                    Model.SGO2.GetFrameResponse url = await httpService.GetIFrameUrl(userID);
                                                     browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                                     await Task.Delay(botSettings.Delays);
                                                     lastRefresh = DateTime.Now;
@@ -734,7 +743,7 @@ namespace GO2FlashLauncher.Script
                                         if (!inSpin)
                                         {
                                             Logger.LogInfo("Lets spin wheel while waiting instance");
-                                            await w.GetIn(bmp);
+                                            _ = await w.GetIn(bmp);
                                             inSpin = true;
                                         }
                                         else
@@ -742,7 +751,7 @@ namespace GO2FlashLauncher.Script
                                             if (resources.Vouchers < planetSettings.MinVouchers)
                                             {
                                                 Logger.LogWarning("Not enough vouchers for spinning, exiting");
-                                                await w.EndSpin(bmp);
+                                                _ = await w.EndSpin(bmp);
                                                 inSpin = false;
                                                 spinable = false;
                                                 spinResult = SpinResult.NotEnoughVouchers;
@@ -756,7 +765,7 @@ namespace GO2FlashLauncher.Script
                                                     Logger.LogWarning("Spin seems failed! Not going to spin!");
                                                     await Task.Delay(50);
                                                     bmp = await devTools.Screenshot();
-                                                    await w.EndSpin(bmp);
+                                                    _ = await w.EndSpin(bmp);
                                                     inSpin = false;
                                                     spinable = false;
                                                 }
@@ -771,7 +780,7 @@ namespace GO2FlashLauncher.Script
                                                         Logger.LogWarning("Voucher Spins! Auto canceling!");
                                                         await Task.Delay(50);
                                                         bmp = await devTools.Screenshot();
-                                                        await w.EndSpin(bmp);
+                                                        _ = await w.EndSpin(bmp);
                                                         inSpin = false;
                                                         spinable = false;
                                                     }
@@ -805,7 +814,7 @@ namespace GO2FlashLauncher.Script
                                 }
                                 else if (inSpin)
                                 {
-                                    await w.EndSpin(bmp);
+                                    _ = await w.EndSpin(bmp);
                                 }
                             }
                             //collecting EZRewards
@@ -831,7 +840,7 @@ namespace GO2FlashLauncher.Script
                                             mainScreenLocated = false;
                                             inStage = false;
                                             error = 0;
-                                            var url = await httpService.GetIFrameUrl(userID);
+                                            Model.SGO2.GetFrameResponse url = await httpService.GetIFrameUrl(userID);
                                             browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                             await Task.Delay(botSettings.Delays);
                                             Cancellation.ThrowIfCancellationRequested();
@@ -839,7 +848,7 @@ namespace GO2FlashLauncher.Script
                                             break;
                                         }
                                     }
-                                    var detect = bmp.FindImageGrayscaled("Images\\MPOK.png", 0.8);
+                                    Point? detect = bmp.FindImageGrayscaled("Images\\MPOK.png", 0.8);
                                     if (detect != null)
                                     {
                                         await host.LeftClick(detect.Value, 120);
@@ -872,7 +881,7 @@ namespace GO2FlashLauncher.Script
                                 if (lag > 120)
                                 {
                                     Logger.LogError("Lag detected! Lag confirmed! Restarting...");
-                                    var url = await httpService.GetIFrameUrl(userID);
+                                    Model.SGO2.GetFrameResponse url = await httpService.GetIFrameUrl(userID);
                                     browser.Load("https://client.guerradenaves.lat/?userId=" + url.Data.UserId + "&sessionKey=" + url.Data.SessionKey);
                                     lag = 0;
                                     inStage = false;

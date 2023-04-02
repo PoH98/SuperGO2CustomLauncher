@@ -30,25 +30,13 @@ namespace GO2FlashLauncher.Service
                 {
                     _config = JsonConvert.DeserializeObject<BotSettings>(File.ReadAllText(ConfigPath));
                     _config.PlanetSettings = _config.PlanetSettings.Distinct().ToList();
-                 }
+                }
                 return _config;
             }
         }
 
-        public string ConfigFolder
-        {
-            get
-            {
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GalaxyOrbit4", "Profile");
-            }
-        }
-        public string ConfigPath
-        {
-            get
-            {
-                return Path.Combine(ConfigFolder, "config.json");
-            }
-        }
+        public string ConfigFolder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GalaxyOrbit4", "Profile");
+        public string ConfigPath => Path.Combine(ConfigFolder, "config.json");
         public ConfigService()
         {
             if (!Directory.Exists(ConfigFolder))

@@ -7,7 +7,7 @@ namespace GO2FlashLauncher.Service
         private readonly string ClientId = "701835165407903744";
         private readonly DiscordRpcClient rpc;
         private bool Inited = false;
-        private Timestamps startTime;
+        private readonly Timestamps startTime;
         public RPC()
         {
             rpc = new DiscordRpcClient(ClientId);

@@ -24,8 +24,8 @@ namespace GO2FlashLauncher.Script.GameLogic
         /// <returns></returns>
         public async Task<bool> OpenInventory(Bitmap bmp)
         {
-            var crop = await bmp.Crop(new Point(bmp.Width - 200, bmp.Height - 500), new Size(200, 500));
-            var point = crop.FindImage("Images\\tools.png", 0.8);
+            Bitmap crop = await bmp.Crop(new Point(bmp.Width - 200, bmp.Height - 500), new Size(200, 500));
+            Point? point = crop.FindImage("Images\\tools.png", 0.8);
             if (point == null)
             {
                 for (int x = 2; x < 8; x++)
@@ -181,10 +181,10 @@ namespace GO2FlashLauncher.Script.GameLogic
             point = bmp.FindImage("Images\\truced.png", 0.7);
             if (point == null)
             {
-                for(int x = 2; x < 4; x++)
+                for (int x = 2; x < 4; x++)
                 {
-                    point = bmp.FindImage("Images\\truced"+x+".png", 0.7);
-                    if(point != null)
+                    point = bmp.FindImage("Images\\truced" + x + ".png", 0.7);
+                    if (point != null)
                     {
                         break;
                     }
@@ -198,25 +198,25 @@ namespace GO2FlashLauncher.Script.GameLogic
             await host.LeftClick(point.Value, rnd.Next(80, 100));
             await Task.Delay(100);
             bmp = await devtools.Screenshot();
-            var bagpoint = bmp.FindImage("Images\\returnbag.png", 0.7);
-            if(bagpoint != null)
+            Point? bagpoint = bmp.FindImage("Images\\returnbag.png", 0.7);
+            if (bagpoint != null)
             {
                 await host.LeftClick(point.Value, rnd.Next(80, 100));
                 await Task.Delay(100);
                 bmp = await devtools.Screenshot();
                 point = bmp.FindImage("Images\\OK.png", 0.7);
-                if(point == null)
+                if (point == null)
                 {
-                    for(int x = 2; x < 5; x++)
+                    for (int x = 2; x < 5; x++)
                     {
                         point = bmp.FindImage("Images\\OK" + x + ".png", 0.7);
-                        if(point != null)
+                        if (point != null)
                         {
                             break;
                         }
                     }
                 }
-                if(point == null)
+                if (point == null)
                 {
                     //error
                     throw new ArgumentException("Weird error occurs");

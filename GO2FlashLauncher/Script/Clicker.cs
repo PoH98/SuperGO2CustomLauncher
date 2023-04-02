@@ -15,8 +15,8 @@ namespace GO2FlashLauncher.Script
         }
         public static async Task LeftClick(this IBrowserHost browser, int x, int y, int interval)
         {
-            var rndX = rnd.Next(x - 1, x + 1);
-            var rndY = rnd.Next(y - 1, y + 1);
+            int rndX = rnd.Next(x - 1, x + 1);
+            int rndY = rnd.Next(y - 1, y + 1);
             Logger.LogDebug("Left Clicked: x: " + rndX + ", y: " + rndY);
             browser.SendMouseClickEvent(rndX, rndY, MouseButtonType.Left, false, 1, CefEventFlags.None);
             await Task.Delay(interval);
@@ -25,8 +25,8 @@ namespace GO2FlashLauncher.Script
 
         public static async Task RightClick(this IBrowserHost browser, int x, int y, int interval)
         {
-            var rndX = rnd.Next(x - 1, x + 1);
-            var rndY = rnd.Next(y - 1, y + 1);
+            int rndX = rnd.Next(x - 1, x + 1);
+            int rndY = rnd.Next(y - 1, y + 1);
             Logger.LogDebug("Right Clicked: x: " + rndX + ", y: " + rndY);
             browser.SendMouseClickEvent(rndX, rndY, MouseButtonType.Right, false, 1, CefEventFlags.None);
             await Task.Delay(interval);

@@ -1,5 +1,4 @@
 ﻿using CefSharp;
-using CefSharp.WinForms;
 using Discord;
 using Discord.WebSocket;
 using GO2FlashLauncher.Model;
@@ -11,7 +10,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -20,14 +18,14 @@ namespace GO2FlashLauncher
 {
     public partial class MainForm : Form
     {
-        readonly RPC rpc = new RPC();
-        GO2HttpService GO2HttpService = new GO2HttpService();
-        readonly string profileName = "Bot1";
-        BotSettings settings = ConfigService.Instance.Config;
-        DiscordSocketClient _client;
-        List<BotControl> bots = new List<BotControl>();
-        HttpClient hc = new HttpClient();
-        bool loginError = false;
+        private readonly RPC rpc = new RPC();
+        private readonly GO2HttpService GO2HttpService = new GO2HttpService();
+        private readonly string profileName = "Bot1";
+        private BotSettings settings = ConfigService.Instance.Config;
+        private DiscordSocketClient _client;
+        private readonly List<BotControl> bots = new List<BotControl>();
+        private readonly HttpClient hc = new HttpClient();
+        private bool loginError = false;
         public MainForm()
         {
             InitializeComponent();
@@ -50,29 +48,29 @@ namespace GO2FlashLauncher
                 if (settings.CredentialHash == null)
                 {
                     Login();
-                    var profile = Encryption.Decrypt(settings.CredentialHash);
-                    var credential = await GO2HttpService.Login(profile.Email, profile.Password);
+                    Profile profile = Encryption.Decrypt(settings.CredentialHash);
+                    Model.SGO2.LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
                     settings.AuthKey = credential.Data.Token;
                 }
                 if (settings.AuthKey == null)
                 {
-                    var profile = Encryption.Decrypt(settings.CredentialHash);
-                    var credential = await GO2HttpService.Login(profile.Email, profile.Password);
+                    Profile profile = Encryption.Decrypt(settings.CredentialHash);
+                    Model.SGO2.LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
                     settings.AuthKey = credential.Data.Token;
                 }
                 GO2HttpService.SetToken(settings.AuthKey);
-                var planet = await GO2HttpService.GetPlanets();
+                Model.SGO2.GetPlanetResponse planet = await GO2HttpService.GetPlanets();
                 if (planet.Code == 401)
                 {
-                    var profile = Encryption.Decrypt(settings.CredentialHash);
-                    var credential = await GO2HttpService.Login(profile.Email, profile.Password);
+                    Profile profile = Encryption.Decrypt(settings.CredentialHash);
+                    Model.SGO2.LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
                     settings.AuthKey = credential.Data.Token;
                     planet = await GO2HttpService.GetPlanets();
                 }
                 textBox1.Text = settings.DiscordBotToken;
                 for (int x = 0; x < planet.Data.Count; x++)
                 {
-                    var tab = new MetroTabPage()
+                    MetroTabPage tab = new MetroTabPage()
                     {
                         Text = planet.Data[x].Username,
                         Theme = MetroThemeStyle.Dark
@@ -84,7 +82,7 @@ namespace GO2FlashLauncher
                     metroTabControl1.Controls.Add(tab);
                     settings.PlanetSettings[x].PlanetId = planet.Data[x].UserId;
                     settings.PlanetSettings[x].PlanetName = planet.Data[x].Username;
-                    var control = new BotControl(settings, settings.PlanetSettings[x], GO2HttpService, _client)
+                    BotControl control = new BotControl(settings, settings.PlanetSettings[x], GO2HttpService, _client)
                     {
                         Size = new Size(tab.Size.Width - 10, tab.Size.Height - 10),
                         Location = new Point(5, 5),
@@ -93,7 +91,7 @@ namespace GO2FlashLauncher
                     bots.Add(control);
                     tab.Controls.Add(control);
                 }
-                var krtab = new MetroTabPage()
+                MetroTabPage krtab = new MetroTabPage()
                 {
                     Text = "Krtools",
                     Theme = MetroThemeStyle.Dark
@@ -104,9 +102,9 @@ namespace GO2FlashLauncher
                 });
                 metroTabControl1.Controls.Add(krtab);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                _ = MessageBox.Show(ex.ToString());
                 loginError = true;
                 ConfigService.Instance.Save();
                 MainForm_Load(sender, e);
@@ -121,8 +119,10 @@ namespace GO2FlashLauncher
 
         private void Login()
         {
-            Login login = new Login(profileName);
-            login.IsError = loginError;
+            Login login = new Login
+            {
+                IsError = loginError
+            };
             if (login.ShowDialog() == DialogResult.OK)
             {
                 ConfigService.Instance.Save();
@@ -131,7 +131,7 @@ namespace GO2FlashLauncher
             }
             else
             {
-                MessageBox.Show("We can't log you in without your credentials! Exiting...");
+                _ = MessageBox.Show("We can't log you in without your credentials! Exiting...");
                 Application.Exit();
                 Environment.Exit(0);
             }
@@ -184,8 +184,8 @@ namespace GO2FlashLauncher
         {
             try
             {
-                var response = await hc.GetAsync("https://api.guerradenaves.lat/metrics/online");
-                var online = JsonConvert.DeserializeObject<OnlinePlayers>(await response.Content.ReadAsStringAsync());
+                HttpResponseMessage response = await hc.GetAsync("https://api.guerradenaves.lat/metrics/online");
+                OnlinePlayers online = JsonConvert.DeserializeObject<OnlinePlayers>(await response.Content.ReadAsStringAsync());
                 Text = "Not So Super GO2 | Online Players: " + online.Data.Online;
             }
             catch
@@ -196,7 +196,7 @@ namespace GO2FlashLauncher
 
         private void button1_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Your secret: " + settings.DiscordSecret + "\nPlease send this secret in discord so the bot knows you are its owner!");
+            _ = MessageBox.Show("Your secret: " + settings.DiscordSecret + "\nPlease send this secret in discord so the bot knows you are its owner!");
         }
 
         private async void button2_Click(object sender, EventArgs e)
@@ -229,17 +229,17 @@ namespace GO2FlashLauncher
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + "\nPlease try restart the bot which might resolve the error", "Discord Bot binding error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                _ = MessageBox.Show(ex.Message + "\nPlease try restart the bot which might resolve the error", "Discord Bot binding error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            foreach (var bot in bots)
+            foreach (BotControl bot in bots)
             {
                 bot.SetDiscordBot(_client);
             }
             if (settings.DiscordUserID == 0)
             {
-                MessageBox.Show("Your secret: " + settings.DiscordSecret + "\nPlease send this secret in discord so the bot knows you are its owner!");
+                _ = MessageBox.Show("Your secret: " + settings.DiscordSecret + "\nPlease send this secret in discord so the bot knows you are its owner!");
             }
         }
     }

@@ -19,21 +19,21 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         public Battle(ChromiumWebBrowser browser)
         {
-            this.devtools = browser.GetBrowser().GetDevToolsClient();
+            devtools = browser.GetBrowser().GetDevToolsClient();
             host = browser.GetBrowser().GetHost();
         }
         public async Task<bool> SelectFleet(Bitmap bmp, List<Fleet> fleets, SelectFleetType fleetType, int instanceLv, Constellations constellations)
         {
-            var crop = await bmp.Crop(new Point(200, 150), new Size(bmp.Width - 300, bmp.Height - 300));
-            var detectedFleets = crop.FindImageArray("Images\\fleettransmittimemarker.png", 0.75);
+            Bitmap crop = await bmp.Crop(new Point(200, 150), new Size(bmp.Width - 300, bmp.Height - 300));
+            Point[] detectedFleets = crop.FindImageArray("Images\\fleettransmittimemarker.png", 0.75);
             if (detectedFleets.Length < 1)
             {
                 //no fleet
                 return false;
             }
-            var firstFleet = detectedFleets.OrderBy(x => x.X).OrderBy(x => x.Y).First();
-            var clickPoint = new Point(firstFleet.X + 250, firstFleet.Y + 150);
-            var maxFleetNum = 15;
+            Point firstFleet = detectedFleets.OrderBy(x => x.X).OrderBy(x => x.Y).First();
+            Point clickPoint = new Point(firstFleet.X + 250, firstFleet.Y + 150);
+            int maxFleetNum = 15;
             switch (fleetType)
             {
                 case SelectFleetType.Restrict:
@@ -161,9 +161,9 @@ namespace GO2FlashLauncher.Script.GameLogic
                     }
                     break;
             }
-            var currentPage = 0;
+            int currentPage = 0;
             bmp = await devtools.Screenshot();
-            var selectedFleets = fleets.Where((x) =>
+            IEnumerable<Fleet> selectedFleets = fleets.Where((x) =>
             {
                 switch (fleetType)
                 {
@@ -192,17 +192,17 @@ namespace GO2FlashLauncher.Script.GameLogic
             }).Take(maxFleetNum);
             foreach (Fleet f in selectedFleets)
             {
-                var index = fleets.IndexOf(f);
-                var page = index / 9;
+                int index = fleets.IndexOf(f);
+                int page = index / 9;
                 if (index >= 9)
                 {
-                    index = index % 9;
+                    index %= 9;
                 }
                 if (currentPage != page)
                 {
                     if (currentPage > page)
                     {
-                        var prev = bmp.FindImage("Images\\selectshipsprevpage.png", 0.6);
+                        Point? prev = bmp.FindImage("Images\\selectshipsprevpage.png", 0.6);
                         if (prev == null)
                         {
                             await Task.Delay(100);
@@ -220,7 +220,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                     }
                     else if (currentPage < page)
                     {
-                        var next = bmp.FindImage("Images\\selectshipsnextpage.png", 0.6);
+                        Point? next = bmp.FindImage("Images\\selectshipsnextpage.png", 0.6);
                         if (next == null)
                         {
                             await Task.Delay(100);
@@ -273,7 +273,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             if (fleetType == SelectFleetType.Instance || fleetType == SelectFleetType.Restrict || fleetType == SelectFleetType.Trial || fleetType == SelectFleetType.Constellation)
             {
                 bmp = await devtools.Screenshot();
-                var result = bmp.FindImageGrayscaled("Images\\OK.png", 0.7);
+                Point? result = bmp.FindImageGrayscaled("Images\\OK.png", 0.7);
                 if (result == null)
                 {
                     for (int i = 2; i < 7; i++)
@@ -297,17 +297,13 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         public async Task<bool> BattleEnds(Bitmap bmp)
         {
-            var result = bmp.FindImageGrayscaled(Path.GetFullPath("Images\\win.png"), 0.7);
-            if (result != null)
-            {
-                return await CloseButtons(bmp);
-            }
-            return false;
+            Point? result = bmp.FindImageGrayscaled(Path.GetFullPath("Images\\win.png"), 0.7);
+            return result != null && await CloseButtons(bmp);
         }
 
         public async Task<bool> CloseButtons(Bitmap bmp)
         {
-            var result = bmp.FindImageGrayscaled("Images\\close.png", 0.7);
+            Point? result = bmp.FindImageGrayscaled("Images\\close.png", 0.7);
             if (result == null)
             {
                 for (int x = 2; x < 20; x++)
@@ -331,12 +327,12 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         public async Task<bool> RefillHE3(Bitmap bmp, BaseResources resources, decimal HaltOn)
         {
-            var fullysupply = true;
+            bool fullysupply = true;
             if (resources.HE3 <= HaltOn)
             {
                 return false;
             }
-            var result = bmp.FindImage(Path.GetFullPath("Images\\fleetsupplies.png"), 0.8);
+            Point? result = bmp.FindImage(Path.GetFullPath("Images\\fleetsupplies.png"), 0.8);
             if (result == null)
             {
                 result = bmp.FindImage(Path.GetFullPath("Images\\fleetsupplies2.png"), 0.8);
@@ -374,7 +370,7 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         public async Task<bool> IncreaseFleet(Bitmap bmp)
         {
-            var result = bmp.FindImageGrayscaled("Images\\increasefleet.png", 0.6);
+            Point? result = bmp.FindImageGrayscaled("Images\\increasefleet.png", 0.6);
             if (result == null)
             {
                 for (int i = 2; i < 7; i++)

@@ -14,24 +14,24 @@ namespace GO2FlashLauncher.Script
     internal static class ImageCapture
     {
         [DllImport("user32.dll")]
-        static extern int GetWindowRgn(IntPtr hWnd, IntPtr hRgn);
+        private static extern int GetWindowRgn(IntPtr hWnd, IntPtr hRgn);
 
         //Region Flags - The return value specifies the type of the region that the function obtains. It can be one of the following values.
-        const int ERROR = 0;
-        const int NULLREGION = 1;
-        const int SIMPLEREGION = 2;
-        const int COMPLEXREGION = 3;
+        private const int ERROR = 0;
+        private const int NULLREGION = 1;
+        private const int SIMPLEREGION = 2;
+        private const int COMPLEXREGION = 3;
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool GetWindowRect(HandleRef hWnd, out RECT lpRect);
+        private static extern bool GetWindowRect(HandleRef hWnd, out RECT lpRect);
 
         [DllImport("gdi32.dll")]
-        static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
+        private static extern IntPtr CreateRectRgn(int nLeftRect, int nTopRect, int nRightRect, int nBottomRect);
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool PrintWindow(IntPtr hwnd, IntPtr hDC, uint nFlags);
+        private static extern bool PrintWindow(IntPtr hwnd, IntPtr hDC, uint nFlags);
 
         [DllImport("gdi32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -54,37 +54,37 @@ namespace GO2FlashLauncher.Script
 
             public int X
             {
-                get { return Left; }
-                set { Right -= (Left - value); Left = value; }
+                get => Left;
+                set { Right -= Left - value; Left = value; }
             }
 
             public int Y
             {
-                get { return Top; }
-                set { Bottom -= (Top - value); Top = value; }
+                get => Top;
+                set { Bottom -= Top - value; Top = value; }
             }
 
             public int Height
             {
-                get { return Bottom - Top; }
-                set { Bottom = value + Top; }
+                get => Bottom - Top;
+                set => Bottom = value + Top;
             }
 
             public int Width
             {
-                get { return Right - Left; }
-                set { Right = value + Left; }
+                get => Right - Left;
+                set => Right = value + Left;
             }
 
             public System.Drawing.Point Location
             {
-                get { return new System.Drawing.Point(Left, Top); }
+                get => new System.Drawing.Point(Left, Top);
                 set { X = value.X; Y = value.Y; }
             }
 
             public System.Drawing.Size Size
             {
-                get { return new System.Drawing.Size(Width, Height); }
+                get => new System.Drawing.Size(Width, Height);
                 set { Width = value.Width; Height = value.Height; }
             }
 
@@ -116,9 +116,14 @@ namespace GO2FlashLauncher.Script
             public override bool Equals(object obj)
             {
                 if (obj is RECT)
+                {
                     return Equals((RECT)obj);
+                }
                 else if (obj is System.Drawing.Rectangle)
+                {
                     return Equals(new RECT((System.Drawing.Rectangle)obj));
+                }
+
                 return false;
             }
 
@@ -136,8 +141,7 @@ namespace GO2FlashLauncher.Script
         {
             IntPtr hwnd = ihandle;//handle here
 
-            RECT rc;
-            GetWindowRect(new HandleRef(null, hwnd), out rc);
+            _ = GetWindowRect(new HandleRef(null, hwnd), out RECT rc);
 
             Bitmap bmp = new Bitmap(rc.Right - rc.Left, rc.Bottom - rc.Top, PixelFormat.Format32bppArgb);
             Graphics gfxBmp = Graphics.FromImage(bmp);
@@ -150,7 +154,7 @@ namespace GO2FlashLauncher.Script
             {
                 return null;
             }
-            BitBlt(hdcBitmap, 0, 0, bmp.Width, bmp.Height, ihandle, 0, 0, 0x00CC0020);
+            _ = BitBlt(hdcBitmap, 0, 0, bmp.Width, bmp.Height, ihandle, 0, 0, 0x00CC0020);
             //bool succeeded = PrintWindow(hwnd, hdcBitmap, 0);
             gfxBmp.ReleaseHdc(hdcBitmap);
             /*if (!succeeded)
@@ -184,8 +188,8 @@ namespace GO2FlashLauncher.Script
         {
             try
             {
-                var watch = Stopwatch.StartNew();
-                var bmpdata = await devTools.Page.CaptureScreenshotAsync();
+                Stopwatch watch = Stopwatch.StartNew();
+                CefSharp.DevTools.Page.CaptureScreenshotResponse bmpdata = await devTools.Page.CaptureScreenshotAsync();
                 Bitmap bmp;
                 using (MemoryStream ms = new MemoryStream(bmpdata.Data))
                 {
@@ -206,14 +210,14 @@ namespace GO2FlashLauncher.Script
         {
             return Task.Run(() =>
             {
-                var watch = Stopwatch.StartNew();
-                var rect = new Rectangle(start, size);
-                var sourceBitmapData = bmp.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppRgb);
+                Stopwatch watch = Stopwatch.StartNew();
+                Rectangle rect = new Rectangle(start, size);
+                BitmapData sourceBitmapData = bmp.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppRgb);
 
-                var destBitmap = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
-                var destBitmapData = destBitmap.LockBits(new Rectangle(0, 0, rect.Width, rect.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppRgb);
+                Bitmap destBitmap = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
+                BitmapData destBitmapData = destBitmap.LockBits(new Rectangle(0, 0, rect.Width, rect.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppRgb);
 
-                var pixels = new int[rect.Width * rect.Height];
+                int[] pixels = new int[rect.Width * rect.Height];
                 Marshal.Copy(sourceBitmapData.Scan0, pixels, 0, pixels.Length);
                 Marshal.Copy(pixels, 0, destBitmapData.Scan0, pixels.Length);
 

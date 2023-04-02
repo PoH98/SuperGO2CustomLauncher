@@ -31,6 +31,8 @@
             this.components = new System.ComponentModel.Container();
             this.BotInstance = new MetroFramework.Controls.MetroTabControl();
             this.View = new MetroFramework.Controls.MetroTabPage();
+            this.metroButton4 = new MetroFramework.Controls.MetroButton();
+            this.metroButton3 = new MetroFramework.Controls.MetroButton();
             this.metroToggle1 = new MetroFramework.Controls.MetroToggle();
             this.metroLabel14 = new MetroFramework.Controls.MetroLabel();
             this.metroButton2 = new MetroFramework.Controls.MetroButton();
@@ -81,9 +83,10 @@
             this.metroCheckBox4 = new MetroFramework.Controls.MetroCheckBox();
             this.metroLabel15 = new MetroFramework.Controls.MetroLabel();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
-            this.metroButton3 = new MetroFramework.Controls.MetroButton();
+            this.haltLabel = new MetroFramework.Controls.MetroLabel();
             this.BotInstance.SuspendLayout();
             this.View.SuspendLayout();
+            this.ChromeContainer.SuspendLayout();
             this.BotSettings.SuspendLayout();
             this.ConfigTabs.SuspendLayout();
             this.metroTabPage1.SuspendLayout();
@@ -114,6 +117,7 @@
             // 
             // View
             // 
+            this.View.Controls.Add(this.metroButton4);
             this.View.Controls.Add(this.metroButton3);
             this.View.Controls.Add(this.metroToggle1);
             this.View.Controls.Add(this.metroLabel14);
@@ -132,10 +136,32 @@
             this.View.VerticalScrollbarHighlightOnWheel = false;
             this.View.VerticalScrollbarSize = 10;
             // 
+            // metroButton4
+            // 
+            this.metroButton4.Location = new System.Drawing.Point(140, 3);
+            this.metroButton4.Name = "metroButton4";
+            this.metroButton4.Size = new System.Drawing.Size(95, 23);
+            this.metroButton4.TabIndex = 8;
+            this.metroButton4.Text = "Halt/Resume";
+            this.metroButton4.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroButton4.UseSelectable = true;
+            this.metroButton4.Click += new System.EventHandler(this.metroButton4_Click);
+            // 
+            // metroButton3
+            // 
+            this.metroButton3.Location = new System.Drawing.Point(84, 3);
+            this.metroButton3.Name = "metroButton3";
+            this.metroButton3.Size = new System.Drawing.Size(50, 23);
+            this.metroButton3.TabIndex = 7;
+            this.metroButton3.Text = "Dev";
+            this.metroButton3.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroButton3.UseSelectable = true;
+            this.metroButton3.Click += new System.EventHandler(this.metroButton3_Click);
+            // 
             // metroToggle1
             // 
             this.metroToggle1.AutoSize = true;
-            this.metroToggle1.Location = new System.Drawing.Point(238, 7);
+            this.metroToggle1.Location = new System.Drawing.Point(344, 9);
             this.metroToggle1.Name = "metroToggle1";
             this.metroToggle1.Size = new System.Drawing.Size(80, 17);
             this.metroToggle1.TabIndex = 6;
@@ -146,7 +172,7 @@
             // metroLabel14
             // 
             this.metroLabel14.AutoSize = true;
-            this.metroLabel14.Location = new System.Drawing.Point(140, 5);
+            this.metroLabel14.Location = new System.Drawing.Point(246, 7);
             this.metroLabel14.Name = "metroLabel14";
             this.metroLabel14.Size = new System.Drawing.Size(92, 19);
             this.metroLabel14.TabIndex = 5;
@@ -170,6 +196,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ChromeContainer.BackColor = System.Drawing.Color.Transparent;
+            this.ChromeContainer.Controls.Add(this.haltLabel);
             this.ChromeContainer.Location = new System.Drawing.Point(3, 32);
             this.ChromeContainer.Name = "ChromeContainer";
             this.ChromeContainer.Size = new System.Drawing.Size(1068, 515);
@@ -805,16 +832,16 @@
             this.timer2.Interval = 10000;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
-            // metroButton3
+            // haltLabel
             // 
-            this.metroButton3.Location = new System.Drawing.Point(84, 3);
-            this.metroButton3.Name = "metroButton3";
-            this.metroButton3.Size = new System.Drawing.Size(50, 23);
-            this.metroButton3.TabIndex = 7;
-            this.metroButton3.Text = "Dev";
-            this.metroButton3.Theme = MetroFramework.MetroThemeStyle.Dark;
-            this.metroButton3.UseSelectable = true;
-            this.metroButton3.Click += new System.EventHandler(this.metroButton3_Click);
+            this.haltLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.haltLabel.Location = new System.Drawing.Point(0, 0);
+            this.haltLabel.Name = "haltLabel";
+            this.haltLabel.Size = new System.Drawing.Size(1068, 515);
+            this.haltLabel.TabIndex = 0;
+            this.haltLabel.Text = "Planet Halted";
+            this.haltLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.haltLabel.Theme = MetroFramework.MetroThemeStyle.Dark;
             // 
             // BotControl
             // 
@@ -827,6 +854,7 @@
             this.BotInstance.ResumeLayout(false);
             this.View.ResumeLayout(false);
             this.View.PerformLayout();
+            this.ChromeContainer.ResumeLayout(false);
             this.BotSettings.ResumeLayout(false);
             this.ConfigTabs.ResumeLayout(false);
             this.metroTabPage1.ResumeLayout(false);
@@ -903,5 +931,7 @@
         private System.Windows.Forms.TextBox textBox3;
         private MetroFramework.Controls.MetroCheckBox metroCheckBox5;
         private MetroFramework.Controls.MetroButton metroButton3;
+        private MetroFramework.Controls.MetroButton metroButton4;
+        private MetroFramework.Controls.MetroLabel haltLabel;
     }
 }

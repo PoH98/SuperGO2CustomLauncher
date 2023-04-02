@@ -23,12 +23,12 @@ namespace GO2FlashLauncher.Script.GameLogic
         protected abstract Point Stage4(Point locate);
         public async Task EnterStage(int stage)
         {
-            var bmp = await devtools.Screenshot();
-            var locateP = AllocateConstellation(bmp);
+            Bitmap bmp = await devtools.Screenshot();
+            Point locateP = AllocateConstellation(bmp);
             switch (stage)
             {
                 case 0:
-                    var p = Stage1(locateP);
+                    Point p = Stage1(locateP);
                     await host.LeftClick(p, rnd.Next(50, 80));
                     break;
                 case 1:
@@ -49,7 +49,7 @@ namespace GO2FlashLauncher.Script.GameLogic
 
         protected virtual Point AllocateConstellation(Bitmap bmp)
         {
-            var result = bmp.FindImage("Images\\Constellations.png", 0.7);
+            Point? result = bmp.FindImage("Images\\Constellations.png", 0.7);
             if (result == null)
             {
                 result = bmp.FindImage("Images\\Constellations2.png", 0.7);
@@ -58,11 +58,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             {
                 result = bmp.FindImage("Images\\Constellations3.png", 0.7);
             }
-            if (result == null)
-            {
-                throw new ArgumentException("Locate Constellation failed");
-            }
-            return result.Value;
+            return result == null ? throw new ArgumentException("Locate Constellation failed") : result.Value;
         }
 
 

@@ -1,18 +1,13 @@
-﻿using GO2FlashLauncher.Model;
-using GO2FlashLauncher.Service;
+﻿using GO2FlashLauncher.Service;
 using MetroFramework.Forms;
-using Newtonsoft.Json;
 using System;
-using System.IO;
 
 namespace GO2FlashLauncher
 {
     public partial class Login : MetroForm
     {
-        readonly BotSettings settings = new BotSettings();
-        readonly string path = null;
         public bool IsError = false;
-        public Login(string profileName)
+        public Login()
         {
             InitializeComponent();
         }

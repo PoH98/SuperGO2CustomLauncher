@@ -25,13 +25,13 @@ namespace GO2FlashLauncher.Script
                 }
                 IsRunning = true;
                 BotStartTime = DateTime.Now;
-                var devTools = browser.GetBrowser().GetDevToolsClient();
-                var host = browser.GetBrowser().GetHost();
+                CefSharp.DevTools.DevToolsClient devTools = browser.GetBrowser().GetDevToolsClient();
+                IBrowserHost host = browser.GetBrowser().GetHost();
                 try
                 {
-                    var m = new MainScreen(browser);
-                    var w = new Wheel(browser);
-                    var error = 0;
+                    MainScreen m = new MainScreen(browser);
+                    Wheel w = new Wheel(browser);
+                    int error = 0;
                     bool mainScreenLocated = false;
                     bool inWheel = false;
                     do
@@ -42,7 +42,7 @@ namespace GO2FlashLauncher.Script
                             //error too much
                             if (error > 5)
                             {
-                                var lagging = await devTools.Screenshot();
+                                System.Drawing.Bitmap lagging = await devTools.Screenshot();
                                 if (m.DetectDisconnect(lagging))
                                 {
                                     Logger.LogError("Please refresh the browser! Server disconnected! Maybe is in server maintainance! ");
@@ -56,10 +56,10 @@ namespace GO2FlashLauncher.Script
                                     inWheel = false;
                                 }
                             }
-                            var bmp = await devTools.Screenshot();
+                            System.Drawing.Bitmap bmp = await devTools.Screenshot();
                             if (bmp.FindImageGrayscaled("Images\\friendrequesttext.png", 0.7).HasValue)
                             {
-                                var friendClose = bmp.FindImage("Images\\friendrequestclose.png", 0.8);
+                                System.Drawing.Point? friendClose = bmp.FindImage("Images\\friendrequestclose.png", 0.8);
                                 if (friendClose.HasValue)
                                 {
                                     await host.LeftClick(friendClose.Value, 100);
@@ -78,11 +78,11 @@ namespace GO2FlashLauncher.Script
                                         if (x <= 1)
                                         {
                                             //don't click home base
-                                            await m.Locate(bmp, false);
+                                            _ = await m.Locate(bmp, false);
                                         }
                                         else
                                         {
-                                            await m.Locate(bmp);
+                                            _ = await m.Locate(bmp);
                                         }
                                         await Task.Delay(100);
                                     }
@@ -116,7 +116,7 @@ namespace GO2FlashLauncher.Script
                             {
                                 //entered wheel
                                 Cancellation.ThrowIfCancellationRequested();
-                                var spinResult = await w.Spin(bmp, resources);
+                                SpinResult spinResult = await w.Spin(bmp, resources);
                                 if (spinResult != SpinResult.Failed)
                                 {
                                     Logger.LogInfo("Detected Vouchers: " + resources.Vouchers);

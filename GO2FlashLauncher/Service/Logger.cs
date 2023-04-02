@@ -12,16 +12,17 @@ namespace GO2FlashLauncher.Service
         private static string logPath;
         private static FileStream logStream;
         private static string profile;
+        private static DateTime logDate;
         public static void Init(RichTextBox richTextBox, string p)
         {
             profile = p;
             logger = richTextBox;
-            logPath = Path.GetFullPath("Profile\\" + profile + "\\Logs");
+            logPath = Path.Combine(ConfigService.Instance.ConfigFolder, "Profile", "Logs");
             if (!Directory.Exists(logPath))
             {
-                Directory.CreateDirectory(logPath);
+                _ = Directory.CreateDirectory(logPath);
             }
-            foreach (var file in Directory.GetFiles(logPath))
+            foreach (string file in Directory.GetFiles(logPath))
             {
                 FileInfo fileInfo = new FileInfo(file);
                 if ((DateTime.Now - fileInfo.CreationTime).TotalDays >= 7)
@@ -29,17 +30,11 @@ namespace GO2FlashLauncher.Service
                     fileInfo.Delete();
                 }
             }
-            logPath += "\\" + DateTime.Now.ToString("yyyy_MM_dd") + ".log";
+            logPath = Path.Combine(logPath, DateTime.Now.ToString("yyyy_MM_dd") + ".log");
+            logDate = DateTime.Now.Date;
             try
             {
-                if (!File.Exists(logPath))
-                {
-                    logStream = File.Create(logPath, 4096, FileOptions.WriteThrough);
-                }
-                else
-                {
-                    logStream = File.OpenWrite(logPath);
-                }
+                logStream = !File.Exists(logPath) ? File.Create(logPath, 4096, FileOptions.WriteThrough) : File.OpenWrite(logPath);
             }
             catch
             {
@@ -52,18 +47,23 @@ namespace GO2FlashLauncher.Service
         /// <param name="info"></param>
         public static async void LogInfo(string info)
         {
-            if(logStream == null)
+            if (logStream == null)
             {
                 Init(logger, profile);
             }
-            var text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][INF]: " + info;
-            var data = Encoding.UTF8.GetBytes(text);
+            if (logDate != DateTime.Now.Date)
+            {
+                logStream.Close();
+                Init(logger, profile);
+            }
+            string text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][INF]: " + info;
+            byte[] data = Encoding.UTF8.GetBytes(text);
             await logStream.WriteAsync(data, 0, data.Length);
             if (logger == null)
             {
                 return;
             }
-            logger.Invoke((MethodInvoker)delegate
+            _ = logger.Invoke((MethodInvoker)delegate
             {
                 logger.SelectionStart = logger.TextLength;
                 logger.SelectionLength = 0;
@@ -83,14 +83,19 @@ namespace GO2FlashLauncher.Service
             {
                 Init(logger, profile);
             }
-            var text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][ERR]: " + info;
-            var data = Encoding.UTF8.GetBytes(text);
+            if (logDate != DateTime.Now.Date)
+            {
+                logStream.Close();
+                Init(logger, profile);
+            }
+            string text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][ERR]: " + info;
+            byte[] data = Encoding.UTF8.GetBytes(text);
             await logStream.WriteAsync(data, 0, data.Length);
             if (logger == null)
             {
                 return;
             }
-            logger.Invoke((MethodInvoker)delegate
+            _ = logger.Invoke((MethodInvoker)delegate
             {
                 logger.SelectionStart = logger.TextLength;
                 logger.SelectionLength = 0;
@@ -109,10 +114,15 @@ namespace GO2FlashLauncher.Service
             {
                 Init(logger, profile);
             }
-            var text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][CLR]: ===========================================================";
-            var data = Encoding.UTF8.GetBytes(text);
+            if (logDate != DateTime.Now.Date)
+            {
+                logStream.Close();
+                Init(logger, profile);
+            }
+            string text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][CLR]: ===========================================================";
+            byte[] data = Encoding.UTF8.GetBytes(text);
             await logStream.WriteAsync(data, 0, data.Length);
-            logger.Invoke((MethodInvoker)delegate
+            _ = logger.Invoke((MethodInvoker)delegate
             {
                 logger.Text = "";
             });
@@ -128,10 +138,15 @@ namespace GO2FlashLauncher.Service
             {
                 Init(logger, profile);
             }
-            var text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][DBG]: " + debug;
-            var data = Encoding.UTF8.GetBytes(text);
+            if (logDate != DateTime.Now.Date)
+            {
+                logStream.Close();
+                Init(logger, profile);
+            }
+            string text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][DBG]: " + debug;
+            byte[] data = Encoding.UTF8.GetBytes(text);
             await logStream.WriteAsync(data, 0, data.Length);
-            logger.Invoke((MethodInvoker)delegate
+            _ = logger.Invoke((MethodInvoker)delegate
             {
                 logger.SelectionStart = logger.TextLength;
                 logger.SelectionLength = 0;
@@ -149,14 +164,19 @@ namespace GO2FlashLauncher.Service
             {
                 Init(logger, profile);
             }
-            var text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][WRN]: " + warn;
-            var data = Encoding.UTF8.GetBytes(text);
+            if (logDate != DateTime.Now.Date)
+            {
+                logStream.Close();
+                Init(logger, profile);
+            }
+            string text = "\n" + "[" + DateTime.Now.ToString("HH:mm") + "][WRN]: " + warn;
+            byte[] data = Encoding.UTF8.GetBytes(text);
             await logStream.WriteAsync(data, 0, data.Length);
             if (logger == null)
             {
                 return;
             }
-            logger.Invoke((MethodInvoker)delegate
+            _ = logger.Invoke((MethodInvoker)delegate
             {
                 logger.SelectionStart = logger.TextLength;
                 logger.SelectionLength = 0;
