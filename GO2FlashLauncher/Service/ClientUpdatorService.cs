@@ -26,7 +26,7 @@ namespace GO2FlashLauncher.Service
             {
                 _ = Directory.CreateDirectory(RootPath);
             }
-            if (Directory.GetFiles(RootPath, "*.swf", SearchOption.AllDirectories).Length < 1)
+            if (Directory.GetFiles(RootPath, "*.*", SearchOption.AllDirectories).Length != Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, "client"), "*.*", SearchOption.AllDirectories).Length)
             {
                 foreach (string f in Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, "client"), "*.*", SearchOption.AllDirectories))
                 {
