@@ -40,9 +40,9 @@
             this.ChromeContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ChromeContainer.Location = new System.Drawing.Point(-1, 39);
+            this.ChromeContainer.Location = new System.Drawing.Point(12, 39);
             this.ChromeContainer.Name = "ChromeContainer";
-            this.ChromeContainer.Size = new System.Drawing.Size(887, 585);
+            this.ChromeContainer.Size = new System.Drawing.Size(862, 585);
             this.ChromeContainer.TabIndex = 0;
             // 
             // button1
@@ -93,6 +93,7 @@
             this.ShowInTaskbar = false;
             this.Text = "BrowserControl";
             this.Load += new System.EventHandler(this.BrowserControl_Load);
+            this.Resize += new System.EventHandler(this.BrowserControl_Resize);
             this.ResumeLayout(false);
 
         }

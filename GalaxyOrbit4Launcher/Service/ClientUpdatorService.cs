@@ -1,5 +1,7 @@
 ﻿using GalaxyOrbit4Launcher.Models;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -25,7 +27,8 @@ namespace GalaxyOrbit4Launcher.Service
             {
                 _ = Directory.CreateDirectory(RootPath);
             }
-            if (Helper.GetAllFiles(RootPath, "*.swf").Count() < 1)
+            IEnumerable<string> files = Helper.GetAllFiles(RootPath, "*.*");
+            if (files.Count() != Helper.GetAllFiles(Path.Combine(Environment.CurrentDirectory, "client"), "*.*").Count())
             {
                 foreach (string f in Helper.GetAllFiles(Path.Combine(Environment.CurrentDirectory, "client"), "*.*"))
                 {
@@ -34,10 +37,20 @@ namespace GalaxyOrbit4Launcher.Service
                     {
                         _ = Directory.CreateDirectory(destination.Remove(destination.LastIndexOf("\\")));
                     }
-                    FileInfo file = new FileInfo(f);
-                    _ = file.CopyTo(destination);
+                    try
+                    {
+                        DeleteOldFile(files.ToArray(), destination);
+                        FileInfo file = new FileInfo(f);
+                        _ = file.CopyTo(destination);
+                    }
+                    catch
+                    {
+
+                    }
                 }
             }
+            File.Delete(Path.Combine(RootPath, "index.html"));
+            File.Copy(Path.Combine(Environment.CurrentDirectory, "client", "index.html"), Path.Combine(RootPath, "index.html"));
         }
 
         private static ClientUpdatorService _instance;
@@ -84,7 +97,7 @@ namespace GalaxyOrbit4Launcher.Service
 
         private void CheckUpdate(string fileName)
         {
-            System.Collections.Generic.IEnumerable<string> files = Helper.GetAllFiles(RootPath, "*.*");
+            IEnumerable<string> files = Helper.GetAllFiles(RootPath, "*.*");
             if (!files.Any(x => x.EndsWith(fileName.Remove(0, fileName.LastIndexOf("/") + 1))))
             {
                 string url = "https://" + Host + "/" + fileName;
@@ -120,7 +133,7 @@ namespace GalaxyOrbit4Launcher.Service
         {
             string realName = Regex.Replace(newFile, @"[\d-]", string.Empty);
             realName = realName.Remove(0, realName.LastIndexOf("/") + 1);
-            System.Collections.Generic.IEnumerable<string> oldFile = files.Where(x => x.EndsWith(realName));
+            IEnumerable<string> oldFile = files.Where(x => x.EndsWith(realName));
             foreach (string file in oldFile)
             {
                 File.Delete(file);

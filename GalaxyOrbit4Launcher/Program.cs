@@ -8,7 +8,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Management;
-using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 

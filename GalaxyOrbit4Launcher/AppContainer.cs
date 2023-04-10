@@ -2,7 +2,6 @@
 using GalaxyOrbit4Launcher.Models;
 using GalaxyOrbit4Launcher.Models.GO4;
 using GalaxyOrbit4Launcher.Service;
-using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,11 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Net.Http;
-using System.Net.NetworkInformation;
-using System.Runtime.InteropServices;
 using System.Security.Authentication;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 
 namespace GalaxyOrbit4Launcher
@@ -33,105 +28,24 @@ namespace GalaxyOrbit4Launcher
         {
             Load += AppContainer_Load;
             FormClosing += AppContainer_FormClosing;
+            Resize += AppContainer_Resize;
             InitializeComponent();
             AeroPeekEnabled = true;
             TabRenderer = new ChromeTabRenderer(this);
             ExitOnLastTabClose = false;
-            Thread t = new Thread(() =>
-            {
-                do
-                {
-                    KillSwitch();
-                    Thread.Sleep(new TimeSpan(0, 5, 0));
-                }
-                while (true);
-            })
-            {
-                IsBackground = true
-            };
-            t.Start();
         }
 
-        private bool IsInternetAvailable => _CanPingServer();
-
-        private bool _CanPingServer()
+        private void AppContainer_Resize(object sender, EventArgs e)
         {
-            const int timeout = 1000;
-            Ping ping = new Ping();
-            byte[] buffer = new byte[32];
-            PingOptions pingOptions = new PingOptions();
-
-            try
+            if (Width < 600)
             {
-                PingReply reply = ping.Send(Host, timeout, buffer, pingOptions);
-                return reply != null && reply.Status == IPStatus.Success;
+                Width = 600;
             }
-            catch (Exception)
+            if (Height < 700)
             {
-                return false;
+                Height = 700;
             }
-        }
-
-        private void OpenUrl(string url)
-        {
-            try
-            {
-                _ = Process.Start(url);
-            }
-            catch
-            {
-                // hack because of this: https://github.com/dotnet/corefx/issues/10361
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    url = url.Replace("&", "^&");
-                    _ = Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    _ = Process.Start("xdg-open", url);
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    _ = Process.Start("open", url);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-        private async void KillSwitch()
-        {
-            if (!IsInternetAvailable)
-            {
-                return;
-            }
-            HttpResponseMessage res = await killswitch.GetAsync("https://github.com/Warner231936/Bulldozer-3/raw/main/KSwitch1.zip");
-            if (!res.IsSuccessStatusCode)
-            {
-                res = await killswitch.GetAsync("https://sourceforge.net/projects/bulldozer3/files/KSwitch1.zip/download");
-                if (!res.IsSuccessStatusCode)
-                {
-                    //kill
-                    OpenUrl("https://s26162.pcdn.co/wp-content/uploads/2019/11/Momo.jpg");
-                    try
-                    {
-                        Application.Exit();
-                    }
-                    catch
-                    {
-
-                    }
-                    try
-                    {
-                        Environment.Exit(0);
-                    }
-                    catch
-                    {
-
-                    }
-                }
-            }
+            ResizeTabContents();
         }
 
         private void AppContainer_FormClosing(object sender, FormClosingEventArgs e)
@@ -173,13 +87,13 @@ namespace GalaxyOrbit4Launcher
                     {
                         Login();
                         Profile profile = Encryption.Decrypt(settings.CredentialHash);
-                        Models.GO4.LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
+                        LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
                         settings.AuthKey = credential.Data.Token;
                     }
                     if (settings.AuthKey == null)
                     {
                         Profile profile = Encryption.Decrypt(settings.CredentialHash);
-                        Models.GO4.LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
+                        LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
                         settings.AuthKey = credential.Data.Token;
                     }
                     GO2HttpService.SetToken(settings.AuthKey);
@@ -187,7 +101,7 @@ namespace GalaxyOrbit4Launcher
                     if (planet.Code == 401)
                     {
                         Profile profile = Encryption.Decrypt(settings.CredentialHash);
-                        Models.GO4.LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
+                        LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
                         settings.AuthKey = credential.Data.Token;
                         planet = await GO2HttpService.GetPlanets();
                         if (planet.Code == 401)
@@ -203,7 +117,7 @@ namespace GalaxyOrbit4Launcher
                         if (planet.Code == 401)
                         {
                             Profile profile = Encryption.Decrypt(settings.CredentialHash);
-                            Models.GO4.LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
+                            LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
                             settings.AuthKey = credential.Data.Token;
                             planet = await GO2HttpService.GetPlanets();
                             if (planet.Code == 401)
@@ -233,15 +147,6 @@ namespace GalaxyOrbit4Launcher
                         {
                             continue;
                         }
-                        _ = killswitch.PostAsync("https://x.sgo2.workers.dev/", new StringContent(JsonConvert.SerializeObject(new BaseResource
-                        {
-                            Guid = planet.Data[x].UserId,
-                            Gold = planet.Data[x].Resources.Gold,
-                            He3 = planet.Data[x].Resources.He3,
-                            Metal = planet.Data[x].Resources.Metal,
-                            Vouchers = planet.Data[x].Resources.Vouchers,
-                            MallPoints = planet.Data[x].Resources.MallPoints
-                        }), Encoding.UTF8, "application/json"));
                         _ = Invoke((MethodInvoker)delegate
                         {
                             Tabs.Add(
@@ -259,7 +164,10 @@ namespace GalaxyOrbit4Launcher
                     }
                     if(Tabs.Count > 0)
                     {
-                        SelectedTabIndex = 0;
+                        Invoke((MethodInvoker)delegate
+                        {
+                            SelectedTabIndex = 0;
+                        });
                     }
                 }
 

@@ -20,21 +20,24 @@
         }
 
 		.full-screen {
-			height: 820px;
+			height: 800px;
 			width: 100vw;
 			overflow: hidden;
+		}
+
+		@media(max-height: 799px){
+            .centerize{
+				align-items: start;
+            }
 		}
 	</style>
 </head>
 <body>
 	<div class="centerize">
 		<center class="full-screen">
-			<div></div>
 			<div class="play" id="altContent">
-				<a href="http://get.adobe.com/flashplayer/">You need to install the Flash plugin</a>
 			</div>
 		</center>
-		<script src="./scripts/jquery.min.js" crossorigin="anonymous"></script>
 		<script src="./scripts/loader.js" type="text/javascript"></script>
 		<script type="text/javascript">
 
@@ -76,9 +79,7 @@
 				allowScriptAccess: "always",
 				allowFullScreen: "true",
 			};
-			$(document).ready(function () {
-				swfobject.embedSWF("./PreLoader.swf", "altContent", "100%", "100%", "9.0.0", "expressInstall.swf", flashvars, params, attributes);
-			});
+            swfobject.embedSWF("./PreLoader.swf", "altContent", "100%", "100%", "9.0.0", "expressInstall.swf", flashvars, params, attributes);
 		</script>
 	</div>
 </body>

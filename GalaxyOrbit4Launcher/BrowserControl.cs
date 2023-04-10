@@ -133,10 +133,16 @@ namespace GalaxyOrbit4Launcher
             chrome.MenuHandler = new CustomMenuHandler();
             chrome.Dock = DockStyle.Fill;
             chrome.IsBrowserInitializedChanged += Chrome_IsBrowserInitializedChanged;
+            chrome.FrameLoadEnd += Chrome_FrameLoadEnd;
             _ = ChromeContainer.Invoke((MethodInvoker)delegate
             {
                 ChromeContainer.Controls.Add(chrome);
             });
+        }
+
+        private void Chrome_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
+        {
+            BrowserControl_Resize(sender, e);
         }
 
         private void Chrome_IsBrowserInitializedChanged(object sender, EventArgs e)
@@ -242,6 +248,31 @@ namespace GalaxyOrbit4Launcher
             {
                 _ = Process.Start(Process.GetCurrentProcess().MainModule.FileName);
                 Environment.Exit(0);
+            }
+        }
+
+        private void BrowserControl_Resize(object sender, EventArgs e)
+        {
+            try
+            {
+                chrome?.Invoke((MethodInvoker)delegate
+                {
+                    if (Width < 800 || Height < 800)
+                    {
+                        var wScale = ((Width / 800f) > 1 ? 1 : (Width / 800f));
+                        var hScale = ((Height / 800f) > 1 ? 1 : (Height / 800f));
+                        var rScale = Math.Min(wScale, hScale);
+                        chrome.ExecuteScriptAsync("document.body.style.transform = \"scale(" +rScale+ ")\"");
+                    }
+                    else
+                    {
+                        chrome.ExecuteScriptAsync("document.body.style.transform = \"scale(1)\";");
+                    }
+                });
+            }
+            catch
+            {
+
             }
         }
     }
