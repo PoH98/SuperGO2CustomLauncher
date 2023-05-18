@@ -78,6 +78,12 @@ namespace GO2FlashLauncher
             {
                 client.MessageReceived += Client_MessageReceived;
             }
+            if (File.Exists("bot.txt"))
+            {
+                ConfigTabs.Visible = true;
+                metroToggle1.Visible = true;
+                metroLabel14.Visible = true;
+            }
             RenderFleets();
         }
 

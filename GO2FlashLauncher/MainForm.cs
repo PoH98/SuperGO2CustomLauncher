@@ -18,14 +18,13 @@ namespace GO2FlashLauncher
 {
     public partial class MainForm : Form
     {
-        private readonly RPC rpc = new RPC();
         private readonly GO2HttpService GO2HttpService = new GO2HttpService();
         private readonly string profileName = "Bot1";
         private BotSettings settings = ConfigService.Instance.Config;
-        private DiscordSocketClient _client;
         private readonly List<BotControl> bots = new List<BotControl>();
         private readonly HttpClient hc = new HttpClient();
         private bool loginError = false;
+        private DiscordSocketClient _client;
         public MainForm()
         {
             InitializeComponent();
@@ -104,12 +103,16 @@ namespace GO2FlashLauncher
             }
             catch (Exception ex)
             {
+                if(ex is JsonException)
+                {
+                    _ = MessageBox.Show("Game is offline!");
+                    Environment.Exit(0);
+                }
                 _ = MessageBox.Show(ex.ToString());
                 loginError = true;
                 ConfigService.Instance.Save();
                 MainForm_Load(sender, e);
             }
-            rpc.SetPresence();
             timer1.Start();
             if (!string.IsNullOrEmpty(settings.DiscordBotToken))
             {

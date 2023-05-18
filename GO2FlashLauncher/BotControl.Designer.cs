@@ -37,6 +37,7 @@
             this.metroLabel14 = new MetroFramework.Controls.MetroLabel();
             this.metroButton2 = new MetroFramework.Controls.MetroButton();
             this.ChromeContainer = new System.Windows.Forms.Panel();
+            this.haltLabel = new MetroFramework.Controls.MetroLabel();
             this.BotSettings = new MetroFramework.Controls.MetroTabPage();
             this.ConfigTabs = new MetroFramework.Controls.MetroTabControl();
             this.metroTabPage1 = new MetroFramework.Controls.MetroTabPage();
@@ -83,7 +84,6 @@
             this.metroCheckBox4 = new MetroFramework.Controls.MetroCheckBox();
             this.metroLabel15 = new MetroFramework.Controls.MetroLabel();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
-            this.haltLabel = new MetroFramework.Controls.MetroLabel();
             this.BotInstance.SuspendLayout();
             this.View.SuspendLayout();
             this.ChromeContainer.SuspendLayout();
@@ -109,7 +109,7 @@
             this.BotInstance.Controls.Add(this.BotSettings);
             this.BotInstance.Location = new System.Drawing.Point(0, 0);
             this.BotInstance.Name = "BotInstance";
-            this.BotInstance.SelectedIndex = 0;
+            this.BotInstance.SelectedIndex = 1;
             this.BotInstance.Size = new System.Drawing.Size(1082, 592);
             this.BotInstance.TabIndex = 0;
             this.BotInstance.Theme = MetroFramework.MetroThemeStyle.Dark;
@@ -138,7 +138,7 @@
             // 
             // metroButton4
             // 
-            this.metroButton4.Location = new System.Drawing.Point(140, 3);
+            this.metroButton4.Location = new System.Drawing.Point(84, 3);
             this.metroButton4.Name = "metroButton4";
             this.metroButton4.Size = new System.Drawing.Size(95, 23);
             this.metroButton4.TabIndex = 8;
@@ -149,13 +149,14 @@
             // 
             // metroButton3
             // 
-            this.metroButton3.Location = new System.Drawing.Point(84, 3);
+            this.metroButton3.Location = new System.Drawing.Point(185, 3);
             this.metroButton3.Name = "metroButton3";
             this.metroButton3.Size = new System.Drawing.Size(50, 23);
             this.metroButton3.TabIndex = 7;
             this.metroButton3.Text = "Dev";
             this.metroButton3.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.metroButton3.UseSelectable = true;
+            this.metroButton3.Visible = false;
             this.metroButton3.Click += new System.EventHandler(this.metroButton3_Click);
             // 
             // metroToggle1
@@ -167,6 +168,7 @@
             this.metroToggle1.TabIndex = 6;
             this.metroToggle1.Text = "Off";
             this.metroToggle1.UseSelectable = true;
+            this.metroToggle1.Visible = false;
             this.metroToggle1.CheckedChanged += new System.EventHandler(this.metroToggle1_CheckedChanged);
             // 
             // metroLabel14
@@ -178,6 +180,7 @@
             this.metroLabel14.TabIndex = 5;
             this.metroLabel14.Text = "Instance Script";
             this.metroLabel14.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.metroLabel14.Visible = false;
             // 
             // metroButton2
             // 
@@ -201,6 +204,17 @@
             this.ChromeContainer.Name = "ChromeContainer";
             this.ChromeContainer.Size = new System.Drawing.Size(1068, 515);
             this.ChromeContainer.TabIndex = 2;
+            // 
+            // haltLabel
+            // 
+            this.haltLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.haltLabel.Location = new System.Drawing.Point(0, 0);
+            this.haltLabel.Name = "haltLabel";
+            this.haltLabel.Size = new System.Drawing.Size(1068, 515);
+            this.haltLabel.TabIndex = 0;
+            this.haltLabel.Text = "Planet Halted";
+            this.haltLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.haltLabel.Theme = MetroFramework.MetroThemeStyle.Dark;
             // 
             // BotSettings
             // 
@@ -232,6 +246,7 @@
             this.ConfigTabs.TabIndex = 2;
             this.ConfigTabs.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.ConfigTabs.UseSelectable = true;
+            this.ConfigTabs.Visible = false;
             // 
             // metroTabPage1
             // 
@@ -831,17 +846,6 @@
             // 
             this.timer2.Interval = 10000;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
-            // 
-            // haltLabel
-            // 
-            this.haltLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.haltLabel.Location = new System.Drawing.Point(0, 0);
-            this.haltLabel.Name = "haltLabel";
-            this.haltLabel.Size = new System.Drawing.Size(1068, 515);
-            this.haltLabel.TabIndex = 0;
-            this.haltLabel.Text = "Planet Halted";
-            this.haltLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.haltLabel.Theme = MetroFramework.MetroThemeStyle.Dark;
             // 
             // BotControl
             // 

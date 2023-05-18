@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>GO2FlashLauncher</RootNamespace>
     <AssemblyName>GO2FlashLauncher</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -41,6 +41,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -50,6 +51,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>8518F760A88B28193A6E5DEFD964B783F96663AC</ManifestCertificateThumbprint>
@@ -156,7 +158,6 @@
     <Compile Include="Service\ControlSnapshot.cs" />
     <Compile Include="Service\GO2HttpService.cs" />
     <Compile Include="Service\Logger.cs" />
-    <Compile Include="Service\RPC.cs" />
     <Compile Include="Service\Encryption.cs" />
     <EmbeddedResource Include="BotControl.resx">
       <DependentUpon>BotControl.cs</DependentUpon>
@@ -2289,9 +2290,6 @@
     </PackageReference>
     <PackageReference Include="Discord.Net">
       <Version>3.8.1</Version>
-    </PackageReference>
-    <PackageReference Include="DiscordRichPresence">
-      <Version>1.1.3.18</Version>
     </PackageReference>
     <PackageReference Include="Emgu.CV">
       <Version>4.6.0.5131</Version>
