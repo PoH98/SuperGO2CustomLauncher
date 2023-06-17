@@ -95,7 +95,14 @@ namespace GO2FlashLauncher
                     _ = MessageBox.Show("Game is offline!");
                     Environment.Exit(0);
                 }
-                _ = MessageBox.Show(ex.ToString());
+                else if(ex.Message == "ACCOUNT_NOT_FOUND")
+                {
+                    settings.CredentialHash = null;
+                }
+                else
+                {
+                    _ = MessageBox.Show(ex.ToString());
+                }
                 loginError = true;
                 ConfigService.Instance.Save();
                 MainForm_Load(sender, e);
