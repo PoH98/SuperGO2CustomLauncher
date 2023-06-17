@@ -25,37 +25,37 @@ namespace GO2FlashLauncher.Model.SGO2
     public class Resources
     {
         [JsonProperty("gold")]
-        public int Gold { get; set; }
+        public int? Gold { get; set; }
 
         [JsonProperty("he3")]
-        public int He3 { get; set; }
+        public int? He3 { get; set; }
 
         [JsonProperty("metal")]
-        public int Metal { get; set; }
+        public int? Metal { get; set; }
 
         [JsonProperty("vouchers")]
-        public int Vouchers { get; set; }
+        public int? Vouchers { get; set; }
 
         [JsonProperty("mallPoints")]
-        public int MallPoints { get; set; }
+        public int? MallPoints { get; set; }
 
         [JsonProperty("coupons")]
-        public int Coupons { get; set; }
+        public int? Coupons { get; set; }
 
         [JsonProperty("corsairs")]
-        public int Corsairs { get; set; }
+        public int? Corsairs { get; set; }
 
         [JsonProperty("honor")]
-        public int Honor { get; set; }
+        public int? Honor { get; set; }
 
         [JsonProperty("badge")]
-        public int Badge { get; set; }
+        public int? Badge { get; set; }
 
         [JsonProperty("championPoints")]
-        public int ChampionPoints { get; set; }
+        public int? ChampionPoints { get; set; }
 
         [JsonProperty("freeSpins")]
-        public int FreeSpins { get; set; }
+        public int? FreeSpins { get; set; }
 
         [JsonProperty("lastSpin")]
         public DateTime? LastSpin { get; set; }

@@ -2,6 +2,7 @@
 using Discord;
 using Discord.WebSocket;
 using GO2FlashLauncher.Model;
+using GO2FlashLauncher.Model.SGO2;
 using GO2FlashLauncher.Models;
 using GO2FlashLauncher.Service;
 using MetroFramework;
@@ -11,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Net.Http;
+using System.Security.Authentication;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -67,39 +69,24 @@ namespace GO2FlashLauncher
                     planet = await GO2HttpService.GetPlanets();
                 }
                 textBox1.Text = settings.DiscordBotToken;
-                for (int x = 0; x < planet.Data.Count; x++)
+                if (planet.Data == null || planet.Data.Count < 1)
                 {
-                    MetroTabPage tab = new MetroTabPage()
+                    CreatePlanet c = new CreatePlanet(GO2HttpService);
+                    _ = c.ShowDialog();
+                    planet = await GO2HttpService.GetPlanets();
+                    if (planet.Code == 401)
                     {
-                        Text = planet.Data[x].Username,
-                        Theme = MetroThemeStyle.Dark
-                    };
-                    if (settings.PlanetSettings.Count <= x)
-                    {
-                        settings.PlanetSettings.Add(new PlanetSettings());
+                        Profile profile = Encryption.Decrypt(settings.CredentialHash);
+                        LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
+                        settings.AuthKey = credential.Data.Token;
+                        planet = await GO2HttpService.GetPlanets();
+                        if (planet.Code == 401)
+                        {
+                            throw new AuthenticationException("Invalid username password to login!");
+                        }
                     }
-                    metroTabControl1.Controls.Add(tab);
-                    settings.PlanetSettings[x].PlanetId = planet.Data[x].UserId;
-                    settings.PlanetSettings[x].PlanetName = planet.Data[x].Username;
-                    BotControl control = new BotControl(settings, settings.PlanetSettings[x], GO2HttpService, _client)
-                    {
-                        Size = new Size(tab.Size.Width - 10, tab.Size.Height - 10),
-                        Location = new Point(5, 5),
-                        Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom,
-                    };
-                    bots.Add(control);
-                    tab.Controls.Add(control);
                 }
-                MetroTabPage krtab = new MetroTabPage()
-                {
-                    Text = "Krtools",
-                    Theme = MetroThemeStyle.Dark
-                };
-                krtab.Controls.Add(new Krtools()
-                {
-                    Dock = DockStyle.Fill
-                });
-                metroTabControl1.Controls.Add(krtab);
+                CreatePlanetTabs(planet);
             }
             catch (Exception ex)
             {
@@ -117,6 +104,91 @@ namespace GO2FlashLauncher
             if (!string.IsNullOrEmpty(settings.DiscordBotToken))
             {
                 button2.PerformClick();
+            }
+        }
+        private void CreatePlanetTabs(GetPlanetResponse planet)
+        {
+            for (int x = 0; x < planet.Data.Count; x++)
+            {
+                MetroTabPage tab = new MetroTabPage()
+                {
+                    Text = planet.Data[x].Username,
+                    Theme = MetroThemeStyle.Dark
+                };
+                if (settings.PlanetSettings.Count <= x)
+                {
+                    settings.PlanetSettings.Add(new PlanetSettings());
+                }
+                metroTabControl1.Controls.Add(tab);
+                settings.PlanetSettings[x].PlanetId = planet.Data[x].UserId;
+                settings.PlanetSettings[x].PlanetName = planet.Data[x].Username;
+                BotControl control = new BotControl(settings, settings.PlanetSettings[x], GO2HttpService, _client)
+                {
+                    Size = new Size(tab.Size.Width - 10, tab.Size.Height - 10),
+                    Location = new Point(5, 5),
+                    Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom,
+                };
+                bots.Add(control);
+                tab.Controls.Add(control);
+                metroTabControl1.SelectedIndex = x;
+            }
+            metroTabControl1.SelectedIndex = 0;
+            if (planet.Data.Count < 3)
+            {
+                MetroTabPage tab = new MetroTabPage()
+                {
+                    Text = "New Planet",
+                    Name = "NewPlanet",
+                    Theme = MetroThemeStyle.Dark
+                };
+                metroTabControl1.Controls.Add(tab);
+                metroTabControl1.SelectedIndexChanged += MetroTabControl1_SelectedIndexChanged;
+            }
+            MetroTabPage krtab = new MetroTabPage()
+            {
+                Text = "Krtools",
+                Theme = MetroThemeStyle.Dark
+            };
+            krtab.Controls.Add(new Krtools()
+            {
+                Dock = DockStyle.Fill
+            });
+            metroTabControl1.Controls.Add(krtab);
+        }
+        private async void MetroTabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(metroTabControl1.Controls.Count > 4)
+            {
+                foreach(MetroTabPage tab in metroTabControl1.TabPages)
+                {
+                    if(tab.Name == "NewPlanet")
+                    {
+                        metroTabControl1.Controls.Remove(tab);
+                    }
+                }
+            }
+            if(metroTabControl1.SelectedTab.Name == "NewPlanet")
+            {
+                metroTabControl1.SelectedIndex = 0;
+                CreatePlanet c = new CreatePlanet(GO2HttpService);
+                if(c.ShowDialog() == DialogResult.OK)
+                {
+                    metroTabControl1.Controls.Clear();
+                    var planet = await GO2HttpService.GetPlanets();
+                    if (planet.Code == 401)
+                    {
+                        Profile profile = Encryption.Decrypt(settings.CredentialHash);
+                        LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
+                        settings.AuthKey = credential.Data.Token;
+                        planet = await GO2HttpService.GetPlanets();
+                        if (planet.Code == 401)
+                        {
+                            throw new AuthenticationException("Invalid username password to login!");
+                        }
+                    }
+                    CreatePlanetTabs(planet);
+                }
+
             }
         }
 

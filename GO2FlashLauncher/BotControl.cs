@@ -78,13 +78,21 @@ namespace GO2FlashLauncher
             {
                 client.MessageReceived += Client_MessageReceived;
             }
+            if (File.Exists("debug.txt"))
+            {
+                metroButton3.Visible = true;
+            }
             if (File.Exists("bot.txt"))
             {
                 ConfigTabs.Visible = true;
                 metroToggle1.Visible = true;
                 metroLabel14.Visible = true;
+                RenderFleets();
             }
-            RenderFleets();
+            else
+            {
+                BotInstance.Controls.Remove(BotSettings);
+            }
         }
 
         private async Task Client_MessageReceived(SocketMessage arg)
@@ -109,7 +117,7 @@ namespace GO2FlashLauncher
                         {
                             _ = arg.Content.Trim() == "help"
                                 ? await arg.Channel.SendMessageAsync("bind - bind you to this bot\nhelp - this message\n")
-                                : await arg.Channel.SendMessageAsync("You are not authorized to use this bot. Plase use \"/bind <secret>\" to bind your user with this bot");
+                                : await arg.Channel.SendMessageAsync("You are not authorized to use this bot. Plase use \"bind <secret>\" to bind your user with this bot");
                         }
                     }
                 }
@@ -130,16 +138,28 @@ namespace GO2FlashLauncher
                             case "help":
                                 if (replyOnce)
                                 {
-                                    _ = await arg.Channel.SendMessageAsync(
-                                        "bind <secret>- bind you to this bot\n" +
-                                        "help - this message\n" +
-                                        "list - list all planet name\n" +
-                                        "resource <planetName> - check current planet resource\n" +
-                                        "gain <planetName> - get current planet gain\n" +
-                                        "start <planetName> - start bot selected planet\n" +
-                                        "stop <planetName> - stop bot selected planet\n" +
-                                        "refresh <planetName> - refresh selected planet\n" +
-                                        "img <planetName> - send screenshot of current planet doing (Might have delays)");
+                                    if (File.Exists("bot.txt"))
+                                    {
+                                        _ = await arg.Channel.SendMessageAsync(
+                                            "bind <secret>- bind you to this bot\n" +
+                                            "help - this message\n" +
+                                            "list - list all planet name\n" +
+                                            "resource <planetName> - check current planet resource\n" +
+                                            "gain <planetName> - get current planet gain\n" +
+                                            "start <planetName> - start bot selected planet\n" +
+                                            "stop <planetName> - stop bot selected planet\n" +
+                                            "refresh <planetName> - refresh selected planet\n" +
+                                            "img <planetName> - send screenshot of current planet doing (Might have delays)");
+                                    }
+                                    else
+                                    {
+                                        _ = await arg.Channel.SendMessageAsync(
+                                            "bind <secret>- bind you to this bot\n" +
+                                            "help - this message\n" +
+                                            "list - list all planet name\n" +
+                                            "refresh <planetName> - refresh selected planet\n" +
+                                            "img <planetName> - send screenshot of current planet doing (Might have delays)");
+                                    }
                                 }
                                 break;
                             case "list":
@@ -154,40 +174,43 @@ namespace GO2FlashLauncher
                                 }
                                 break;
                             default:
-                                if (arg.Content.Trim() == "resource " + planet.PlanetName)
+                                if (File.Exists("bot.txt"))
                                 {
-                                    _ = await arg.Channel.SendMessageAsync("Current planet resources: \n" + script.Resources.ToString());
-                                }
-                                else if (arg.Content.Trim() == "gain " + planet.PlanetName)
-                                {
-                                    if (script == null || !script.Running)
+                                    if (arg.Content.Trim() == "resource " + planet.PlanetName)
                                     {
-                                        _ = await arg.Channel.SendMessageAsync("Bot is not started.");
+                                        _ = await arg.Channel.SendMessageAsync("Current planet resources: \n" + script.Resources.ToString());
                                     }
-                                    if (resources == null)
+                                    else if (arg.Content.Trim() == "gain " + planet.PlanetName)
                                     {
-                                        _ = await arg.Channel.SendMessageAsync("Bot not loaded resources details yet.");
+                                        if (script == null || !script.Running)
+                                        {
+                                            _ = await arg.Channel.SendMessageAsync("Bot is not started.");
+                                        }
+                                        if (resources == null)
+                                        {
+                                            _ = await arg.Channel.SendMessageAsync("Bot not loaded resources details yet.");
+                                        }
+                                        _ = await arg.Channel.SendMessageAsync("Current planet gained resources: \nMetal:" + (script.Resources.Metal - resources.Metal) +
+                                            "\nHE3: " + (script.Resources.HE3 - resources.HE3) + "\nGold: " + (script.Resources.Gold - resources.Gold));
                                     }
-                                    _ = await arg.Channel.SendMessageAsync("Current planet gained resources: \nMetal:" + (script.Resources.Metal - resources.Metal) +
-                                        "\nHE3: " + (script.Resources.HE3 - resources.HE3) + "\nGold: " + (script.Resources.Gold - resources.Gold));
-                                }
-                                else if (arg.Content.Trim().Contains("start " + planet.PlanetName))
-                                {
-                                    _ = metroToggle1.Invoke((MethodInvoker)delegate ()
+                                    else if (arg.Content.Trim().Contains("start " + planet.PlanetName))
                                     {
-                                        metroToggle1.Checked = true;
-                                    });
-                                    _ = await arg.Channel.SendMessageAsync("Bot Started");
-                                }
-                                else if (arg.Content.Trim().Contains("stop " + planet.PlanetName))
-                                {
-                                    _ = metroToggle1.Invoke((MethodInvoker)delegate ()
+                                        _ = metroToggle1.Invoke((MethodInvoker)delegate ()
+                                        {
+                                            metroToggle1.Checked = true;
+                                        });
+                                        _ = await arg.Channel.SendMessageAsync("Bot Started");
+                                    }
+                                    else if (arg.Content.Trim().Contains("stop " + planet.PlanetName))
                                     {
-                                        metroToggle1.Checked = false;
-                                    });
-                                    _ = await arg.Channel.SendMessageAsync("Bot Stopped");
+                                        _ = metroToggle1.Invoke((MethodInvoker)delegate ()
+                                        {
+                                            metroToggle1.Checked = false;
+                                        });
+                                        _ = await arg.Channel.SendMessageAsync("Bot Stopped");
+                                    }
                                 }
-                                else if (arg.Content.Trim().Contains("refresh " + planet.PlanetName))
+                                if (arg.Content.Trim().Contains("refresh " + planet.PlanetName))
                                 {
                                     _ = metroButton2.Invoke((MethodInvoker)delegate
                                     {
@@ -197,19 +220,10 @@ namespace GO2FlashLauncher
                                 }
                                 else if (arg.Content.Trim().Contains("img " + planet.PlanetName))
                                 {
-                                    if (script == null)
-                                    {
-                                        _ = await arg.Channel.SendMessageAsync("Bot not started");
-                                        return;
-                                    }
-                                    if (script.lastbmp == null)
-                                    {
-                                        _ = await arg.Channel.SendMessageAsync("Bot unable to fetch screenshot now, please try again later");
-                                        return;
-                                    }
+                                    var bmp = await chrome.GetBrowser().GetDevToolsClient().Screenshot();
                                     using (MemoryStream stream = new MemoryStream())
                                     {
-                                        script.lastbmp.Save(stream, ImageFormat.Png);
+                                        bmp.Save(stream, ImageFormat.Png);
                                         _ = await arg.Channel.SendFileAsync(stream, "screenshot.png");
                                     }
                                 }
@@ -263,6 +277,10 @@ namespace GO2FlashLauncher
             foreach (string constellations in Enum.GetNames(typeof(Constellations)))
             {
                 _ = metroComboBox5.Items.Add(constellations);
+            }
+            if (!File.Exists("bot.txt"))
+            {
+                return;
             }
             metroComboBox1.SelectedIndex = planet.Instance - 1;
             numericUpDown1.Value = planet.InstanceHitCount;
@@ -627,9 +645,12 @@ namespace GO2FlashLauncher
         {
             if(chrome != null)
             {
-                metroToggle1.Checked = false;
-                Logger.LogInfo("Bot Stopped");
-                Logger.LogInfo("Unlocked browser for botting...");
+                if (metroToggle1.Checked)
+                {
+                    metroToggle1.Checked = false;
+                    Logger.LogInfo("Bot Stopped");
+                    Logger.LogInfo("Unlocked browser for botting...");
+                }
                 if(script != null && script.Running)
                 {
                     script.Stop();

@@ -261,11 +261,11 @@ namespace GO2FlashLauncher.Script.GameLogic
             Model.SGO2.GetPlanetResponse result = await httpService.GetPlanets();
             BaseResources br = new BaseResources();
             Model.SGO2.Datum selectedPlanet = result.Data.FirstOrDefault(x => x.UserId == userID);
-            br.HE3 = selectedPlanet.Resources.He3;
-            br.Metal = selectedPlanet.Resources.Metal;
-            br.Gold = selectedPlanet.Resources.Gold;
-            br.MP = selectedPlanet.Resources.MallPoints;
-            br.Vouchers = selectedPlanet.Resources.Vouchers;
+            br.HE3 = selectedPlanet.Resources.He3.Value;
+            br.Metal = selectedPlanet.Resources.Metal.Value;
+            br.Gold = selectedPlanet.Resources.Gold.Value;
+            br.MP = selectedPlanet.Resources.MallPoints.Value;
+            br.Vouchers = selectedPlanet.Resources.Vouchers.Value;
             return br;
         }
     }

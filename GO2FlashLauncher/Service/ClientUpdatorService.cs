@@ -35,9 +35,9 @@ namespace GO2FlashLauncher.Service
                     {
                         _ = Directory.CreateDirectory(destination.Remove(destination.LastIndexOf("\\")));
                     }
-                    if (File.Exists(f))
+                    if (File.Exists(destination))
                     {
-                        File.Delete(f);
+                        File.Delete(destination);
                     }
                     FileInfo file = new FileInfo(f);
                     _ = file.CopyTo(destination);

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <config>
-<resources path="https://beta-client.supergo2.com/" gMap="asset/map/" res="asset/" client="asset/0058" galaxyAssetPath="0630galaxy_asset">
-                <resource name="GameRes"                src="0045GameRes.swf"  type="Mc"/>
+<resources path="https://client.guerradenaves.lat/" gMap="asset/map/" res="asset/" client="asset/0058" galaxyAssetPath="0630galaxy_asset">
+                <resource name="GameRes"                src="0048GameRes.swf"  type="Mc"/>
                 <resource name="games_asset"            src="0425games_asset.swf"  type="Mc"/>
                 <resource name="Picres"                 src="0045Picres.swf"  type="Mc"/>
                 <resource name="lottery"                src="302lottery.swf"  type="Mc"/>
@@ -10,7 +10,7 @@
                 <resource name="chat"                   src="0628chat_asset.swf"  type="Mc"/>
          <resource name="font"                  src="225afont.swf"  type="Mc"/>
         </resources>
-        <music path="https://beta-client.supergo2.com/" res="asset/music/">
+        <music path="https://client.guerradenaves.lat/" res="asset/music/">
                 <audio name="galaxy_music"      src="galaxy.mp3" type="Sound"/> 
                 <audio name="battle_music"      src="battle.mp3" type="Sound"/>
 

@@ -24,7 +24,7 @@ namespace GO2FlashLauncher.Service
         }
         public async Task<LoginResponse> Login(string username, string password)
         {
-            HttpResponseMessage response = await httpClient.PostAsync(Host + "/login/login/account", new StringContent(JsonConvert.SerializeObject(new
+            HttpResponseMessage response = await httpClient.PostAsync(Host + "/login/login/accounts", new StringContent(JsonConvert.SerializeObject(new
             {
                 username,
                 password
@@ -44,7 +44,7 @@ namespace GO2FlashLauncher.Service
 
         public async Task CreatePlanet(string username, int ground)
         {
-            HttpResponseMessage response = await httpClient.PostAsync(Host + "/account/create/user", new StringContent(JsonConvert.SerializeObject(new
+            HttpResponseMessage response = await httpClient.PostAsync(Host + "/accounts/create/user", new StringContent(JsonConvert.SerializeObject(new
             {
                 ground,
                 username
@@ -58,14 +58,14 @@ namespace GO2FlashLauncher.Service
 
         public async Task<GetFrameResponse> GetIFrameUrl(int id)
         {
-            HttpResponseMessage response = await httpClient.GetAsync(Host + "/account/play/user/" + id);
+            HttpResponseMessage response = await httpClient.GetAsync(Host + "/accounts/play/user/" + id);
             GetFrameResponse result = JsonConvert.DeserializeObject<GetFrameResponse>(await response.Content.ReadAsStringAsync());
             return result;
         }
 
         public async Task<GetPlanetResponse> GetPlanets()
         {
-            HttpResponseMessage response = await httpClient.GetAsync(Host + "/account/list/user");
+            HttpResponseMessage response = await httpClient.GetAsync(Host + "/accounts/list/user");
             GetPlanetResponse result = JsonConvert.DeserializeObject<GetPlanetResponse>(await response.Content.ReadAsStringAsync());
             return result;
         }
