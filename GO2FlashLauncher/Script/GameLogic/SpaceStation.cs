@@ -1,6 +1,5 @@
 ﻿using CefSharp;
-using CefSharp.DevTools;
-using CefSharp.WinForms;
+using CefSharp.DevTools.Page;
 using Emgu.CV;
 using Emgu.CV.OCR;
 using Emgu.CV.Structure;
@@ -15,15 +14,15 @@ namespace GO2FlashLauncher.Script.GameLogic
     internal class SpaceStation
     {
         private readonly IBrowserHost host;
-        private readonly DevToolsClient devtools;
+        private readonly PageClient pageClient;
         private readonly Random rnd = new Random();
         private readonly Tesseract ocr;
         private int NextTrialStage = 1;
         private readonly ConstellationCreator constellationCreator = new ConstellationCreator();
-        public SpaceStation(ChromiumWebBrowser browser)
+        public SpaceStation(IBrowserHost host, PageClient pageClient)
         {
-            host = browser.GetBrowser().GetHost();
-            devtools = browser.GetBrowser().GetDevToolsClient();
+            this.host = host;
+            this.pageClient = pageClient;
             ocr = new Tesseract("libs", "eng", OcrEngineMode.TesseractLstmCombined);
             ocr.SetVariable("tessedit_char_whitelist", "1234567890");
         }
@@ -79,7 +78,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             {
                 await host.LeftClick(result.Value, rnd.Next(10, 50));
                 await Task.Delay(800);
-                bmp = await devtools.Screenshot();
+                bmp = await pageClient.Screenshot();
             }
             //detect already in instance
             if (bmp.FindImage("Images\\instanceWindowMarker.png", 0.65) != null)
@@ -119,7 +118,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             {
                 await host.LeftClick(result.Value, rnd.Next(10, 50));
                 await Task.Delay(1000);
-                bmp = await devtools.Screenshot();
+                bmp = await pageClient.Screenshot();
             }
             //detect already in instance
             if (bmp.FindImage("Images\\instanceWindowMarker.png", 0.65) != null)
@@ -129,7 +128,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 {
                     await host.LeftClick(result.Value, rnd.Next(10, 50));
                     await Task.Delay(300);
-                    bmp = await devtools.Screenshot();
+                    bmp = await pageClient.Screenshot();
                 }
                 //read OCR restrict count left
                 Point? ocrPoint = bmp.FindImage("Images\\restrictRemaining.png", 0.7);
@@ -180,7 +179,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             {
                 await host.LeftClick(result.Value, rnd.Next(10, 50));
                 await Task.Delay(1000);
-                bmp = await devtools.Screenshot();
+                bmp = await pageClient.Screenshot();
             }
             //detect already in instance
             if (bmp.FindImage("Images\\instanceWindowMarker.png", 0.65) != null)
@@ -190,7 +189,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 {
                     await host.LeftClick(result.Value, rnd.Next(10, 50));
                     await Task.Delay(300);
-                    bmp = await devtools.Screenshot();
+                    bmp = await pageClient.Screenshot();
                     for (int i = NextTrialStage; i <= 10; i++)
                     {
                         result = bmp.FindImage("Images\\ti" + i + "ti.png", 0.9);
@@ -225,7 +224,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             {
                 await host.LeftClick(result.Value, rnd.Next(10, 50));
                 await Task.Delay(1000);
-                bmp = await devtools.Screenshot();
+                bmp = await pageClient.Screenshot();
             }
             //detect already in instance
             if (bmp.FindImage("Images\\instanceWindowMarker.png", 0.65) != null)
@@ -243,7 +242,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 {
                     await host.LeftClick(result.Value, rnd.Next(10, 50));
                     await Task.Delay(200);
-                    bmp = await devtools.Screenshot();
+                    bmp = await pageClient.Screenshot();
                     result = bmp.FindImage("Images\\Const" + constellations.ToString() + ".png", 0.8);
                     if (result != null)
                     {
@@ -251,7 +250,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                         await Task.Delay(200);
                         try
                         {
-                            AbstractConstellation constel = constellationCreator.Create(constellations, devtools, host);
+                            AbstractConstellation constel = constellationCreator.Create(constellations, pageClient, host);
                             await constel.EnterStage(stage);
                             return InstanceEnterState.IncreaseFleet;
                         }

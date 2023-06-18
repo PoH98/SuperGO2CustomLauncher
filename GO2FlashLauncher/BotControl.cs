@@ -220,7 +220,7 @@ namespace GO2FlashLauncher
                                 }
                                 else if (arg.Content.Trim().Contains("img " + planet.PlanetName))
                                 {
-                                    var bmp = await chrome.GetBrowser().GetDevToolsClient().Screenshot();
+                                    var bmp = await chrome.GetBrowser().GetDevToolsClient().Page.Screenshot();
                                     using (MemoryStream stream = new MemoryStream())
                                     {
                                         bmp.Save(stream, ImageFormat.Png);

@@ -1,5 +1,6 @@
 ﻿using CefSharp;
 using CefSharp.DevTools;
+using CefSharp.DevTools.Page;
 using CefSharp.WinForms;
 using System;
 using System.Drawing;
@@ -11,12 +12,12 @@ namespace GO2FlashLauncher.Script.GameLogic
     {
         private readonly IBrowserHost host;
         private readonly Random rnd = new Random();
-        private readonly DevToolsClient devtools;
+        private readonly PageClient pageClient;
 
-        public Inventory(ChromiumWebBrowser browser)
+        public Inventory(IBrowserHost host, PageClient pageClient)
         {
-            devtools = browser.GetBrowser().GetDevToolsClient();
-            host = browser.GetBrowser().GetHost();
+            this.host = host;
+            this.pageClient = pageClient;
         }
         /// <summary>
         /// Open inventory window
@@ -40,7 +41,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             await host.LeftClick(new Point(point.Value.X + bmp.Width - 200, point.Value.Y + bmp.Height - 500), rnd.Next(80, 100));
             await Task.Delay(300);
-            bmp = await devtools.Screenshot();
+            bmp = await pageClient.Screenshot();
             crop = await bmp.Crop(new Point(bmp.Width - 300, bmp.Height - 500), new Size(300, 500));
             point = crop.FindImageGrayscaled("Images\\bag.png", 0.8);
             if (point == null)
@@ -90,7 +91,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                         await host.LeftClick(point.Value, rnd.Next(80, 100));
                         await Task.Delay(200);
                     }
-                    bmp = await devtools.Screenshot();
+                    bmp = await pageClient.Screenshot();
                     //find treasure box
                     point = bmp.FindImage("Images\\treasurebox.png", 0.8);
                     if (point == null)
@@ -130,7 +131,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 await host.LeftClick(point.Value, rnd.Next(80, 100));
                 await Task.Delay(500);
                 //open button
-                bmp = await devtools.Screenshot();
+                bmp = await pageClient.Screenshot();
                 point = bmp.FindImage("Images\\usebtn.png", 0.8);
                 if (point == null)
                 {
@@ -142,7 +143,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 await host.LeftClick(point.Value, rnd.Next(80, 100));
                 //clicked use
                 await Task.Delay(1000);
-                bmp = await devtools.Screenshot();
+                bmp = await pageClient.Screenshot();
                 //close reward window
                 point = bmp.FindImage("Images\\treasurerewardconfirm.png", 0.8);
                 if (point == null)
@@ -177,7 +178,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             await host.LeftClick(point.Value, rnd.Next(80, 100));
             await Task.Delay(200);
-            bmp = await devtools.Screenshot();
+            bmp = await pageClient.Screenshot();
             point = bmp.FindImage("Images\\truced.png", 0.7);
             if (point == null)
             {
@@ -197,13 +198,13 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             await host.LeftClick(point.Value, rnd.Next(80, 100));
             await Task.Delay(100);
-            bmp = await devtools.Screenshot();
+            bmp = await pageClient.Screenshot();
             Point? bagpoint = bmp.FindImage("Images\\returnbag.png", 0.7);
             if (bagpoint != null)
             {
                 await host.LeftClick(point.Value, rnd.Next(80, 100));
                 await Task.Delay(100);
-                bmp = await devtools.Screenshot();
+                bmp = await pageClient.Screenshot();
                 point = bmp.FindImage("Images\\OK.png", 0.7);
                 if (point == null)
                 {
@@ -223,7 +224,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 }
                 await host.LeftClick(point.Value, rnd.Next(80, 100));
                 await Task.Delay(100);
-                bmp = await devtools.Screenshot();
+                bmp = await pageClient.Screenshot();
                 point = bmp.FindImage("Images\\truced.png", 0.7);
                 if (point == null)
                 {
@@ -244,7 +245,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                 await host.LeftClick(point.Value, rnd.Next(80, 100));
             }
             await Task.Delay(50);
-            bmp = await devtools.Screenshot();
+            bmp = await pageClient.Screenshot();
             point = bmp.FindImage("Images//usebtn.png", 0.8);
             if (point == null)
             {

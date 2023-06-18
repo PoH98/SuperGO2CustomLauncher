@@ -1,5 +1,6 @@
 ﻿using CefSharp;
 using CefSharp.DevTools;
+using CefSharp.DevTools.Page;
 using System.Drawing;
 
 
@@ -7,7 +8,7 @@ namespace GO2FlashLauncher.Script.GameLogic.Constellation
 {
     internal class Cancer : AbstractConstellation
     {
-        public Cancer(DevToolsClient devtools, IBrowserHost host) : base(devtools, host)
+        public Cancer(PageClient devtools, IBrowserHost host) : base(devtools, host)
         {
         }
 

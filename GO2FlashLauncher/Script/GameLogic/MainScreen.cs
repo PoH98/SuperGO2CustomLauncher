@@ -1,5 +1,6 @@
 ﻿using CefSharp;
 using CefSharp.DevTools;
+using CefSharp.DevTools.Page;
 using CefSharp.WinForms;
 using Emgu.CV.OCR;
 using GO2FlashLauncher.Model;
@@ -16,13 +17,13 @@ namespace GO2FlashLauncher.Script.GameLogic
     {
         private readonly IBrowserHost host;
         private readonly Random rnd = new Random();
-        private readonly DevToolsClient devtools;
+        private readonly PageClient pageClient;
         private readonly Tesseract ocr;
 
-        public MainScreen(ChromiumWebBrowser browser)
+        public MainScreen(IBrowserHost host, PageClient pageClient)
         {
-            devtools = browser.GetBrowser().GetDevToolsClient();
-            host = browser.GetBrowser().GetHost();
+            this.pageClient = pageClient;
+            this.host = host;
             ocr = new Tesseract("libs", "eng", OcrEngineMode.TesseractLstmCombined);
             ocr.SetVariable("tessedit_char_whitelist", "1234567890");
         }
@@ -195,14 +196,14 @@ namespace GO2FlashLauncher.Script.GameLogic
                 return false;
             }
             await host.LeftClick(new Point(point.Value.X + bmp.Width - 200, point.Value.Y + bmp.Height - 500), rnd.Next(80, 100));
-            bmp = await devtools.Screenshot();
+            bmp = await pageClient.Screenshot();
             crop = await bmp.Crop(new Point(bmp.Width - 200, bmp.Height - 500), new Size(200, 500));
             Point? mail = crop.FindImage("Images\\toolsemailicon.png", 0.6);
             if (mail != null)
             {
                 await host.LeftClick(new Point(mail.Value.X + bmp.Width - 200, mail.Value.Y + bmp.Height - 500), rnd.Next(80, 100));
                 await Task.Delay(1000);
-                bmp = await devtools.Screenshot();
+                bmp = await pageClient.Screenshot();
                 mail = bmp.FindImage("Images\\mailitemfilter.png", 0.7);
                 if (mail == null)
                 {
@@ -222,7 +223,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                     await Task.Delay(300);
                     await host.LeftClick(mail.Value.X, mail.Value.Y + 125, rnd.Next(80, 100));
                     await Task.Delay(1000);
-                    bmp = await devtools.Screenshot();
+                    bmp = await pageClient.Screenshot();
                     Point? collect = bmp.FindImageGrayscaled("Images\\allcharge.png", 0.7);
                     if (collect != null)
                     {

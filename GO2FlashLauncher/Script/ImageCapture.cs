@@ -1,4 +1,5 @@
 ﻿using CefSharp.DevTools;
+using CefSharp.DevTools.Page;
 using CefSharp.WinForms;
 using GO2FlashLauncher.Service;
 using System;
@@ -184,12 +185,12 @@ namespace GO2FlashLauncher.Script
             });
         }
 
-        public static async Task<Bitmap> Screenshot(this DevToolsClient devTools)
+        public static async Task<Bitmap> Screenshot(this PageClient pageClient)
         {
             try
             {
                 Stopwatch watch = Stopwatch.StartNew();
-                CefSharp.DevTools.Page.CaptureScreenshotResponse bmpdata = await devTools.Page.CaptureScreenshotAsync();
+                CaptureScreenshotResponse bmpdata = await pageClient.CaptureScreenshotAsync();
                 Bitmap bmp;
                 using (MemoryStream ms = new MemoryStream(bmpdata.Data))
                 {

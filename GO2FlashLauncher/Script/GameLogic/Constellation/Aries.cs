@@ -1,5 +1,5 @@
 ﻿using CefSharp;
-using CefSharp.DevTools;
+using CefSharp.DevTools.Page;
 using System.Drawing;
 
 
@@ -7,7 +7,7 @@ namespace GO2FlashLauncher.Script.GameLogic.Constellation
 {
     internal class Aries : AbstractConstellation
     {
-        public Aries(DevToolsClient devtools, IBrowserHost host) : base(devtools, host)
+        public Aries(PageClient pageClient, IBrowserHost host) : base(pageClient, host)
         {
         }
 

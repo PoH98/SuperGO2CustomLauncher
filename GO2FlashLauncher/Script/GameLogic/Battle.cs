@@ -1,5 +1,6 @@
 ﻿using CefSharp;
 using CefSharp.DevTools;
+using CefSharp.DevTools.Page;
 using CefSharp.WinForms;
 using GO2FlashLauncher.Model;
 using System;
@@ -15,12 +16,12 @@ namespace GO2FlashLauncher.Script.GameLogic
     {
         private readonly IBrowserHost host;
         private readonly Random rnd = new Random();
-        private readonly DevToolsClient devtools;
+        private readonly PageClient pageClient;
 
-        public Battle(ChromiumWebBrowser browser)
+        public Battle(IBrowserHost host, PageClient pageClient)
         {
-            devtools = browser.GetBrowser().GetDevToolsClient();
-            host = browser.GetBrowser().GetHost();
+            this.host = host;
+            this.pageClient = pageClient;
         }
         public async Task<bool> SelectFleet(Bitmap bmp, List<Fleet> fleets, SelectFleetType fleetType, int instanceLv, Constellations constellations)
         {
@@ -162,7 +163,7 @@ namespace GO2FlashLauncher.Script.GameLogic
                     break;
             }
             int currentPage = 0;
-            bmp = await devtools.Screenshot();
+            bmp = await pageClient.Screenshot();
             IEnumerable<Fleet> selectedFleets = fleets.Where((x) =>
             {
                 switch (fleetType)
@@ -272,7 +273,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             if (fleetType == SelectFleetType.Instance || fleetType == SelectFleetType.Restrict || fleetType == SelectFleetType.Trial || fleetType == SelectFleetType.Constellation)
             {
-                bmp = await devtools.Screenshot();
+                bmp = await pageClient.Screenshot();
                 Point? result = bmp.FindImageGrayscaled("Images\\OK.png", 0.7);
                 if (result == null)
                 {
@@ -341,7 +342,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             {
                 await host.LeftClick(result.Value, rnd.Next(39, 50));
                 await Task.Delay(800);
-                bmp = await devtools.Screenshot();
+                bmp = await pageClient.Screenshot();
                 result = bmp.FindImage("Images\\supplyall.png", 0.8);
                 if (result != null)
                 {

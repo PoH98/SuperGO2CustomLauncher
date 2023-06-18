@@ -1,12 +1,13 @@
 ﻿using CefSharp;
 using CefSharp.DevTools;
+using CefSharp.DevTools.Page;
 using System.Drawing;
 
 namespace GO2FlashLauncher.Script.GameLogic.Constellation
 {
     internal class Scorpio : AbstractConstellation
     {
-        public Scorpio(DevToolsClient devtools, IBrowserHost host) : base(devtools, host)
+        public Scorpio(PageClient devtools, IBrowserHost host) : base(devtools, host)
         {
         }
 

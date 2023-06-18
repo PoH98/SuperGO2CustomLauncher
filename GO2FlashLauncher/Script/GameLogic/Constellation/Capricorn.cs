@@ -1,12 +1,13 @@
 ﻿using CefSharp;
 using CefSharp.DevTools;
+using CefSharp.DevTools.Page;
 using System.Drawing;
 
 namespace GO2FlashLauncher.Script.GameLogic.Constellation
 {
     internal class Capricorn : AbstractConstellation
     {
-        public Capricorn(DevToolsClient devtools, IBrowserHost host) : base(devtools, host)
+        public Capricorn(PageClient devtools, IBrowserHost host) : base(devtools, host)
         {
         }
 

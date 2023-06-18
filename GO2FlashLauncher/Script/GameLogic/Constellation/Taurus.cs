@@ -1,12 +1,13 @@
 ﻿using CefSharp;
 using CefSharp.DevTools;
+using CefSharp.DevTools.Page;
 using System.Drawing;
 
 namespace GO2FlashLauncher.Script.GameLogic.Constellation
 {
     internal class Taurus : AbstractConstellation
     {
-        public Taurus(DevToolsClient devtools, IBrowserHost host) : base(devtools, host)
+        public Taurus(PageClient devtools, IBrowserHost host) : base(devtools, host)
         {
         }
 

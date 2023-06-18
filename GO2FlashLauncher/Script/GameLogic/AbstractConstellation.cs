@@ -1,5 +1,5 @@
 ﻿using CefSharp;
-using CefSharp.DevTools;
+using CefSharp.DevTools.Page;
 using System;
 using System.Drawing;
 using System.Threading.Tasks;
@@ -8,13 +8,13 @@ namespace GO2FlashLauncher.Script.GameLogic
 {
     internal abstract class AbstractConstellation
     {
-        private readonly DevToolsClient devtools;
+        private readonly PageClient pageClient;
         private readonly IBrowserHost host;
         private readonly Random rnd = new Random();
-        public AbstractConstellation(DevToolsClient devtools, IBrowserHost host)
+        public AbstractConstellation(PageClient pageClient, IBrowserHost host)
         {
             this.host = host;
-            this.devtools = devtools;
+            this.pageClient = pageClient;
         }
 
         protected abstract Point Stage1(Point locate);
@@ -23,7 +23,7 @@ namespace GO2FlashLauncher.Script.GameLogic
         protected abstract Point Stage4(Point locate);
         public async Task EnterStage(int stage)
         {
-            Bitmap bmp = await devtools.Screenshot();
+            Bitmap bmp = await pageClient.Screenshot();
             Point locateP = AllocateConstellation(bmp);
             switch (stage)
             {

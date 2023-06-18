@@ -1,4 +1,5 @@
 ﻿using CefSharp;
+using CefSharp.DevTools.Page;
 using CefSharp.WinForms;
 using GO2FlashLauncher.Model;
 using GO2FlashLauncher.Script.GameLogic;
@@ -25,12 +26,12 @@ namespace GO2FlashLauncher.Script
                 }
                 IsRunning = true;
                 BotStartTime = DateTime.Now;
-                CefSharp.DevTools.DevToolsClient devTools = browser.GetBrowser().GetDevToolsClient();
+                var pageClient = browser.GetBrowser().GetDevToolsClient().Page;
                 IBrowserHost host = browser.GetBrowser().GetHost();
                 try
                 {
-                    MainScreen m = new MainScreen(browser);
-                    Wheel w = new Wheel(browser);
+                    MainScreen m = new MainScreen(host, pageClient);
+                    Wheel w = new Wheel(host, pageClient);
                     int error = 0;
                     bool mainScreenLocated = false;
                     bool inWheel = false;
@@ -42,7 +43,7 @@ namespace GO2FlashLauncher.Script
                             //error too much
                             if (error > 5)
                             {
-                                System.Drawing.Bitmap lagging = await devTools.Screenshot();
+                                System.Drawing.Bitmap lagging = await pageClient.Screenshot();
                                 if (m.DetectDisconnect(lagging))
                                 {
                                     Logger.LogError("Please refresh the browser! Server disconnected! Maybe is in server maintainance! ");
@@ -56,7 +57,7 @@ namespace GO2FlashLauncher.Script
                                     inWheel = false;
                                 }
                             }
-                            System.Drawing.Bitmap bmp = await devTools.Screenshot();
+                            System.Drawing.Bitmap bmp = await pageClient.Screenshot();
                             if (bmp.FindImageGrayscaled("Images\\friendrequesttext.png", 0.7).HasValue)
                             {
                                 System.Drawing.Point? friendClose = bmp.FindImage("Images\\friendrequestclose.png", 0.8);
@@ -64,7 +65,7 @@ namespace GO2FlashLauncher.Script
                                 {
                                     await host.LeftClick(friendClose.Value, 100);
                                     await Task.Delay(botSettings.Delays);
-                                    bmp = await devTools.Screenshot();
+                                    bmp = await pageClient.Screenshot();
                                 }
                             }
                             if (!mainScreenLocated)
@@ -74,7 +75,7 @@ namespace GO2FlashLauncher.Script
                                 {
                                     for (int x = 0; x < 3; x++)
                                     {
-                                        bmp = await devTools.Screenshot();
+                                        bmp = await pageClient.Screenshot();
                                         if (x <= 1)
                                         {
                                             //don't click home base

@@ -1,5 +1,6 @@
 ﻿using CefSharp;
 using CefSharp.DevTools;
+using CefSharp.DevTools.Page;
 using CefSharp.WinForms;
 using GO2FlashLauncher.Model;
 using System;
@@ -12,11 +13,11 @@ namespace GO2FlashLauncher.Script.GameLogic
     {
         private readonly IBrowserHost host;
         private readonly Random rnd = new Random();
-        private readonly DevToolsClient devtools;
-        public Wheel(ChromiumWebBrowser browser)
+        private readonly PageClient pageClient;
+        public Wheel(IBrowserHost host, PageClient pageClient)
         {
-            devtools = browser.GetBrowser().GetDevToolsClient();
-            host = browser.GetBrowser().GetHost();
+            this.host = host;
+            this.pageClient = pageClient;
         }
 
         public async Task<bool> GetIn(Bitmap bmp)
@@ -39,7 +40,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             {
                 await host.LeftClick(new Point(point.Value.X + bmp.Width - 200, point.Value.Y + bmp.Height - 500), rnd.Next(80, 100));
                 await Task.Delay(300);
-                bmp = await devtools.Screenshot();
+                bmp = await pageClient.Screenshot();
                 crop = await bmp.Crop(new Point(bmp.Width - 200, bmp.Height - 500), new Size(200, 500));
                 point = crop.FindImage("Images\\wheel.png", 0.7);
                 if (point == null)
@@ -79,7 +80,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             }
             await host.LeftClick(point.Value, rnd.Next(80, 100));
             await Task.Delay(500);
-            bmp = await devtools.Screenshot();
+            bmp = await pageClient.Screenshot();
             point = bmp.FindImage("Images\\wheelbuyandspin.png", 0.7);
             if (point == null)
             {
@@ -134,7 +135,7 @@ namespace GO2FlashLauncher.Script.GameLogic
             {
                 await Task.Delay(1000);
                 //scan for share
-                bmp = await devtools.Screenshot();
+                bmp = await pageClient.Screenshot();
                 point = bmp.FindImage("Images\\closeshare.png", 0.7);
                 if (point != null)
                 {

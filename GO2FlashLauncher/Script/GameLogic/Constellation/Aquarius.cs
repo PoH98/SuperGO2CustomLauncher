@@ -1,12 +1,12 @@
 ﻿using CefSharp;
-using CefSharp.DevTools;
+using CefSharp.DevTools.Page;
 using System.Drawing;
 
 namespace GO2FlashLauncher.Script.GameLogic.Constellation
 {
     internal class Aquarius : AbstractConstellation
     {
-        public Aquarius(DevToolsClient devtools, IBrowserHost host) : base(devtools, host)
+        public Aquarius(PageClient devtools, IBrowserHost host) : base(devtools, host)
         {
         }
 

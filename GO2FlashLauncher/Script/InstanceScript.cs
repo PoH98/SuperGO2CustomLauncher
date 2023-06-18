@@ -1,4 +1,6 @@
 ﻿using CefSharp;
+using CefSharp.DevTools;
+using CefSharp.DevTools.Page;
 using CefSharp.WinForms;
 using Discord;
 using Discord.WebSocket;
@@ -15,6 +17,7 @@ namespace GO2FlashLauncher.Script
     {
         private readonly DiscordSocketClient client;
         private readonly IUser user;
+        private PageClient pageClient;
         public InstanceScript(BotSettings settings, PlanetSettings planetSettings, DiscordSocketClient client) : base(settings, planetSettings)
         {
             this.client = client;
@@ -39,18 +42,21 @@ namespace GO2FlashLauncher.Script
                 {
                     await Task.Delay(1000);
                 }
-                CefSharp.DevTools.DevToolsClient devTools = browser.GetBrowser().GetDevToolsClient();
+                if(pageClient == null)
+                {
+                    pageClient = browser.GetBrowser().GetDevToolsClient().Page;
+                }
                 IBrowserHost host = browser.GetBrowser().GetHost();
                 host.SetFocus(false);
                 try
                 {
                     //Init sub scripts
-                    MainScreen m = new MainScreen(browser);
-                    SpaceStation s = new SpaceStation(browser);
-                    Battle b = new Battle(browser);
-                    Inventory i = new Inventory(browser);
+                    MainScreen m = new MainScreen(host, pageClient);
+                    SpaceStation s = new SpaceStation(host, pageClient);
+                    Battle b = new Battle(host, pageClient);
+                    Inventory i = new Inventory(host, pageClient);
                     LagDetection l = new LagDetection();
-                    Wheel w = new Wheel(browser);
+                    Wheel w = new Wheel(host, pageClient);
                     //Init status
                     bool mainScreenLocated = false;
                     bool spaceStationLocated = false;
@@ -115,7 +121,7 @@ namespace GO2FlashLauncher.Script
                             //error too much
                             if (error > 5)
                             {
-                                Bitmap lagging = await devTools.Screenshot();
+                                Bitmap lagging = await pageClient.Screenshot();
                                 if (error > 20)
                                 {
                                     //start over again
@@ -125,7 +131,7 @@ namespace GO2FlashLauncher.Script
                                 }
                             }
                             //Screenshot browser
-                            Bitmap bmp = await devTools.Screenshot();
+                            Bitmap bmp = await pageClient.Screenshot();
                             await Task.Delay(100);
                             if (m.DetectDisconnect(bmp))
                             {
@@ -159,7 +165,7 @@ namespace GO2FlashLauncher.Script
 
                                 _ = await i.OpenInventory(bmp);
                                 await Task.Delay(500);
-                                bmp = await devTools.Screenshot();
+                                bmp = await pageClient.Screenshot();
                                 if (!await i.OpenTruce(bmp))
                                 {
                                     if (user != null)
@@ -169,13 +175,13 @@ namespace GO2FlashLauncher.Script
 
                                     Logger.LogError("Unable to open truce.");
                                 }
-                                bmp = await devTools.Screenshot();
+                                bmp = await pageClient.Screenshot();
                                 _ = await b.CloseButtons(bmp);
                                 await Task.Delay(50);
                                 //click away the warning
                                 await host.LeftClick(underAttack.Value, 100);
                                 await Task.Delay(100);
-                                bmp = await devTools.Screenshot();
+                                bmp = await pageClient.Screenshot();
                                 _ = await b.CloseButtons(bmp);
                             }
                             //check for friendrequest
@@ -186,7 +192,7 @@ namespace GO2FlashLauncher.Script
                                 {
                                     await host.LeftClick(friendClose.Value, 100);
                                     await Task.Delay(botSettings.Delays - 100);
-                                    bmp = await devTools.Screenshot();
+                                    bmp = await pageClient.Screenshot();
                                 }
                             }
                             if (!mainScreenLocated)
@@ -196,7 +202,7 @@ namespace GO2FlashLauncher.Script
                                 {
                                     for (int x = 0; x < 2; x++)
                                     {
-                                        bmp = await devTools.Screenshot();
+                                        bmp = await pageClient.Screenshot();
                                         if (x <= 1)
                                         {
                                             //don't click home base
@@ -248,7 +254,7 @@ namespace GO2FlashLauncher.Script
                                     await Task.Delay(botSettings.Delays / 2);
                                     _ = await m.LocateWarehouse(bmp);
                                     await Task.Delay(botSettings.Delays);
-                                    bmp = await devTools.Screenshot();
+                                    bmp = await pageClient.Screenshot();
                                     _ = await m.Collect(bmp);
                                     collectedResources = true;
                                     lastCollectTime = DateTime.Now;
@@ -261,7 +267,7 @@ namespace GO2FlashLauncher.Script
                                 await s.Enter(bmp);
                                 Logger.LogInfo("Going to space station");
                                 await Task.Delay(botSettings.Delays / 4 * 3);
-                                bmp = await devTools.Screenshot();
+                                bmp = await pageClient.Screenshot();
                                 Point? spaceStationLocation = await s.Locate(bmp);
                                 if (spaceStationLocation.HasValue)
                                 {
@@ -285,7 +291,7 @@ namespace GO2FlashLauncher.Script
                                         try
                                         {
                                             await Task.Delay(botSettings.Delays);
-                                            bmp = await devTools.Screenshot();
+                                            bmp = await pageClient.Screenshot();
                                             Cancellation.ThrowIfCancellationRequested();
                                             if (planetSettings.TrialFight)
                                             {
@@ -307,7 +313,7 @@ namespace GO2FlashLauncher.Script
                                                         //seems like last time failed
                                                         trialStucked = true;
                                                         Logger.LogWarning("Seems like you can't win this Trial " + r.Item2 + ", skipping...");
-                                                        bmp = await devTools.Screenshot();
+                                                        bmp = await pageClient.Screenshot();
                                                         _ = await b.CloseButtons(bmp);
                                                         await Task.Delay(botSettings.Delays);
                                                         inStage = false;
@@ -318,7 +324,7 @@ namespace GO2FlashLauncher.Script
                                                     {
                                                         currentTrialLv = r.Item2;
                                                         Logger.LogWarning("Trial " + r.Item2 + " is not attackable, skipping...");
-                                                        bmp = await devTools.Screenshot();
+                                                        bmp = await pageClient.Screenshot();
                                                         _ = await b.CloseButtons(bmp);
                                                         await Task.Delay(botSettings.Delays);
                                                         inStage = false;
@@ -375,7 +381,7 @@ namespace GO2FlashLauncher.Script
                                                         {
                                                             currentRestrictCount = 3;
                                                             Logger.LogInfo("Restrict already out of chances today, skipping...");
-                                                            bmp = await devTools.Screenshot();
+                                                            bmp = await pageClient.Screenshot();
                                                             _ = await b.CloseButtons(bmp);
                                                             await Task.Delay(botSettings.Delays);
                                                             runningRestrict = false;
@@ -420,7 +426,7 @@ namespace GO2FlashLauncher.Script
                                                         if (ex.Message == "")
                                                         {
                                                             Logger.LogInfo("Out of items to enter Constellations, skipping...");
-                                                            bmp = await devTools.Screenshot();
+                                                            bmp = await pageClient.Screenshot();
                                                             _ = await b.CloseButtons(bmp);
                                                             await Task.Delay(botSettings.Delays);
                                                             runningConstellation = false;
@@ -454,12 +460,12 @@ namespace GO2FlashLauncher.Script
                                                     Logger.LogInfo("Selecting fleets");
                                                     while (!await b.IncreaseFleet(bmp))
                                                     {
-                                                        bmp = await devTools.Screenshot();
+                                                        bmp = await pageClient.Screenshot();
                                                         await Task.Delay(100);
                                                         Cancellation.ThrowIfCancellationRequested();
                                                     }
                                                     await Task.Delay(botSettings.Delays);
-                                                    bmp = await devTools.Screenshot();
+                                                    bmp = await pageClient.Screenshot();
                                                     Logger.LogInfo("Refilling fleets");
                                                     if (!await b.RefillHE3(bmp, resources, planetSettings.HaltOn))
                                                     {
@@ -489,10 +495,10 @@ namespace GO2FlashLauncher.Script
                                                         break;
                                                     }
                                                     await Task.Delay(botSettings.Delays);
-                                                    bmp = await devTools.Screenshot();
+                                                    bmp = await pageClient.Screenshot();
                                                     while (!await b.IncreaseFleet(bmp))
                                                     {
-                                                        bmp = await devTools.Screenshot();
+                                                        bmp = await pageClient.Screenshot();
                                                         Cancellation.ThrowIfCancellationRequested();
                                                         error++;
                                                         if (error > 5)
@@ -514,7 +520,7 @@ namespace GO2FlashLauncher.Script
                                                         break;
                                                     }
                                                     await Task.Delay(botSettings.Delays - 100);
-                                                    bmp = await devTools.Screenshot();
+                                                    bmp = await pageClient.Screenshot();
                                                     int instanceLv = 1;
                                                     switch (instanceType)
                                                     {
@@ -538,7 +544,7 @@ namespace GO2FlashLauncher.Script
 
                                                         }
                                                         Logger.LogError("No fleet found!");
-                                                        bmp = await devTools.Screenshot();
+                                                        bmp = await pageClient.Screenshot();
                                                         error++;
                                                         if (error > 3)
                                                         {
@@ -560,7 +566,7 @@ namespace GO2FlashLauncher.Script
                                                         break;
                                                     }
                                                     await Task.Delay(botSettings.Delays - 100);
-                                                    bmp = await devTools.Screenshot();
+                                                    bmp = await pageClient.Screenshot();
                                                     Point? p = bmp.FindImage("Images\\instanceStart.png", 0.7);
                                                     if (p != null)
                                                     {
@@ -632,11 +638,11 @@ namespace GO2FlashLauncher.Script
                                     {
                                         for (int x = 0; x < 3; x++)
                                         {
-                                            bmp = await devTools.Screenshot();
+                                            bmp = await pageClient.Screenshot();
                                             _ = await b.CloseButtons(bmp);
                                             await Task.Delay(botSettings.Delays);
                                         }
-                                        bmp = await devTools.Screenshot();
+                                        bmp = await pageClient.Screenshot();
                                         _ = await w.EndSpin(bmp);
                                     }
                                     inStage = false;
@@ -664,7 +670,7 @@ namespace GO2FlashLauncher.Script
                                         if (await m.CollectMails(bmp))
                                         {
                                             suspendCollect = false;
-                                            bmp = await devTools.Screenshot();
+                                            bmp = await pageClient.Screenshot();
                                         }
                                     }
                                     if (stageCount >= planetSettings.InstanceHitCount && planetSettings.InstanceHitCount > 0 && !suspendCollect && !runningRestrict && !runningTrial && !runningConstellation)
@@ -673,7 +679,7 @@ namespace GO2FlashLauncher.Script
                                         if (await i.OpenInventory(bmp))
                                         {
                                             await Task.Delay(botSettings.Delays);
-                                            bmp = await devTools.Screenshot();
+                                            bmp = await pageClient.Screenshot();
                                             //open boxes
                                             if (await i.OpenTreasury(bmp, stageCount))
                                             {
@@ -684,12 +690,12 @@ namespace GO2FlashLauncher.Script
                                                 suspendCollect = true;
                                             }
                                             await Task.Delay(botSettings.Delays);
-                                            bmp = await devTools.Screenshot();
+                                            bmp = await pageClient.Screenshot();
                                             while (!await b.CloseButtons(bmp))
                                             {
                                                 error++;
                                                 await Task.Delay(100);
-                                                bmp = await devTools.Screenshot();
+                                                bmp = await pageClient.Screenshot();
                                                 Cancellation.ThrowIfCancellationRequested();
                                                 if (error > 10)
                                                 {
@@ -711,12 +717,12 @@ namespace GO2FlashLauncher.Script
                                         {
                                             suspendCollect = true;
                                             await Task.Delay(botSettings.Delays);
-                                            bmp = await devTools.Screenshot();
+                                            bmp = await pageClient.Screenshot();
                                             while (!await b.CloseButtons(bmp))
                                             {
                                                 error++;
                                                 await Task.Delay(100);
-                                                bmp = await devTools.Screenshot();
+                                                bmp = await pageClient.Screenshot();
                                                 if (error > 10)
                                                 {
                                                     //???
@@ -764,7 +770,7 @@ namespace GO2FlashLauncher.Script
                                                     //stop spin, something wrong
                                                     Logger.LogWarning("Spin seems failed! Not going to spin!");
                                                     await Task.Delay(50);
-                                                    bmp = await devTools.Screenshot();
+                                                    bmp = await pageClient.Screenshot();
                                                     _ = await w.EndSpin(bmp);
                                                     inSpin = false;
                                                     spinable = false;
@@ -779,7 +785,7 @@ namespace GO2FlashLauncher.Script
                                                     {
                                                         Logger.LogWarning("Voucher Spins! Auto canceling!");
                                                         await Task.Delay(50);
-                                                        bmp = await devTools.Screenshot();
+                                                        bmp = await pageClient.Screenshot();
                                                         _ = await w.EndSpin(bmp);
                                                         inSpin = false;
                                                         spinable = false;
@@ -825,13 +831,13 @@ namespace GO2FlashLauncher.Script
                                     Logger.LogInfo("Collected EZRewards");
                                     await Task.Delay(800);
                                     //detect close
-                                    bmp = await devTools.Screenshot();
+                                    bmp = await pageClient.Screenshot();
                                     bmp = await bmp.Crop(new Point(0, 0), new Size(bmp.Width, bmp.Height - 300));
                                     while (!await b.CloseButtons(bmp))
                                     {
                                         error++;
                                         await Task.Delay(100);
-                                        bmp = await devTools.Screenshot();
+                                        bmp = await pageClient.Screenshot();
                                         if (error > 10)
                                         {
                                             //???
