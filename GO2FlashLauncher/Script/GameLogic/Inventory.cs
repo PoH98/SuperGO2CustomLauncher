@@ -1,7 +1,5 @@
 ﻿using CefSharp;
-using CefSharp.DevTools;
 using CefSharp.DevTools.Page;
-using CefSharp.WinForms;
 using System;
 using System.Drawing;
 using System.Threading.Tasks;

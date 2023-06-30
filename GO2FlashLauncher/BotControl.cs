@@ -68,7 +68,7 @@ namespace GO2FlashLauncher
 
                 if (!Cef.Initialize(settings, true))
                 {
-                    throw new Exception("Unable to Initialize Cef");
+                    throw new ApplicationException("Unable to Initialize Cef");
                 }
             }
             ClientUpdatorService.Instance.UpdateFiles();
@@ -95,6 +95,58 @@ namespace GO2FlashLauncher
             }
         }
 
+        private async Task HiddenDCBotFunc(SocketMessage arg)
+        {
+            if (arg.Content.Trim() == "resource " + planet.PlanetName)
+            {
+                _ = await arg.Channel.SendMessageAsync("Current planet resources: \n" + script.Resources.ToString());
+            }
+            else if (arg.Content.Trim() == "gain " + planet.PlanetName)
+            {
+                if (script == null || !script.Running)
+                {
+                    _ = await arg.Channel.SendMessageAsync("Bot is not started.");
+                }
+                if (resources == null)
+                {
+                    _ = await arg.Channel.SendMessageAsync("Bot not loaded resources details yet.");
+                }
+                _ = await arg.Channel.SendMessageAsync("Current planet gained resources: \nMetal:" + (script.Resources.Metal - resources.Metal) +
+                    "\nHE3: " + (script.Resources.HE3 - resources.HE3) + "\nGold: " + (script.Resources.Gold - resources.Gold));
+            }
+            else if (arg.Content.Trim().Contains("start " + planet.PlanetName))
+            {
+                _ = metroToggle1.Invoke((MethodInvoker)delegate ()
+                {
+                    metroToggle1.Checked = true;
+                });
+                _ = await arg.Channel.SendMessageAsync("Bot Started");
+            }
+            else if (arg.Content.Trim().Contains("stop " + planet.PlanetName))
+            {
+                _ = metroToggle1.Invoke((MethodInvoker)delegate ()
+                {
+                    metroToggle1.Checked = false;
+                });
+                _ = await arg.Channel.SendMessageAsync("Bot Stopped");
+            }
+        }
+
+        private async Task NotBinded(SocketMessage arg)
+        {
+            if (arg.Content.Trim() == "bind " + botSettings.DiscordSecret)
+            {
+                botSettings.DiscordUserID = arg.Author.Id;
+                _ = await arg.Channel.SendMessageAsync("User bind successfully");
+            }
+            else
+            {
+                _ = arg.Content.Trim() == "help"
+                    ? await arg.Channel.SendMessageAsync("bind - bind you to this bot\nhelp - this message\n")
+                    : await arg.Channel.SendMessageAsync("You are not authorized to use this bot. Plase use \"bind <secret>\" to bind your user with this bot");
+            }
+        }
+
         private async Task Client_MessageReceived(SocketMessage arg)
         {
             if (arg.Author.IsBot)
@@ -108,17 +160,7 @@ namespace GO2FlashLauncher
                 {
                     if (replyOnce)
                     {
-                        if (arg.Content.Trim() == "bind " + botSettings.DiscordSecret)
-                        {
-                            botSettings.DiscordUserID = arg.Author.Id;
-                            _ = await arg.Channel.SendMessageAsync("User bind successfully");
-                        }
-                        else
-                        {
-                            _ = arg.Content.Trim() == "help"
-                                ? await arg.Channel.SendMessageAsync("bind - bind you to this bot\nhelp - this message\n")
-                                : await arg.Channel.SendMessageAsync("You are not authorized to use this bot. Plase use \"bind <secret>\" to bind your user with this bot");
-                        }
+                        await NotBinded(arg);
                     }
                 }
                 else
@@ -138,9 +180,8 @@ namespace GO2FlashLauncher
                             case "help":
                                 if (replyOnce)
                                 {
-                                    if (File.Exists("bot.txt"))
-                                    {
-                                        _ = await arg.Channel.SendMessageAsync(
+                                    _ = File.Exists("bot.txt")
+                                        ? await arg.Channel.SendMessageAsync(
                                             "bind <secret>- bind you to this bot\n" +
                                             "help - this message\n" +
                                             "list - list all planet name\n" +
@@ -149,17 +190,13 @@ namespace GO2FlashLauncher
                                             "start <planetName> - start bot selected planet\n" +
                                             "stop <planetName> - stop bot selected planet\n" +
                                             "refresh <planetName> - refresh selected planet\n" +
-                                            "img <planetName> - send screenshot of current planet doing (Might have delays)");
-                                    }
-                                    else
-                                    {
-                                        _ = await arg.Channel.SendMessageAsync(
+                                            "img <planetName> - send screenshot of current planet doing (Might have delays)")
+                                        : await arg.Channel.SendMessageAsync(
                                             "bind <secret>- bind you to this bot\n" +
                                             "help - this message\n" +
                                             "list - list all planet name\n" +
                                             "refresh <planetName> - refresh selected planet\n" +
                                             "img <planetName> - send screenshot of current planet doing (Might have delays)");
-                                    }
                                 }
                                 break;
                             case "list":
@@ -176,39 +213,7 @@ namespace GO2FlashLauncher
                             default:
                                 if (File.Exists("bot.txt"))
                                 {
-                                    if (arg.Content.Trim() == "resource " + planet.PlanetName)
-                                    {
-                                        _ = await arg.Channel.SendMessageAsync("Current planet resources: \n" + script.Resources.ToString());
-                                    }
-                                    else if (arg.Content.Trim() == "gain " + planet.PlanetName)
-                                    {
-                                        if (script == null || !script.Running)
-                                        {
-                                            _ = await arg.Channel.SendMessageAsync("Bot is not started.");
-                                        }
-                                        if (resources == null)
-                                        {
-                                            _ = await arg.Channel.SendMessageAsync("Bot not loaded resources details yet.");
-                                        }
-                                        _ = await arg.Channel.SendMessageAsync("Current planet gained resources: \nMetal:" + (script.Resources.Metal - resources.Metal) +
-                                            "\nHE3: " + (script.Resources.HE3 - resources.HE3) + "\nGold: " + (script.Resources.Gold - resources.Gold));
-                                    }
-                                    else if (arg.Content.Trim().Contains("start " + planet.PlanetName))
-                                    {
-                                        _ = metroToggle1.Invoke((MethodInvoker)delegate ()
-                                        {
-                                            metroToggle1.Checked = true;
-                                        });
-                                        _ = await arg.Channel.SendMessageAsync("Bot Started");
-                                    }
-                                    else if (arg.Content.Trim().Contains("stop " + planet.PlanetName))
-                                    {
-                                        _ = metroToggle1.Invoke((MethodInvoker)delegate ()
-                                        {
-                                            metroToggle1.Checked = false;
-                                        });
-                                        _ = await arg.Channel.SendMessageAsync("Bot Stopped");
-                                    }
+                                    await HiddenDCBotFunc(arg);
                                 }
                                 if (arg.Content.Trim().Contains("refresh " + planet.PlanetName))
                                 {
@@ -220,7 +225,7 @@ namespace GO2FlashLauncher
                                 }
                                 else if (arg.Content.Trim().Contains("img " + planet.PlanetName))
                                 {
-                                    var bmp = await chrome.GetBrowser().GetDevToolsClient().Page.Screenshot();
+                                    Bitmap bmp = await chrome.GetBrowser().GetDevToolsClient().Page.Screenshot();
                                     using (MemoryStream stream = new MemoryStream())
                                     {
                                         bmp.Save(stream, ImageFormat.Png);
@@ -499,7 +504,7 @@ namespace GO2FlashLauncher
 
         private void metroToggle1_CheckedChanged(object sender, EventArgs e)
         {
-            if(chrome == null)
+            if (chrome == null)
             {
                 metroToggle1.Checked = false;
                 return;
@@ -643,7 +648,7 @@ namespace GO2FlashLauncher
 
         private async void metroButton4_Click(object sender, EventArgs e)
         {
-            if(chrome != null)
+            if (chrome != null)
             {
                 if (metroToggle1.Checked)
                 {
@@ -651,7 +656,7 @@ namespace GO2FlashLauncher
                     Logger.LogInfo("Bot Stopped");
                     Logger.LogInfo("Unlocked browser for botting...");
                 }
-                if(script != null && script.Running)
+                if (script != null && script.Running)
                 {
                     script.Stop();
                     script = null;
@@ -659,7 +664,7 @@ namespace GO2FlashLauncher
                 }
                 await Cef.UIThreadTaskFactory.StartNew(delegate
                 {
-                    chrome.DestroyWindow();
+                    _ = chrome.DestroyWindow();
                 });
                 ChromeContainer.Controls.Remove(chrome);
                 chrome = null;

@@ -1,7 +1,5 @@
 ﻿using CefSharp;
-using CefSharp.DevTools;
 using CefSharp.DevTools.Page;
-using CefSharp.WinForms;
 using GO2FlashLauncher.Model;
 using System;
 using System.Collections.Generic;

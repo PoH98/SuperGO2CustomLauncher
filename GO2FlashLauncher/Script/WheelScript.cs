@@ -26,7 +26,7 @@ namespace GO2FlashLauncher.Script
                 }
                 IsRunning = true;
                 BotStartTime = DateTime.Now;
-                var pageClient = browser.GetBrowser().GetDevToolsClient().Page;
+                PageClient pageClient = browser.GetBrowser().GetDevToolsClient().Page;
                 IBrowserHost host = browser.GetBrowser().GetHost();
                 try
                 {

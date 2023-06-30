@@ -1,7 +1,5 @@
 ﻿using CefSharp;
-using CefSharp.DevTools;
 using CefSharp.DevTools.Page;
-using CefSharp.WinForms;
 using Emgu.CV.OCR;
 using GO2FlashLauncher.Model;
 using GO2FlashLauncher.Service;

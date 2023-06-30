@@ -1,5 +1,4 @@
 ﻿using CefSharp;
-using CefSharp.DevTools;
 using CefSharp.DevTools.Page;
 using CefSharp.WinForms;
 using Discord;
@@ -42,7 +41,7 @@ namespace GO2FlashLauncher.Script
                 {
                     await Task.Delay(1000);
                 }
-                if(pageClient == null)
+                if (pageClient == null)
                 {
                     pageClient = browser.GetBrowser().GetDevToolsClient().Page;
                 }

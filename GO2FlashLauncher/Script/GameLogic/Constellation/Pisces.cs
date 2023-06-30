@@ -1,5 +1,4 @@
 ﻿using CefSharp;
-using CefSharp.DevTools;
 using CefSharp.DevTools.Page;
 using System.Drawing;
 

@@ -3,7 +3,6 @@ using Discord;
 using Discord.WebSocket;
 using GO2FlashLauncher.Model;
 using GO2FlashLauncher.Model.SGO2;
-using GO2FlashLauncher.Models;
 using GO2FlashLauncher.Service;
 using MetroFramework;
 using MetroFramework.Controls;
@@ -50,21 +49,25 @@ namespace GO2FlashLauncher
                 {
                     Login();
                     Profile profile = Encryption.Decrypt(settings.CredentialHash);
-                    Model.SGO2.LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
+                    LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
                     settings.AuthKey = credential.Data.Token;
                 }
                 if (settings.AuthKey == null)
                 {
                     Profile profile = Encryption.Decrypt(settings.CredentialHash);
-                    Model.SGO2.LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
+                    LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
                     settings.AuthKey = credential.Data.Token;
                 }
                 GO2HttpService.SetToken(settings.AuthKey);
-                Model.SGO2.GetPlanetResponse planet = await GO2HttpService.GetPlanets();
+                GetPlanetResponse planet = await GO2HttpService.GetPlanets();
+                if(planet == null)
+                {
+                    throw new JsonException();
+                }
                 if (planet.Code == 401)
                 {
                     Profile profile = Encryption.Decrypt(settings.CredentialHash);
-                    Model.SGO2.LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
+                    LoginResponse credential = await GO2HttpService.Login(profile.Email, profile.Password);
                     settings.AuthKey = credential.Data.Token;
                     planet = await GO2HttpService.GetPlanets();
                 }
@@ -90,12 +93,12 @@ namespace GO2FlashLauncher
             }
             catch (Exception ex)
             {
-                if(ex is JsonException)
+                if (ex is JsonException)
                 {
                     _ = MessageBox.Show("Game is offline!");
                     Environment.Exit(0);
                 }
-                else if(ex.Message == "ACCOUNT_NOT_FOUND")
+                else if (ex.Message == "ACCOUNT_NOT_FOUND")
                 {
                     settings.CredentialHash = null;
                 }
@@ -164,24 +167,24 @@ namespace GO2FlashLauncher
         }
         private async void MetroTabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(metroTabControl1.Controls.Count > 4)
+            if (metroTabControl1.Controls.Count > 4)
             {
-                foreach(MetroTabPage tab in metroTabControl1.TabPages)
+                foreach (MetroTabPage tab in metroTabControl1.TabPages)
                 {
-                    if(tab.Name == "NewPlanet")
+                    if (tab.Name == "NewPlanet")
                     {
                         metroTabControl1.Controls.Remove(tab);
                     }
                 }
             }
-            if(metroTabControl1.SelectedTab.Name == "NewPlanet")
+            if (metroTabControl1.SelectedTab.Name == "NewPlanet")
             {
                 metroTabControl1.SelectedIndex = 0;
                 CreatePlanet c = new CreatePlanet(GO2HttpService);
-                if(c.ShowDialog() == DialogResult.OK)
+                if (c.ShowDialog() == DialogResult.OK)
                 {
                     metroTabControl1.Controls.Clear();
-                    var planet = await GO2HttpService.GetPlanets();
+                    GetPlanetResponse planet = await GO2HttpService.GetPlanets();
                     if (planet.Code == 401)
                     {
                         Profile profile = Encryption.Decrypt(settings.CredentialHash);
@@ -266,8 +269,7 @@ namespace GO2FlashLauncher
         {
             try
             {
-                HttpResponseMessage response = await hc.GetAsync("https://api.guerradenaves.lat/metrics/online");
-                OnlinePlayers online = JsonConvert.DeserializeObject<OnlinePlayers>(await response.Content.ReadAsStringAsync());
+                var online = await GO2HttpService.GetOnlinePlayers();
                 Text = "Not So Super GO2 | Online Players: " + online.Data.Online;
             }
             catch

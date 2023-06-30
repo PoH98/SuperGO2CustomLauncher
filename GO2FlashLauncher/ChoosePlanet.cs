@@ -1,12 +1,7 @@
 ﻿using MetroFramework.Forms;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GO2FlashLauncher
@@ -14,7 +9,7 @@ namespace GO2FlashLauncher
     public partial class ChoosePlanet : MetroForm
     {
         public string SelectedPlanet { get; private set; }
-        public ChoosePlanet(List<string> planets)
+        public ChoosePlanet(ReadOnlyCollection<string> planets)
         {
             InitializeComponent();
             metroComboBox1.Items.AddRange(planets.ToArray());
@@ -22,7 +17,7 @@ namespace GO2FlashLauncher
 
         private void metroButton2_Click(object sender, EventArgs e)
         {
-            if(metroComboBox1.SelectedIndex == -1)
+            if (metroComboBox1.SelectedIndex == -1)
             {
                 return;
             }

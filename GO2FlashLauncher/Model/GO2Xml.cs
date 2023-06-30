@@ -59,7 +59,7 @@ namespace GO2FlashLauncher.Model
     {
 
         [XmlElement(ElementName = "audio")]
-        public List<Audio> Audio { get; set; }
+        public ICollection<Audio> Audio { get; set; }
 
         [XmlAttribute(AttributeName = "path")]
         public string Path { get; set; }
@@ -84,7 +84,7 @@ namespace GO2FlashLauncher.Model
     {
 
         [XmlElement(ElementName = "Msg")]
-        public List<Msg> Msg { get; set; }
+        public ICollection<Msg> Msg { get; set; }
     }
 
     [XmlRoot(ElementName = "config")]
