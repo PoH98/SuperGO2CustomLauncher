@@ -54,11 +54,7 @@ namespace GalaxyOrbit4Launcher
             {
                 SchemeName = "https",
                 DomainName = Host,
-                SchemeHandlerFactory = new FolderSchemeHandlerFactory(
-                    rootFolder: ClientUpdatorService.Instance.RootPath,
-                    hostName: Host,
-                    defaultPage: "index.html"
-                )
+                SchemeHandlerFactory = new ResourceHandlerService(Host)
             });
             if (!Cef.Initialize(settings))
             {
@@ -72,7 +68,6 @@ namespace GalaxyOrbit4Launcher
                 _ = loader.ShowDialog();
             });
             load.Start();
-            ClientUpdatorService.Instance.UpdateFiles();
             string wmiQueryString = "SELECT ProcessID, ExecutablePath FROM Win32_Process";
             using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(wmiQueryString))
             using (ManagementObjectCollection results = searcher.Get())

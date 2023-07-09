@@ -24,7 +24,7 @@ namespace GalaxyOrbit4Launcher.Service
         }
         public async Task<LoginResponse> Login(string username, string password)
         {
-            HttpResponseMessage response = await httpClient.PostAsync(Host + "/login/login/accounts", new StringContent(JsonConvert.SerializeObject(new
+            HttpResponseMessage response = await httpClient.PostAsync(Host + "/login/login/account", new StringContent(JsonConvert.SerializeObject(new
             {
                 username,
                 password

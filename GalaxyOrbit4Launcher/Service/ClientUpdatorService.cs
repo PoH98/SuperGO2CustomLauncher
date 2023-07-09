@@ -69,6 +69,10 @@ namespace GalaxyOrbit4Launcher.Service
         public void UpdateFiles()
         {
             HttpResponseMessage xmlres = httpClient.GetAsync("https://" + Host + "/data/config.xml").ConfigureAwait(false).GetAwaiter().GetResult();
+            if (!xmlres.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException("Game file version fetch failed "+xmlres.StatusCode);
+            }
             Stream xmldat = xmlres.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             XmlSerializer serializer = new XmlSerializer(typeof(GO4Xml));
             GO4Xml xml = serializer.Deserialize(xmldat) as GO4Xml;

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyOrbit4Launcher", "Gal
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "GalaxyOrbit4Installer", "GalaxyOrbit4Installer\GalaxyOrbit4Installer.vdproj", "{447B95DC-08AF-4EBA-A580-FAD8622812A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyOrbit.Resources", "Resources\GalaxyOrbit.Resources.csproj", "{8A86AECC-C15F-4F19-90E7-C3B3B7D5A338}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,14 @@ Global
 		{447B95DC-08AF-4EBA-A580-FAD8622812A9}.Debug|x86.ActiveCfg = Debug
 		{447B95DC-08AF-4EBA-A580-FAD8622812A9}.Release|Any CPU.ActiveCfg = Release
 		{447B95DC-08AF-4EBA-A580-FAD8622812A9}.Release|x86.ActiveCfg = Release
+		{8A86AECC-C15F-4F19-90E7-C3B3B7D5A338}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A86AECC-C15F-4F19-90E7-C3B3B7D5A338}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A86AECC-C15F-4F19-90E7-C3B3B7D5A338}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8A86AECC-C15F-4F19-90E7-C3B3B7D5A338}.Debug|x86.Build.0 = Debug|Any CPU
+		{8A86AECC-C15F-4F19-90E7-C3B3B7D5A338}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A86AECC-C15F-4F19-90E7-C3B3B7D5A338}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A86AECC-C15F-4F19-90E7-C3B3B7D5A338}.Release|x86.ActiveCfg = Release|Any CPU
+		{8A86AECC-C15F-4F19-90E7-C3B3B7D5A338}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
