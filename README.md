@@ -1,3 +1,5 @@
+# SuperGO2 shutdown for a unknown long time, archived until server reup
+
 # SuperGO2CustomLauncher
 A custom launcher for SuperGO2
 
